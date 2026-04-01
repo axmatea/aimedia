@@ -231,19 +231,77 @@
   }
 }
 
-/* ── Smooth scroll ── */
+/* ── Smooth scroll + snap ── */
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
+  height: 100%;
+  /* Force high refresh rate compositing */
+  -webkit-transform: translateZ(0);
 }
 
-/* ── Scroll performance ── */
+/* Snap scrolling — GPU-accelerated, native FPS */
+.snap-y {
+  scroll-snap-type: y proximity;
+}
+.snap-start {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+/* Disable snap on very short viewports (mobile landscape) */
+@media (max-height: 500px) {
+  .snap-y { scroll-snap-type: none; }
+}
+
+/* ── Content visibility: skip rendering for off-screen sections ── */
+/* Browser skips paint/layout for sections until they scroll into view */
+.ai-page section:not(:first-child),
+.ai-panel {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px;
+}
+
+/* ── Reduced motion: respect user preference ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .snap-y { scroll-snap-type: none; }
+}
+
+/* ── Global scroll & touch performance ── */
 * {
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+body {
+  /* Smooth momentum scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: none;
+}
+
+/* GPU-accelerate sections for smooth scroll repaint */
 .ai-page section {
   will-change: auto;
   contain: layout style;
+  /* Promote to own compositor layer during scroll */
+  transform: translateZ(0);
+}
+
+.hero-section {
+  contain: paint !important;
+}
+
+/* Spline canvas — GPU layer, no layout thrashing */
+canvas {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 /* ── Light mode overrides ── */
@@ -301,3 +359,25 @@ html:not(.dark) .ai-tag-dark {
 html:not(.dark) .ai-switch-track[data-state=checked]   { background-color: rgba(0,0,0,0.3) !important; }
 html:not(.dark) .ai-switch-track[data-state=unchecked] { background-color: rgba(0,0,0,0.12) !important; }
 html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
+
+/* Mobile robot positioning */
+@media (max-width: 1023px) {
+  .snap-y {
+    scroll-snap-type: none;
+  }
+
+  .hero-robot-shell {
+    contain: paint;
+    transform: translateZ(0) !important;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .robot-mobile {
+    top: -6svh !important;
+    bottom: auto !important;
+    height: 130svh !important;    /* svh = stable, never jumps with URL bar */
+    transform: translateZ(0) !important;
+    will-change: auto;
+  }
+}

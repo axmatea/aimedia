@@ -32,7 +32,7 @@ export function WorldMap({
     () =>
       map.getSVG({
         radius: 0.22,
-        color: resolvedTheme === "dark" ? "#FFFFFF18" : "#00000020",
+        color: resolvedTheme === "dark" ? "#FFFFFF20" : "#00000040",
         shape: "circle",
         backgroundColor: "transparent",
       }),
@@ -61,7 +61,7 @@ export function WorldMap({
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
-        className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] pointer-events-none select-none object-cover opacity-60"
+        className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] pointer-events-none select-none object-cover opacity-80"
         alt="world map"
         draggable={false}
         suppressHydrationWarning

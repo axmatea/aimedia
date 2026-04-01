@@ -8,8 +8,27 @@ import { LiquidMetalButton } from "@/components/ui/liquid-metal-button"
 import ThemeToggle from "@/components/ui/toggle-theme"
 import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
-import { N8nWorkflowBlock } from "@/components/ui/n8n-workflow-block-shadcnui"
-import { AIUGCCreators } from "@/components/ui/animated-tooltip"
+// ── Below-fold heavy components: lazy loaded for faster LCP ──────────────────
+const N8nWorkflowBlock = dynamic(
+  () => import("@/components/ui/n8n-workflow-block-shadcnui").then((mod) => mod.N8nWorkflowBlock),
+  { ssr: false, loading: () => <div className="h-[460px] rounded-2xl animate-pulse bg-white/[0.02] border border-white/5" /> }
+)
+const AIUGCCreators = dynamic(
+  () => import("@/components/ui/animated-tooltip").then((mod) => mod.AIUGCCreators),
+  { ssr: false }
+)
+const Lightning = dynamic(
+  () => import("@/components/ui/lightning").then((mod) => mod.Lightning),
+  { ssr: false }
+)
+const AgentRadial = dynamic(
+  () => import("@/components/ui/agent-radial").then((mod) => mod.AgentRadial),
+  { ssr: false, loading: () => <div className="h-[320px] rounded-xl animate-pulse bg-white/[0.02]" /> }
+)
+const LeadFunnel = dynamic(
+  () => import("@/components/ui/lead-funnel").then((mod) => mod.LeadFunnel),
+  { ssr: false, loading: () => <div className="h-[400px] rounded-2xl animate-pulse bg-white/[0.02] border border-white/5" /> }
+)
 
 // ── All heavy/below-fold components: dynamically loaded ─────────────────────
 const SplineScene = dynamic(
@@ -26,7 +45,7 @@ const WorldMap = dynamic(
 )
 
 // ── Config ──────────────────────────────────────────────────────────────────
-const CALENDLY_URL = "https://calendly.com/amediacorp/booking"
+const CALENDLY_URL = "https://cal.com/axmedia/call"
 
 // ── Shared viewport config for whileInView ──────────────────────────────────
 const VP = { once: true, margin: "0px 0px -80px 0px" } as const
@@ -47,23 +66,23 @@ const WHO_WE_SERVE = [
 
 // Tools we actually use and integrate with
 const TRUSTED_LOGOS = [
-  { src: "https://svgl.app/library/claude-ai.svg", alt: "Claude" },
-  { src: "https://svgl.app/library/openai.svg", alt: "OpenAI" },
-  { src: "https://svgl.app/library/n8n.svg", alt: "n8n" },
-  { src: "https://svgl.app/library/airtable.svg", alt: "Airtable" },
-  { src: "https://svgl.app/library/notion.svg", alt: "Notion" },
-  { src: "https://svgl.app/library/zapier.svg", alt: "Zapier" },
-  { src: "https://svgl.app/library/hubspot.svg", alt: "HubSpot" },
-  { src: "https://svgl.app/library/slack.svg", alt: "Slack" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/openai.svg", alt: "OpenAI" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/notion.svg", alt: "Notion" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/slack.svg", alt: "Slack" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/hubspot.svg", alt: "HubSpot" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/zapier.svg", alt: "Zapier" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/stripe.svg", alt: "Stripe" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/airtable.svg", alt: "Airtable" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/n8n.svg", alt: "n8n" },
 ]
 
 const FEATURED_LOGOS = [
-  { src: "https://svgl.app/library/instagram.svg", alt: "Instagram" },
-  { src: "https://svgl.app/library/linkedin.svg", alt: "LinkedIn" },
-  { src: "https://svgl.app/library/tiktok.svg", alt: "TikTok" },
-  { src: "https://svgl.app/library/x.svg", alt: "X / Twitter" },
-  { src: "https://svgl.app/library/youtube.svg", alt: "YouTube" },
-  { src: "https://svgl.app/library/stripe_wordmark.svg", alt: "Stripe" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/instagram.svg", alt: "Instagram" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/linkedin.svg", alt: "LinkedIn" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/tiktok.svg", alt: "TikTok" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/youtube.svg", alt: "YouTube" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/figma.svg", alt: "Figma" },
+  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/google.svg", alt: "Google" },
 ]
 
 const MAP_DOTS = [
@@ -78,17 +97,17 @@ const SERVICES = [
   {
     id: "01", name: "GO-TO-MARKET\nENGINE", tag: "GROWTH",
     bg: "#0E0718", accent: "#7B2FFF", textDark: false,
-    tagline: "Find and convert your ideal customers.",
-    body: "AI pipelines that map ideal buyers and run multi-channel outreach at scale — from SaaS enterprise to Web3 communities. CRM enrichment, zero spray-and-pray.",
+    tagline: "Find and convert your ideal customers — on autopilot.",
+    body: "AI maps ideal buyers, enriches CRM, and runs multi-channel outreach at scale. Zero spray-and-pray.",
     metrics: [{ label: "Leads generated / week", value: "2,400+" }, { label: "Pipeline conversion lift", value: "6.8×" }],
     tools: ["Clay", "Apollo", "Apify", "Claude API"],
     steps: ["Mapping ideal customer profile...","Enriching and scoring leads...","Launching outreach sequences...","Monitoring conversion metrics..."],
   },
   {
     id: "02", name: "CONTENT\nSYSTEM", tag: "CONTENT",
-    bg: "#FF2D55", accent: "#fff", textDark: false,
-    tagline: "Automated social media, email & content creation.",
-    body: "We build AI systems that automatically post to Instagram, LinkedIn, X, and TikTok — on-brand, at scale. Scripts, thumbnails, email sequences, and drop announcements generated without touching a keyboard.",
+    bg: "#0A0A0F", accent: "#A78BFA", textDark: false,
+    tagline: "500+ content pieces a month. Zero manual work.",
+    body: "AI posts to Instagram, LinkedIn, X, TikTok — on-brand, at scale. Scripts, thumbnails, emails, generated automatically.",
     metrics: [{ label: "Content pieces / month", value: "500+" }, { label: "Time saved vs in-house", value: "80 hrs" }],
     tools: ["Claude API", "Remotion", "Beehiiv", "GPT-4o"],
     steps: ["Defining brand voice & tone...","Creating multi-format content...","Scheduling to social channels...","Analyzing performance & iterating..."],
@@ -96,10 +115,10 @@ const SERVICES = [
   {
     id: "03", name: "AI OPS\nPIPELINE", tag: "AUTOMATION",
     bg: "#C8FF60", accent: "#050507", textDark: true,
-    tagline: "Your full sales & ops infrastructure on autopilot.",
-    body: "From AI-powered cold calling and CRM sync to community monitoring and automated reporting — we replace manual operations with deterministic AI infrastructure that runs 24/7.",
+    tagline: "Your full sales & ops infrastructure — on autopilot.",
+    body: "Cold calling, CRM sync, community monitoring, reporting. Manual ops replaced with AI infrastructure, 24/7.",
     metrics: [{ label: "Automated actions / day", value: "1.2M+" }, { label: "Report delivery", value: "<30s" }],
-    tools: ["Modal", "n8n", "Trigger.dev", "Dune Analytics"],
+    tools: ["Modal", "n8n", "Zapier", "HubSpot"],
     steps: ["Auditing existing workflows...","Building AI cold-call sequences...","Connecting CRM & data sources...","Deploying to production..."],
   },
 ]
@@ -118,9 +137,9 @@ const PROCESS = [
 ]
 
 const NAV_LINKS = [
-  { label: "Services", href: "#services" },
-  { label: "Work", href: "#work" },
-  { label: "Process", href: "#process" },
+  { label: "Services", href: "#built-for" },
+  { label: "Work", href: "#ai-team" },
+  { label: "Solutions", href: "#services" },
   { label: "Contact", href: "#booking" },
 ]
 
@@ -149,8 +168,8 @@ const HeroSection = memo(function HeroSection() {
   }, [])
 
   return (
-    <section className="min-h-screen relative overflow-hidden flex flex-col justify-end pb-16 pt-32 px-6 md:px-10">
-      <Spotlight size={500} />
+    <section className="hero-section min-h-[100svh] relative overflow-hidden flex flex-col justify-end pb-16 pt-32 px-6 md:px-10 snap-start">
+      <div className="hidden lg:block"><Spotlight size={500} /></div>
 
       {/* Backgrounds — reduced blur for GPU perf */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
@@ -159,14 +178,20 @@ const HeroSection = memo(function HeroSection() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:80px_80px]" />
       </div>
 
+      {/* Lightning behind robot — subtle ambient, hidden in light mode (black canvas) */}
+      <div className="absolute right-0 top-0 w-[75%] h-full pointer-events-none hidden dark:lg:block z-[1] opacity-30 mix-blend-screen">
+        <Lightning hue={260} xOffset={0.3} speed={1.0} intensity={0.35} size={2.2} />
+      </div>
+
       {/* Robot */}
       <div
-        className="absolute right-0 top-0 bottom-0 w-[65%] pointer-events-none hidden lg:block z-0"
-        style={{ transform: "scale(1.35) translateY(-8%)", transformOrigin: "top center" }}
+        className="hero-robot-shell robot-mobile absolute right-0 top-0 w-[100%] h-[55svh] lg:bottom-0 lg:w-[65%] lg:h-auto pointer-events-none block z-[2]"
+        style={{ transform: "scale(1.35) translate3d(0, -8%, 0)", transformOrigin: "top center", willChange: "transform" }}
       >
-        <SplineScene scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode" className="w-full h-full" />
-        <div className="ai-hero-fade-x absolute inset-y-0 left-0 w-[40%]" />
-        <div className="ai-hero-fade-y absolute bottom-0 left-0 right-0 h-48" />
+        <SplineScene scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode" className="w-full h-full dark:opacity-100 opacity-90 dark:mix-blend-normal mix-blend-luminosity" />
+        <div className="ai-hero-fade-x absolute inset-y-0 left-0 w-[50%]" />
+        <div className="ai-hero-fade-y absolute bottom-0 left-0 right-0 h-56" />
+        <div className="ai-hero-fade-x absolute inset-y-0 right-0 w-[15%] rotate-180 block dark:hidden" />
       </div>
 
       {/* Content */}
@@ -180,9 +205,9 @@ const HeroSection = memo(function HeroSection() {
         </m.div>
 
         <m.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}>
-          <Disp className="block ai-text text-[clamp(5rem,14vw,180px)] leading-[0.85]">WE BUILD</Disp>
-          <Disp className="block text-[#FF2D55] text-[clamp(5rem,14vw,180px)] leading-[0.85]">AI SYSTEMS</Disp>
-          <div className="overflow-hidden" style={{ height: "clamp(5rem,14vw,180px)" }}>
+          <Disp className="block ai-text text-[clamp(2.8rem,12vw,180px)] leading-[0.85]">WE BUILD</Disp>
+          <Disp className="block text-[#FF2D55] text-[clamp(2.8rem,12vw,180px)] leading-[0.85]">AI SYSTEMS</Disp>
+          <div className="overflow-hidden" style={{ height: "clamp(2.8rem,12vw,180px)" }}>
             <AnimatePresence mode="wait">
               <m.div
                 key={audienceIdx}
@@ -191,7 +216,7 @@ const HeroSection = memo(function HeroSection() {
                 exit={{ y: "-100%", opacity: 0 }}
                 transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
               >
-                <Disp className="block ai-muted text-[clamp(5rem,14vw,180px)] leading-[0.85]">
+                <Disp className="block ai-muted text-[clamp(2.8rem,12vw,180px)] leading-[0.85]">
                   FOR {HERO_AUDIENCES[audienceIdx]}
                 </Disp>
               </m.div>
@@ -209,7 +234,7 @@ const HeroSection = memo(function HeroSection() {
           </p>
           <div className="flex gap-3 flex-shrink-0">
             <LiquidMetalButton label="Start a Project" onClick={() => scrollTo("booking")} />
-            <button onClick={() => scrollTo("services")} className="px-8 py-3.5 border-2 border-white/25 text-white/80 text-sm font-semibold rounded-full hover:border-[#FF2D55] hover:text-[#FF2D55] transition-all">
+            <button onClick={() => scrollTo("services")} className="px-8 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-sm font-semibold rounded-full hover:border-[#FF2D55] hover:text-[#FF2D55] transition-all">
               View More →
             </button>
           </div>
@@ -222,112 +247,27 @@ const HeroSection = memo(function HeroSection() {
 
 // ── BookingSection ───────────────────────────────────────────────────────────
 const BookingSection = memo(function BookingSection() {
-  const [step, setStep] = useState<0 | 1 | 2>(0)
-  const [quiz, setQuiz] = useState({ projectType: "", goal: "", budget: "" })
-  const [contact, setContact] = useState({ name: "", email: "", phone: "" })
-  const [emailError, setEmailError] = useState("")
-
-  const validateEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)
-
-  const handleContactContinue = () => {
-    if (!contact.name || !contact.email || !contact.phone) return
-    if (!validateEmail(contact.email)) { setEmailError("Please enter a valid email address"); return }
-    setEmailError("")
-    const params = new URLSearchParams({ name: contact.name, email: contact.email, a1: quiz.projectType, a2: quiz.goal, a3: quiz.budget })
-    window.open(`${CALENDLY_URL}?${params.toString()}`, "_blank")
-    setStep(2)
-  }
-
   return (
     <div id="booking">
-      <div className="relative py-28 px-6 border-b ai-border overflow-hidden">
-        <ShaderAnimation className="absolute inset-0 w-full h-full opacity-25" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050507]/85 via-[#050507]/40 to-[#050507]/85 pointer-events-none" />
+      <div className="relative py-16 md:py-24 px-4 md:px-6 border-b border-white/5 overflow-hidden bg-[#050507]">
+        <ShaderAnimation className="absolute inset-0 w-full h-full opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050507]/50 via-[#050507]/15 to-[#050507]/50 pointer-events-none" />
 
-        <div className="relative z-10 max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <Tag>Free strategy call</Tag>
-            <Disp className="text-white text-[clamp(2.5rem,7vw,88px)] block mt-4 leading-[0.9]">
-              BOOK YOUR<br /><span style={{ color: "#FF2D55" }}>30 MINUTES.</span>
-            </Disp>
-            <p className="text-white/65 text-lg mt-5 max-w-lg mx-auto leading-relaxed">
-              We audit your stack and show you exactly which AI systems will move the needle — no fluff, just outcomes.
-            </p>
-            <p className="text-white/20 text-sm mt-3 italic tracking-wide">The fabric of digital reality.</p>
+        <div className="relative z-10 max-w-2xl mx-auto text-center">
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/60">Free strategy call</span>
+          <Disp className="text-white text-[clamp(2.5rem,8vw,88px)] block mt-4 leading-[0.88]">
+            BOOK YOUR<br /><span style={{ color: "#FF2D55" }}>30 MINUTES.</span>
+          </Disp>
+          <p className="text-white/65 text-sm md:text-lg mt-4 max-w-lg mx-auto leading-relaxed">
+            We audit your stack and show you exactly which AI systems will move the needle — no fluff, just outcomes.
+          </p>
+          <div className="mt-8">
+            <LiquidMetalButton
+              label="Book your call →"
+              onClick={() => window.open(CALENDLY_URL, "_blank")}
+              className="mx-auto"
+            />
           </div>
-
-          {/* Step indicator */}
-          <div className="flex items-center justify-center gap-2 mb-10">
-            {["Your Project", "Contact", "Schedule"].map((label, i) => (
-              <div key={label} className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold transition-all" style={{
-                    backgroundColor: step > i ? "#FF2D55" : step === i ? "rgba(255,45,85,0.2)" : "rgba(255,255,255,0.06)",
-                    border: step === i ? "1px solid #FF2D55" : "1px solid transparent",
-                    color: step >= i ? "#FF2D55" : "rgba(255,255,255,0.25)",
-                  }}>{i + 1}</div>
-                  <span className="text-xs font-medium uppercase tracking-wider" style={{ color: step === i ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.3)" }}>{label}</span>
-                </div>
-                {i < 2 && <div className="w-10 h-px mx-1" style={{ backgroundColor: step > i ? "#FF2D55" : "rgba(255,255,255,0.12)" }} />}
-              </div>
-            ))}
-          </div>
-
-          <AnimatePresence mode="wait">
-            {step === 0 && (
-              <m.div key="step0" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }} className="max-w-2xl mx-auto space-y-7">
-                {[
-                  { key: "projectType" as const, q: "What best describes your project?", ph: "e.g. Web3, NFT, SaaS, Agency, Startup, Brand, Other..." },
-                  { key: "goal" as const, q: "What's your primary goal?", ph: "e.g. More leads, Content automation, Sales pipeline, Ops efficiency..." },
-                  { key: "budget" as const, q: "Monthly budget?", ph: "e.g. $3k/mo, $10k/mo, $20k+, Let's discuss..." },
-                ].map(({ key, q, ph }) => (
-                  <div key={key}>
-                    <label className="text-white/90 text-xl font-black block mb-3">{q}</label>
-                    <input type="text" placeholder={ph} value={quiz[key]}
-                      onChange={e => setQuiz(p => ({ ...p, [key]: e.target.value }))}
-                      className="w-full bg-white/5 border border-white/15 rounded-xl px-5 py-4 text-base text-white placeholder-white/35 focus:outline-none focus:border-[#FF2D55]/60 transition-colors" />
-                  </div>
-                ))}
-                <LiquidMetalButton label="Continue →" onClick={() => { if (quiz.projectType && quiz.goal && quiz.budget) setStep(1) }} className="w-full justify-center" />
-                {!(quiz.projectType && quiz.goal && quiz.budget) && <p className="text-white/40 text-xs text-center">Fill in all 3 fields to continue</p>}
-              </m.div>
-            )}
-
-            {step === 1 && (
-              <m.div key="step1" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }} className="max-w-md mx-auto space-y-4">
-                {[
-                  { field: "name" as const, label: "Your name", type: "text", ph: "First name" },
-                  { field: "email" as const, label: "Email address", type: "email", ph: "you@company.com" },
-                  { field: "phone" as const, label: "Phone number", type: "tel", ph: "+1 (555) 000-0000" },
-                ].map(({ field, label, type, ph }) => (
-                  <div key={field}>
-                    <label className="text-white/65 text-xs uppercase tracking-widest block mb-2 font-bold">{label}</label>
-                    <input type={type} placeholder={ph} value={contact[field]}
-                      onChange={e => { setContact(c => ({ ...c, [field]: e.target.value })); if (field === "email") setEmailError("") }}
-                      className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-[#FF2D55]/60 transition-colors" />
-                    {field === "email" && emailError && <p className="text-[#FF2D55] text-xs mt-1">{emailError}</p>}
-                  </div>
-                ))}
-                <div className="flex gap-3 pt-2">
-                  <button onClick={() => setStep(0)} className="px-5 py-3 rounded-xl border border-white/15 text-white/55 text-sm hover:border-white/30 hover:text-white/75 transition-colors">← Back</button>
-                  <LiquidMetalButton label="Continue to Schedule →" onClick={handleContactContinue} className="flex-1 justify-center" />
-                </div>
-                {!(contact.name && contact.email && contact.phone) && <p className="text-white/35 text-xs text-center">All fields required</p>}
-              </m.div>
-            )}
-
-            {step === 2 && (
-              <m.div key="step2" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35 }} className="max-w-md mx-auto text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-[#FF2D55]/15 border border-[#FF2D55]/30 flex items-center justify-center mx-auto text-3xl">✓</div>
-                <Disp className="text-white text-4xl">CALENDLY IS OPEN.</Disp>
-                <p className="text-white/65 text-base">Your booking page opened in a new tab.</p>
-                <p className="text-white/45 text-sm">Confirmation will be sent to <span className="text-white/80 font-semibold">{contact.email}</span></p>
-                <p className="text-white/30 text-xs">We&apos;ll review your answers and come fully prepared.</p>
-                <button onClick={() => { setStep(0); setQuiz({ projectType: "", goal: "", budget: "" }); setContact({ name: "", email: "", phone: "" }) }}
-                  className="text-[#FF2D55]/60 text-sm hover:text-[#FF2D55] transition-colors mt-4">Start over</button>
-              </m.div>
-            )}
-          </AnimatePresence>
         </div>
       </div>
     </div>
@@ -337,13 +277,13 @@ const BookingSection = memo(function BookingSection() {
 // ── Page ────────────────────────────────────────────────────────────────────
 export default function Home() {
   return (
-    <main className="w-full ai-page overflow-hidden grain">
+    <main className="w-full ai-page overflow-hidden grain snap-y snap-proximity">
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
-      <nav className="ai-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-5 backdrop-blur-md border-b ai-border">
-        <a href="#" className="flex items-center">
+      <nav className="ai-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-4 md:py-5 backdrop-blur-md border-b ai-border">
+        <a href="#" className="flex items-center flex-shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-gen/v2-01-transparent.png" alt="AX Media" className="h-11 w-auto"  />
+          <img src="/logo-gen/v2-01-transparent.png" alt="AX Media" className="h-8 md:h-11 w-auto invert dark:invert-0" />
         </a>
         <div className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((item) => (
@@ -354,17 +294,17 @@ export default function Home() {
             </a>
           ))}
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <ThemeToggle />
           <button
             onClick={() => scrollTo("booking")}
-            className="px-5 py-2.5 rounded-full text-sm font-bold tracking-wide text-[#050507] transition-all hover:scale-105 active:scale-95"
-            style={{
-              background: "linear-gradient(135deg, #FF2D55 0%, #FF6B35 100%)",
-              boxShadow: "0 0 20px rgba(255,45,85,0.35), inset 0 1px 0 rgba(255,255,255,0.2)",
-            }}
+            className="group relative px-4 md:px-6 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-bold tracking-wider uppercase overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-95 border-2 border-[#FF2D55] dark:border-[#FF2D55]/60 hover:border-[#FF2D55] text-[#FF2D55] dark:text-white"
           >
-            Book a Call
+            <span className="absolute inset-0 bg-[#FF2D55]/20 dark:bg-[#FF2D55]/15 group-hover:bg-[#FF2D55]/30 transition-colors duration-300" />
+            <span className="relative z-10 flex items-center gap-1.5 md:gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF2D55] group-hover:animate-ping" />
+              Book a Call
+            </span>
           </button>
         </div>
       </nav>
@@ -394,7 +334,7 @@ export default function Home() {
       </div>
 
       {/* 03 FOR WHO */}
-      <section className="ai-page py-20 px-6 border-b ai-border overflow-hidden" style={{ contain: "layout paint" }}>
+      <section id="built-for" className="ai-page py-20 px-6 border-b ai-border overflow-hidden snap-start" style={{ contain: "layout paint" }}>
         <div className="max-w-6xl mx-auto">
           <div className="flex items-end justify-between mb-12 gap-4 flex-wrap">
             <div>
@@ -407,12 +347,11 @@ export default function Home() {
               From early-stage founders to Web3 protocols — we build AI systems that scale with your ambitions.
             </p>
           </div>
-          <div className="flex flex-wrap justify-center -space-x-3 md:-space-x-4">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
             {WHO_WE_SERVE.map((w, i) => (
               <m.div key={w.label} {...fadeUp} transition={{ delay: i * 0.07 }}
-                className="hover:-translate-y-3 hover:scale-105 transition-all duration-300 w-[220px] md:w-[240px]"
-                style={{ zIndex: WHO_WE_SERVE.length - i }}>
-                <GlowCard glowColor={w.glowColor} customSize className="w-full h-full min-h-[280px]">
+                className="w-[calc(50%-8px)] sm:w-[200px] md:w-[210px]">
+                <GlowCard glowColor={w.glowColor} customSize className="w-full h-full min-h-[220px] sm:min-h-[280px]">
                   <div className="flex flex-col justify-between h-full py-3">
                     <span className="text-5xl" style={{ color: w.color }}>{w.icon}</span>
                     <div>
@@ -428,7 +367,7 @@ export default function Home() {
       </section>
 
       {/* AI Team Never Sleeps */}
-      <section className="ai-panel py-20 px-6 border-b ai-border relative overflow-hidden" style={{ contain: "layout paint" }}>
+      <section id="ai-team" className="ai-panel py-20 px-6 border-b ai-border relative overflow-hidden snap-start" style={{ contain: "layout paint" }}>
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div className="relative z-10">
             <Tag>The Intelligence</Tag>
@@ -443,49 +382,14 @@ export default function Home() {
             <div className="flex flex-col gap-3">
               {["Deploys in 7 days", "You own the code", "Production-grade infra", "No vendor lock-in"].map((f) => (
                 <div key={f} className="flex items-center gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#C8FF60] flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a] dark:bg-[#C8FF60] flex-shrink-0" />
                   <span className="ai-muted text-sm">{f}</span>
                 </div>
               ))}
             </div>
           </div>
-          <div className="ai-card border rounded-3xl p-8 relative overflow-hidden">
-            <div className="flex items-center justify-between mb-6">
-              <p className="text-white/50 text-[10px] font-mono uppercase tracking-widest">Your AI Team — Live</p>
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C8FF60] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C8FF60]" />
-              </span>
-            </div>
-            <div className="space-y-3">
-              {[
-                { role: "Lead Gen Agent", task: "Enriching 847 contacts from Google Maps", color: "#7B2FFF" },
-                { role: "Content Agent", task: "Generating 12 social posts for LinkedIn", color: "#FF2D55" },
-                { role: "Analytics Agent", task: "Compiling weekly performance report", color: "#0ACDCD" },
-                { role: "Outreach Agent", task: "Sending 234 personalized cold emails", color: "#C8FF60" },
-              ].map((agent, i) => (
-                <m.div key={i}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.12, duration: 0.4 }}
-                  whileHover={{ scale: 1.02, x: 4 }}
-                  className="flex items-center justify-between p-3 rounded-xl border border-white/6 bg-white/[0.02] cursor-default">
-                  <div className="flex items-center gap-3">
-                    <m.div
-                      animate={{ scale: [1, 1.3, 1] }}
-                      transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
-                      className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: agent.color }} />
-                    <div>
-                      <p className="text-white/75 text-xs font-bold">{agent.role}</p>
-                      <p className="text-white/35 text-[10px] font-mono mt-0.5">{agent.task}</p>
-                    </div>
-                  </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#C8FF60]/10 text-[#C8FF60]">Running</span>
-                </m.div>
-              ))}
-            </div>
-            <p className="text-white/20 text-[10px] font-mono text-center mt-5">4 agents active · 0 errors · uptime 99.9%</p>
+          <div className="flex items-center justify-center py-8">
+            <AgentRadial />
           </div>
         </div>
       </section>
@@ -493,7 +397,7 @@ export default function Home() {
       {/* 04 SOLUTION — Services */}
       <div id="services">
         {SERVICES.map((svc, i) => (
-          <section key={svc.id} className="py-24 px-6 border-b ai-border relative overflow-hidden" style={{ backgroundColor: svc.bg, contain: "layout paint" }}>
+          <section key={svc.id} className="py-24 px-6 border-b ai-border relative overflow-hidden snap-start" style={{ backgroundColor: svc.bg, contain: "layout paint" }}>
             <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center relative z-10">
               <div className={i % 2 === 1 ? "md:order-last" : ""}>
                 <div className="flex items-center gap-3 mb-6">
@@ -504,8 +408,8 @@ export default function Home() {
                   <span className="text-xs font-bold" style={{ color: svc.textDark ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.2)" }}>{svc.id}</span>
                 </div>
                 <Disp className="text-[clamp(2.5rem,6vw,72px)] leading-[0.88] whitespace-pre-line block mb-4" style={{ color: svc.textDark ? "#050507" : "#fff" }}>{svc.name}</Disp>
-                <p className="text-sm leading-relaxed mb-2 font-semibold" style={{ color: svc.accent }}>{svc.tagline}</p>
-                <p className="text-sm leading-relaxed mb-8" style={{ color: svc.textDark ? "rgba(0,0,0,0.5)" : "rgba(255,255,255,0.45)" }}>{svc.body}</p>
+                <p className="text-base md:text-lg leading-snug mb-3 font-semibold" style={{ color: svc.accent }}>{svc.tagline}</p>
+                <p className="text-sm md:text-base leading-relaxed mb-8" style={{ color: svc.textDark ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.5)" }}>{svc.body}</p>
                 <div className="flex gap-8 mb-6">
                   {svc.metrics.map((m) => (
                     <div key={m.label}>
@@ -526,6 +430,8 @@ export default function Home() {
 
               {/* Service-specific right panel */}
               {svc.id === "01" ? (
+                <LeadFunnel />
+              ) : svc.id === "03" ? (
                 <N8nWorkflowBlock />
               ) : svc.id === "02" ? (
                 <div className="rounded-3xl overflow-hidden border border-white/8 bg-[#0C0C0F] p-8 space-y-6">
@@ -582,31 +488,7 @@ export default function Home() {
         ))}
       </div>
 
-      {/* 05 PROOF — anchor kept for nav */}
-      <div id="work" />
-
-      {/* 06 PROCESS */}
-      <section id="process" className="ai-panel py-24 px-6 border-b ai-border">
-        <div className="max-w-6xl mx-auto">
-          <Tag>How it works</Tag>
-          <Disp className="ai-text text-[clamp(2.5rem,6vw,72px)] mt-4 block mb-16">FROM KICKOFF<br />TO REVENUE.</Disp>
-          <div className="grid md:grid-cols-3 gap-4">
-            {PROCESS.map((step, i) => (
-              <m.div key={i} {...fadeUp} transition={{ delay: i * 0.1 }}
-                className="ai-process-card border ai-border rounded-3xl p-8 relative overflow-hidden hover:border-[#C8FF60]/20 transition-colors">
-                <Disp className="text-[120px] text-[#C8FF60]/10 leading-none absolute -top-3 -right-2 pointer-events-none select-none" aria-hidden>{step.num}</Disp>
-                <div className="relative z-10">
-                  <div className="w-8 h-8 bg-[#C8FF60]/10 border border-[#C8FF60]/20 rounded-xl flex items-center justify-center mb-6">
-                    <span className="text-[#C8FF60] text-xs font-bold font-mono">{step.num}</span>
-                  </div>
-                  <Disp className="ai-text text-3xl block mb-3">{step.title}</Disp>
-                  <p className="ai-muted text-sm leading-relaxed">{step.body}</p>
-                </div>
-              </m.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Process section removed per user request */}
 
       {/* ── Lime marquee ─────────────────────────────────────────────────── */}
       <div className="py-5 border-b ai-border overflow-hidden bg-[#C8FF60]" aria-hidden>
@@ -622,7 +504,7 @@ export default function Home() {
       </div>
 
       {/* 07 SCALE — World Map */}
-      <section className="ai-page py-20 px-6 border-b ai-border overflow-hidden" style={{ contain: "layout paint" }}>
+      <section className="ai-page py-20 px-6 border-b ai-border overflow-hidden snap-start" style={{ contain: "layout paint" }}>
         <div className="max-w-6xl mx-auto">
           <m.div {...fadeUp} className="text-center mb-10">
             <Tag>Global reach</Tag>
@@ -645,8 +527,8 @@ export default function Home() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-gen/v2-01-transparent.png" alt="AX Media" className="h-8 w-auto" loading="lazy" />
-            <span className="ai-muted text-xs">© 2026 AX Media</span>
+            <img src="/logo-gen/v2-01-transparent.png" alt="AI Media" className="h-8 w-auto invert dark:invert-0" loading="lazy" />
+            <span className="ai-muted text-xs">© 2026 AI Media · aimedia.global</span>
           </div>
           <div className="flex gap-6">
             <a href="/privacy-policy" className="ai-muted text-xs hover:text-[#FF2D55] transition-colors">Privacy</a>

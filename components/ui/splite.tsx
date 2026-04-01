@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, lazy, useCallback, useEffect, useRef } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react'
 import type { Application } from '@splinetool/runtime'
 
 const Spline = lazy(() => import('@splinetool/react-spline'))
@@ -9,13 +9,59 @@ interface SplineSceneProps {
   scene: string
   className?: string
   onLoad?: (app: Application) => void
+  /** Optional static fallback image for mobile (saves ~5s LCP on phones) */
+  mobileFallback?: string
+}
+
+type SplineObject = {
+  name: string
+  rotation: { x: number; y: number; z: number }
+}
+
+type SplineApp = Application & {
+  canvas?: HTMLCanvasElement | null
+  getAllObjects?: () => SplineObject[]
+  findObjectByName?: (name: string) => SplineObject | undefined
+  play?: () => void
+  stop?: () => void
+  _splineCleanup?: () => void
 }
 
 // Possible head object names across common Spline robot scenes
 const HEAD_NAMES = ['Head', 'head', 'Robot_Head', 'robot_head', 'HEAD', 'Helmet', 'helmet', 'Skull', 'skull']
 
-export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
-  const appRef = useRef<Application | null>(null)
+export function SplineScene({ scene, className, onLoad, mobileFallback }: SplineSceneProps) {
+  const [isMobile, setIsMobile] = useState(false)
+  const interactiveRef = useRef(true)
+  useEffect(() => {
+    const mobileQuery = window.matchMedia('(max-width: 768px)')
+    const finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+
+    const syncViewportState = () => {
+      setIsMobile(mobileQuery.matches)
+      interactiveRef.current = finePointerQuery.matches && !reducedMotionQuery.matches
+    }
+
+    syncViewportState()
+
+    const addChangeListener = (query: MediaQueryList, handler: () => void) => {
+      query.addEventListener?.('change', handler)
+      return () => query.removeEventListener?.('change', handler)
+    }
+
+    const cleanups = [
+      addChangeListener(mobileQuery, syncViewportState),
+      addChangeListener(finePointerQuery, syncViewportState),
+      addChangeListener(reducedMotionQuery, syncViewportState),
+    ]
+
+    return () => {
+      cleanups.forEach((cleanup) => cleanup())
+    }
+  }, [])
+
+  const appRef = useRef<SplineApp | null>(null)
   const headRef = useRef<{ rotation: { x: number; y: number; z: number } } | null>(null)
   const headBaseRotation = useRef({ x: 0, y: 0, z: 0 })
   const rafRef = useRef<number | null>(null)
@@ -23,8 +69,10 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
   const currentRef = useRef({ x: 0, y: 0 })
 
   const handleLoad = useCallback((app: Application) => {
-    appRef.current = app
-    const canvas = app.canvas
+    const splineApp = app as SplineApp
+    appRef.current = splineApp
+    const canvas = splineApp.canvas
+    const isInteractive = interactiveRef.current
 
     if (canvas) {
       canvas.style.background = 'transparent'
@@ -32,13 +80,12 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
     }
 
     // Find head object by trying common names
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const objects: any[] = (app as any).getAllObjects?.() ?? []
+    const objects = splineApp.getAllObjects?.() ?? []
 
-    let headObj = null
+    let headObj: SplineObject | undefined
     for (const name of HEAD_NAMES) {
       headObj = objects.find((o: { name: string }) => o.name === name)
-        ?? (app as any).findObjectByName?.(name)
+        ?? splineApp.findObjectByName?.(name)
       if (headObj) break
     }
 
@@ -51,73 +98,110 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
       }
     }
 
-    // Forward global mouse to canvas (activates built-in Spline events too)
-    const forwardMouse = (e: MouseEvent) => {
-      canvas?.dispatchEvent(new MouseEvent('mousemove', {
-        bubbles: false, cancelable: true,
-        clientX: e.clientX, clientY: e.clientY,
-        screenX: e.screenX, screenY: e.screenY,
-        movementX: e.movementX, movementY: e.movementY,
-      }))
+    let forwardMouse: ((e: MouseEvent) => void) | null = null
 
-      // Update target for smooth lerp
-      const vw = window.innerWidth
-      const vh = window.innerHeight
-      targetRef.current = {
-        x: (e.clientX / vw - 0.5),   // -0.5 … 0.5
-        y: (e.clientY / vh - 0.5),   // -0.5 … 0.5
+    if (isInteractive) {
+      // Forward global mouse to canvas (activates built-in Spline events too)
+      forwardMouse = (e: MouseEvent) => {
+        canvas?.dispatchEvent(new MouseEvent('mousemove', {
+          bubbles: false, cancelable: true,
+          clientX: e.clientX, clientY: e.clientY,
+          screenX: e.screenX, screenY: e.screenY,
+          movementX: e.movementX, movementY: e.movementY,
+        }))
+
+        // Update target for smooth lerp
+        const vw = window.innerWidth
+        const vh = window.innerHeight
+        targetRef.current = {
+          x: (e.clientX / vw - 0.5),   // -0.5 … 0.5
+          y: (e.clientY / vh - 0.5),   // -0.5 … 0.5
+        }
       }
-    }
 
-    window.addEventListener('mousemove', forwardMouse)
+      window.addEventListener('mousemove', forwardMouse)
 
-    // Smooth lerp animation loop for direct head rotation
-    const MAX_Y = 0.45  // radians ~26°
-    const MAX_X = 0.25  // radians ~14°
-    const LERP  = 0.06  // smoothing factor
+      // Smooth lerp animation loop for direct head rotation
+      const MAX_Y = 0.6   // radians ~34° horizontal
+      const MAX_X = 0.4   // radians ~23° vertical
+      const LERP  = 0.08  // smoothing factor (faster response)
 
-    const animate = () => {
+      const animate = () => {
+        rafRef.current = requestAnimationFrame(animate)
+
+        // Lerp current → target
+        currentRef.current.x += (targetRef.current.x - currentRef.current.x) * LERP
+        currentRef.current.y += (targetRef.current.y - currentRef.current.y) * LERP
+
+        if (headRef.current) {
+          headRef.current.rotation.y = headBaseRotation.current.y + currentRef.current.x * MAX_Y * 2
+          headRef.current.rotation.x = headBaseRotation.current.x + currentRef.current.y * MAX_X
+        }
+      }
       rafRef.current = requestAnimationFrame(animate)
-
-      // Lerp current → target
-      currentRef.current.x += (targetRef.current.x - currentRef.current.x) * LERP
-      currentRef.current.y += (targetRef.current.y - currentRef.current.y) * LERP
-
-      if (headRef.current) {
-        headRef.current.rotation.y = headBaseRotation.current.y + currentRef.current.x * MAX_Y * 2
-        headRef.current.rotation.x = headBaseRotation.current.x + currentRef.current.y * MAX_X * -1
-      }
     }
-    rafRef.current = requestAnimationFrame(animate)
 
     // Cleanup
     const cleanup = () => {
-      window.removeEventListener('mousemove', forwardMouse)
+      if (forwardMouse) {
+        window.removeEventListener('mousemove', forwardMouse)
+      }
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-    ;(app as any)._splineCleanup = cleanup
+    splineApp._splineCleanup = cleanup
 
     onLoad?.(app)
   }, [onLoad])
 
+  // Pause Spline animation loop when off-screen to save GPU
+  const containerRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        const app = appRef.current
+        if (!app) return
+        // Stop / start the Spline render loop
+        if (entry.isIntersecting) {
+          app.play?.()
+        } else {
+          app.stop?.()
+        }
+      },
+      { threshold: 0.05 }
+    )
+    obs.observe(el)
     return () => {
+      obs.disconnect()
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
       if (appRef.current) {
-        ;(appRef.current as any)._splineCleanup?.()
+        appRef.current._splineCleanup?.()
       }
     }
   }, [])
 
+  // On mobile with a fallback image: skip the entire 3D scene → saves ~5s LCP
+  if (isMobile && mobileFallback) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={mobileFallback} alt="" className={className} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
+      </div>
+    )
+  }
+
   return (
-    <Suspense
-      fallback={
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-[#FF2D55]/30 border-t-[#FF2D55] rounded-full animate-spin" />
-        </div>
-      }
-    >
-      <Spline scene={scene} className={className} onLoad={handleLoad} />
-    </Suspense>
+    <div ref={containerRef} className="w-full h-full">
+      <Suspense
+        fallback={
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-[#FF2D55]/30 border-t-[#FF2D55] rounded-full animate-spin" />
+          </div>
+        }
+      >
+        <Spline scene={scene} className={className} onLoad={handleLoad} />
+      </Suspense>
+    </div>
   )
 }
