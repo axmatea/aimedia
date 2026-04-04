@@ -283,7 +283,7 @@ const BookingSection = memo(function BookingSection() {
   return (
     <div id="booking">
       <div className="relative py-16 md:py-24 px-4 md:px-6 border-b border-white/5 overflow-hidden bg-[#050507]">
-        <ShaderAnimation className="absolute inset-0 w-full h-full opacity-80" />
+        <ShaderAnimation className="absolute inset-0 w-full h-full opacity-80 pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#050507]/50 via-[#050507]/15 to-[#050507]/50 pointer-events-none" />
 
         <div className="relative z-10 max-w-2xl md:max-w-6xl mx-auto">
