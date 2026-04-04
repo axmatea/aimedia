@@ -247,27 +247,169 @@ const HeroSection = memo(function HeroSection() {
 
 // ── BookingSection ───────────────────────────────────────────────────────────
 const BookingSection = memo(function BookingSection() {
+  const [step, setStep] = useState<0 | 1 | 2>(0)
+  const [quiz, setQuiz] = useState({ projectType: "", goal: "", budget: "" })
+  const [contact, setContact] = useState({ name: "", email: "", phone: "" })
+  const [emailError, setEmailError] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+
+  const validateEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)
+
+  const handleContactContinue = async () => {
+    if (!contact.name || !contact.email || !contact.phone) return
+    if (!validateEmail(contact.email)) { setEmailError("Please enter a valid email address"); return }
+    setEmailError("")
+    setSubmitting(true)
+    try {
+      await fetch("/api/booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: contact.name,
+          email: contact.email,
+          phone: contact.phone,
+          projectType: quiz.projectType,
+          goal: quiz.goal,
+          budget: quiz.budget,
+        }),
+      })
+    } catch (_) { /* silent — cal.com still opens */ }
+    const params = new URLSearchParams({ name: contact.name, email: contact.email, a1: quiz.projectType, a2: quiz.goal, a3: quiz.budget })
+    window.open(`${CALENDLY_URL}?${params.toString()}`, "_blank")
+    setSubmitting(false)
+    setStep(2)
+  }
+
   return (
     <div id="booking">
       <div className="relative py-16 md:py-24 px-4 md:px-6 border-b border-white/5 overflow-hidden bg-[#050507]">
         <ShaderAnimation className="absolute inset-0 w-full h-full opacity-80" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#050507]/50 via-[#050507]/15 to-[#050507]/50 pointer-events-none" />
 
-        <div className="relative z-10 max-w-2xl mx-auto text-center">
-          <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/60">Free strategy call</span>
-          <Disp className="text-white text-[clamp(2.5rem,8vw,88px)] block mt-4 leading-[0.88]">
-            BOOK YOUR<br /><span style={{ color: "#FF2D55" }}>30 MINUTES.</span>
-          </Disp>
-          <p className="text-white/65 text-sm md:text-lg mt-4 max-w-lg mx-auto leading-relaxed">
-            We audit your stack and show you exactly which AI systems will move the needle — no fluff, just outcomes.
-          </p>
-          <div className="mt-8">
-            <LiquidMetalButton
-              label="Book your call →"
-              onClick={() => window.open(CALENDLY_URL, "_blank")}
-              className="mx-auto"
-            />
+        <div className="relative z-10 max-w-2xl md:max-w-6xl mx-auto">
+          <div className="text-center mb-8 md:mb-14">
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/60">Free strategy call</span>
+            <Disp className="text-white text-[clamp(2.5rem,8vw,88px)] block mt-4 leading-[0.88]">
+              BOOK YOUR<br /><span style={{ color: "#FF2D55" }}>30 MINUTES.</span>
+            </Disp>
+            <p className="text-white/65 text-sm md:text-lg mt-4 max-w-lg mx-auto leading-relaxed">
+              We audit your stack and show you exactly which AI systems will move the needle — no fluff, just outcomes.
+            </p>
+            <p className="text-white/25 text-xs md:text-sm mt-2 italic tracking-wide">The fabric of digital reality.</p>
           </div>
+
+          {/* Step indicator */}
+          <div className="flex items-center justify-center gap-1.5 md:gap-2 mb-6 md:mb-10">
+            {["Your Project", "Contact", "Schedule"].map((label, i) => (
+              <div key={label} className="flex items-center gap-1 md:gap-2">
+                <div className="flex items-center gap-1 md:gap-1.5">
+                  <div className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold transition-all" style={{
+                    backgroundColor: step > i ? "#FF2D55" : step === i ? "rgba(255,45,85,0.2)" : "rgba(255,255,255,0.06)",
+                    border: step === i ? "1px solid #FF2D55" : "1px solid transparent",
+                    color: step >= i ? "#FF2D55" : "rgba(255,255,255,0.25)",
+                  }}>{i + 1}</div>
+                  <span className="hidden sm:inline text-xs font-medium uppercase tracking-wider" style={{ color: step === i ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.3)" }}>{label}</span>
+                </div>
+                {i < 2 && <div className="w-10 h-px mx-1" style={{ backgroundColor: step > i ? "#FF2D55" : "rgba(255,255,255,0.12)" }} />}
+              </div>
+            ))}
+          </div>
+
+          <AnimatePresence mode="wait">
+            {step === 0 && (
+              <m.div key="step0" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }} className="max-w-2xl mx-auto space-y-6 md:space-y-8">
+
+                {/* Project type */}
+                <div>
+                  <label className="text-white/90 text-base md:text-xl font-black block mb-3">What best describes your project?</label>
+                  <div className="flex flex-wrap gap-2">
+                    {["Web3 / NFT", "SaaS / Product", "Agency", "Brand", "Startup", "Enterprise"].map(opt => (
+                      <button key={opt} onClick={() => setQuiz(p => ({ ...p, projectType: opt }))}
+                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-all duration-200 ${
+                          quiz.projectType === opt
+                            ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
+                            : "bg-white/5 border-white/15 text-white/55 hover:border-[#FF2D55]/40 hover:text-white/80"
+                        }`}>
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Primary goal */}
+                <div>
+                  <label className="text-white/90 text-base md:text-xl font-black block mb-3">Primary goal?</label>
+                  <div className="flex flex-wrap gap-2">
+                    {["Lead Generation", "Content Automation", "Community Growth", "Sales Pipeline", "Ops Efficiency", "Other"].map(opt => (
+                      <button key={opt} onClick={() => setQuiz(p => ({ ...p, goal: opt }))}
+                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-all duration-200 ${
+                          quiz.goal === opt
+                            ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
+                            : "bg-white/5 border-white/15 text-white/55 hover:border-[#FF2D55]/40 hover:text-white/80"
+                        }`}>
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Monthly budget */}
+                <div>
+                  <label className="text-white/90 text-base md:text-xl font-black block mb-3">Monthly budget?</label>
+                  <div className="flex flex-wrap gap-2">
+                    {["$1–3k / mo", "$3–10k / mo", "$10–20k / mo", "$20k+ / mo"].map(opt => (
+                      <button key={opt} onClick={() => setQuiz(p => ({ ...p, budget: opt }))}
+                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-all duration-200 ${
+                          quiz.budget === opt
+                            ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
+                            : "bg-white/5 border-white/15 text-white/55 hover:border-[#FF2D55]/40 hover:text-white/80"
+                        }`}>
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <LiquidMetalButton label="Continue →" onClick={() => { if (quiz.projectType && quiz.goal && quiz.budget) setStep(1) }} className="w-full justify-center" />
+                {!(quiz.projectType && quiz.goal && quiz.budget) && <p className="text-white/40 text-xs text-center">Select all options to continue</p>}
+              </m.div>
+            )}
+
+            {step === 1 && (
+              <m.div key="step1" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }} className="max-w-md mx-auto space-y-4">
+                {[
+                  { field: "name" as const, label: "Your name", type: "text", ph: "First name" },
+                  { field: "email" as const, label: "Email address", type: "email", ph: "you@company.com" },
+                  { field: "phone" as const, label: "Phone number", type: "tel", ph: "+1 (555) 000-0000" },
+                ].map(({ field, label, type, ph }) => (
+                  <div key={field}>
+                    <label className="text-white/65 text-xs uppercase tracking-widest block mb-2 font-bold">{label}</label>
+                    <input type={type} placeholder={ph} value={contact[field]}
+                      onChange={e => { setContact(c => ({ ...c, [field]: e.target.value })); if (field === "email") setEmailError("") }}
+                      className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-[#FF2D55]/60 transition-colors" />
+                    {field === "email" && emailError && <p className="text-[#FF2D55] text-xs mt-1">{emailError}</p>}
+                  </div>
+                ))}
+                <div className="flex gap-3 pt-2">
+                  <button onClick={() => setStep(0)} className="px-5 py-3 rounded-xl border border-white/15 text-white/55 text-sm hover:border-white/30 hover:text-white/75 transition-colors">← Back</button>
+                  <LiquidMetalButton label={submitting ? "Sending..." : "Continue to Schedule →"} onClick={handleContactContinue} className="flex-1 justify-center" />
+                </div>
+                {!(contact.name && contact.email && contact.phone) && <p className="text-white/35 text-xs text-center">All fields required</p>}
+              </m.div>
+            )}
+
+            {step === 2 && (
+              <m.div key="step2" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35 }} className="max-w-md mx-auto text-center space-y-4">
+                <div className="w-16 h-16 rounded-full bg-[#FF2D55]/15 border border-[#FF2D55]/30 flex items-center justify-center mx-auto text-3xl">✓</div>
+                <Disp className="text-white text-4xl">YOUR CALL IS BOOKED.</Disp>
+                <p className="text-white/65 text-base">Your Cal.com booking page opened in a new tab.</p>
+                <p className="text-white/45 text-sm">Confirmation will be sent to <span className="text-white/80 font-semibold">{contact.email}</span></p>
+                <p className="text-white/30 text-xs">We&apos;ll review your answers and come fully prepared.</p>
+                <button onClick={() => { setStep(0); setQuiz({ projectType: "", goal: "", budget: "" }); setContact({ name: "", email: "", phone: "" }) }}
+                  className="text-[#FF2D55]/60 text-sm hover:text-[#FF2D55] transition-colors mt-4">Start over</button>
+              </m.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
