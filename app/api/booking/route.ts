@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
 import { Resend } from "resend"
-import { google } from "googleapis"
 
 function getResend() {
   const key = process.env.RESEND_API_KEY
@@ -10,22 +9,47 @@ function getResend() {
 
 const OWNER_EMAIL = process.env.OWNER_EMAIL || "info@aimedia.global"
 const FROM_EMAIL = process.env.FROM_EMAIL || "AI Media <noreply@aimedia.global>"
+const NOTION_DB_ID = "316e953489014e0ebd499995e418d211"
 
-async function appendToSheet(row: string[]) {
-  const clientId     = process.env.GOOGLE_CLIENT_ID
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET
-  const refreshToken = process.env.GOOGLE_REFRESH_TOKEN
-  const sheetId      = process.env.LEADS_SHEET_ID
-  if (!clientId || !clientSecret || !refreshToken || !sheetId) return
+async function addNotionLead(data: {
+  name: string
+  email: string
+  phone: string
+  projectType?: string
+  goal?: string
+  budget?: string
+}) {
+  const token = process.env.NOTION_TOKEN
+  if (!token) return
 
-  const auth = new google.auth.OAuth2(clientId, clientSecret)
-  auth.setCredentials({ refresh_token: refreshToken })
-  const sheets = google.sheets({ version: "v4", auth })
-  await sheets.spreadsheets.values.append({
-    spreadsheetId: sheetId,
-    range: "Leads!A:G",
-    valueInputOption: "USER_ENTERED",
-    requestBody: { values: [row] },
+  const budgetMap: Record<string, string> = {
+    "$1k-3k/mo": "$1k-3k/mo",
+    "$3k-5k/mo": "$3k-5k/mo",
+    "$5k-10k/mo": "$5k-10k/mo",
+    "$10k+/mo": "$10k+/mo",
+  }
+  const budgetOption = data.budget ? (budgetMap[data.budget] ?? null) : null
+
+  await fetch("https://api.notion.com/v1/pages", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "Notion-Version": "2022-06-28",
+    },
+    body: JSON.stringify({
+      parent: { database_id: NOTION_DB_ID },
+      properties: {
+        Name:           { title: [{ text: { content: data.name } }] },
+        Email:          { email: data.email },
+        Phone:          { phone_number: data.phone },
+        "Project Type": { rich_text: [{ text: { content: data.projectType || "" } }] },
+        Goal:           { rich_text: [{ text: { content: data.goal || "" } }] },
+        Budget:         budgetOption ? { select: { name: budgetOption } } : undefined,
+        Status:         { select: { name: "New" } },
+        Source:         { select: { name: "Website" } },
+      },
+    }),
   })
 }
 
@@ -41,11 +65,11 @@ export async function POST(req: NextRequest) {
     const timestamp = new Date().toLocaleString("en-GB", { timeZone: "UTC" })
     const resend = getResend()
 
-    // ── 1. Log to Google Sheets ──────────────────────────────────────────────
+    // ── 1. Log to Notion CRM ────────────────────────────────────────────────
     try {
-      await appendToSheet([timestamp, name, email, phone, projectType || "", goal || "", budget || ""])
+      await addNotionLead({ name, email, phone, projectType, goal, budget })
     } catch (err) {
-      console.error("Sheets logging error:", err)
+      console.error("Notion CRM error:", err)
     }
 
     // ── 2. Notify owner ──────────────────────────────────────────────────────
