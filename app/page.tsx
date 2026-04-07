@@ -62,6 +62,7 @@ const WHO_WE_SERVE = [
   { label: "Agencies", sub: "Marketing & Creative Studios", color: "#C8FF60", glowColor: "green" as const, icon: "◉" },
   { label: "DTC Brands", sub: "Fashion, Wellness, Premium", color: "#0ACDCD", glowColor: "blue" as const, icon: "◈" },
   { label: "Enterprise", sub: "Sales & Ops Automation at Scale", color: "#FF8C42", glowColor: "orange" as const, icon: "◎" },
+  { label: "SaaS & Products", sub: "B2B Tools, Platforms & Apps", color: "#2D8CFF", glowColor: "blue" as const, icon: "◇" },
 ]
 
 // Tools we actually use and integrate with

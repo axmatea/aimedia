@@ -30,9 +30,11 @@ function injectGlowCSS() {
   const style = document.createElement('style');
   style.id = 'glow-card-css';
   style.textContent = `
-    [data-glow]::before,[data-glow]::after{pointer-events:none;content:"";position:absolute;inset:calc(var(--border-size)*-1);border:var(--border-size) solid transparent;border-radius:inherit;background-attachment:fixed;background-size:calc(100% + (2*var(--border-size))) calc(100% + (2*var(--border-size)));background-repeat:no-repeat;background-position:50% 50%;mask:linear-gradient(white,white),linear-gradient(white,white);mask-clip:padding-box,border-box;mask-composite:exclude;-webkit-mask-composite:xor;}
+    [data-glow]::before,[data-glow]::after{pointer-events:none;content:"";position:absolute;inset:calc(var(--border-size)*-1);border:var(--border-size) solid transparent;border-radius:inherit;background-size:calc(100% + (2*var(--border-size))) calc(100% + (2*var(--border-size)));background-repeat:no-repeat;background-position:0 0;mask:linear-gradient(white,white),linear-gradient(white,white);mask-clip:padding-box,border-box;mask-composite:exclude;-webkit-mask-composite:xor;transition:opacity 0.3s ease;}
     [data-glow]::before{background-image:radial-gradient(calc(var(--spotlight-size)*0.75) calc(var(--spotlight-size)*0.75) at calc(var(--x,0)*1px) calc(var(--y,0)*1px),hsl(var(--hue,210) calc(var(--saturation,100)*1%) calc(var(--lightness,50)*1%)/var(--border-spot-opacity,1)),transparent 100%);filter:brightness(2);}
     [data-glow]::after{background-image:radial-gradient(calc(var(--spotlight-size)*0.5) calc(var(--spotlight-size)*0.5) at calc(var(--x,0)*1px) calc(var(--y,0)*1px),hsl(0 100% 100%/var(--border-light-opacity,0.5)),transparent 100%);}
+    [data-glow]{transition:box-shadow 0.3s ease,background-color 0.3s ease;}
+    [data-glow]:hover{--bg-spot-opacity:0.15;box-shadow:0 0 40px -12px hsl(var(--hue,210) 100% 60%/0.35),0 1rem 2rem -1rem black;}
   `;
   document.head.appendChild(style);
 }
@@ -52,21 +54,26 @@ const GlowCard: React.FC<GlowCardProps> = ({
     injectGlowCSS();
 
     let rafId: number;
-    // passive:true lets browser optimize scroll independently
+    const card = cardRef.current;
+    if (!card) return;
+
     const syncPointer = (e: PointerEvent) => {
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         if (!cardRef.current) return;
-        cardRef.current.style.setProperty('--x', e.clientX.toFixed(1));
-        cardRef.current.style.setProperty('--xp', (e.clientX / window.innerWidth).toFixed(3));
-        cardRef.current.style.setProperty('--y', e.clientY.toFixed(1));
-        cardRef.current.style.setProperty('--yp', (e.clientY / window.innerHeight).toFixed(3));
+        const rect = cardRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        cardRef.current.style.setProperty('--x', x.toFixed(1));
+        cardRef.current.style.setProperty('--xp', (x / rect.width).toFixed(3));
+        cardRef.current.style.setProperty('--y', y.toFixed(1));
+        cardRef.current.style.setProperty('--yp', (y / rect.height).toFixed(3));
       });
     };
 
-    document.addEventListener('pointermove', syncPointer, { passive: true });
+    card.addEventListener('pointermove', syncPointer, { passive: true });
     return () => {
-      document.removeEventListener('pointermove', syncPointer);
+      card.removeEventListener('pointermove', syncPointer);
       cancelAnimationFrame(rafId);
     };
   }, []);
@@ -87,9 +94,8 @@ const GlowCard: React.FC<GlowCardProps> = ({
     '--hue': 'calc(var(--base) + (var(--xp, 0) * var(--spread, 0)))',
     backgroundImage: `radial-gradient(var(--spotlight-size) var(--spotlight-size) at calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px), hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) calc(var(--lightness, 70) * 1%) / var(--bg-spot-opacity, 0.08)), transparent)`,
     backgroundColor: 'var(--backdrop, transparent)',
-    backgroundSize: 'calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)))',
-    backgroundPosition: '50% 50%',
-    backgroundAttachment: 'fixed',
+    backgroundSize: '100% 100%',
+    backgroundPosition: '0 0',
     border: 'var(--border-size) solid var(--backup-border)',
     position: 'relative',
     touchAction: 'none',
