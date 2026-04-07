@@ -73,12 +73,10 @@ export async function POST(req: NextRequest) {
     const resend = getResend()
 
     // ── 1. Log to Notion CRM ────────────────────────────────────────────────
-    let notionError: string | null = null
     try {
       await addNotionLead({ name, email, phone, projectType, goal, budget })
     } catch (err) {
-      notionError = err instanceof Error ? err.message : String(err)
-      console.error("Notion CRM error:", notionError)
+      console.error("Notion CRM error:", err instanceof Error ? err.message : String(err))
     }
 
     // ── 2. Notify owner ──────────────────────────────────────────────────────
@@ -307,7 +305,7 @@ export async function POST(req: NextRequest) {
 </html>`,
     })
 
-    return NextResponse.json({ success: true, notionError })
+    return NextResponse.json({ success: true })
   } catch (err) {
     console.error("Booking API error:", err)
     return NextResponse.json({ error: "Failed to process booking" }, { status: 500 })
