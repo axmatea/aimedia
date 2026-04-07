@@ -30,7 +30,18 @@ async function addNotionLead(data: {
   }
   const budgetOption = data.budget ? (budgetMap[data.budget] ?? null) : null
 
-  await fetch("https://api.notion.com/v1/pages", {
+  const properties: Record<string, unknown> = {
+    Name:           { title: [{ text: { content: data.name } }] },
+    Email:          { email: data.email },
+    Phone:          { phone_number: data.phone },
+    "Project Type": { rich_text: [{ text: { content: data.projectType || "" } }] },
+    Goal:           { rich_text: [{ text: { content: data.goal || "" } }] },
+    Status:         { select: { name: "New" } },
+    Source:         { select: { name: "Website" } },
+  }
+  if (budgetOption) properties.Budget = { select: { name: budgetOption } }
+
+  const res = await fetch("https://api.notion.com/v1/pages", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -39,18 +50,14 @@ async function addNotionLead(data: {
     },
     body: JSON.stringify({
       parent: { database_id: NOTION_DB_ID },
-      properties: {
-        Name:           { title: [{ text: { content: data.name } }] },
-        Email:          { email: data.email },
-        Phone:          { phone_number: data.phone },
-        "Project Type": { rich_text: [{ text: { content: data.projectType || "" } }] },
-        Goal:           { rich_text: [{ text: { content: data.goal || "" } }] },
-        Budget:         budgetOption ? { select: { name: budgetOption } } : undefined,
-        Status:         { select: { name: "New" } },
-        Source:         { select: { name: "Website" } },
-      },
+      properties,
     }),
   })
+
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Notion API ${res.status}: ${text}`)
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -66,10 +73,12 @@ export async function POST(req: NextRequest) {
     const resend = getResend()
 
     // ── 1. Log to Notion CRM ────────────────────────────────────────────────
+    let notionError: string | null = null
     try {
       await addNotionLead({ name, email, phone, projectType, goal, budget })
     } catch (err) {
-      console.error("Notion CRM error:", err)
+      notionError = err instanceof Error ? err.message : String(err)
+      console.error("Notion CRM error:", notionError)
     }
 
     // ── 2. Notify owner ──────────────────────────────────────────────────────
@@ -298,7 +307,7 @@ export async function POST(req: NextRequest) {
 </html>`,
     })
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, notionError })
   } catch (err) {
     console.error("Booking API error:", err)
     return NextResponse.json({ error: "Failed to process booking" }, { status: 500 })
