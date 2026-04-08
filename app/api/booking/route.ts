@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
+import crypto from "node:crypto"
 import { Resend } from "resend"
+import { scheduleFollowUps } from "@/lib/followups"
 
 function getResend() {
   const key = process.env.RESEND_API_KEY
@@ -8,19 +10,34 @@ function getResend() {
 }
 
 const OWNER_EMAIL = process.env.OWNER_EMAIL || "info@aimedia.global"
-const FROM_EMAIL = process.env.FROM_EMAIL || "AI Media <noreply@aimedia.global>"
+const FROM_EMAIL = process.env.FROM_EMAIL || "AI Media <info@aimedia.global>"
+const REPLY_TO_EMAIL = process.env.REPLY_TO_EMAIL || "info@aimedia.global"
+const PUBLIC_BASE_URL = (process.env.PUBLIC_BASE_URL || "https://aimedia.global").replace(/\/$/, "")
 const NOTION_DB_ID = "316e953489014e0ebd499995e418d211"
 
-async function addNotionLead(data: {
+function buildContactedLink(email: string): string | null {
+  const secret = process.env.MARK_CONTACTED_SECRET
+  if (!secret) return null
+  const token = crypto
+    .createHmac("sha256", secret)
+    .update(email.trim().toLowerCase())
+    .digest("hex")
+    .slice(0, 24)
+  return `${PUBLIC_BASE_URL}/api/booking/contacted?email=${encodeURIComponent(email)}&token=${token}`
+}
+
+type LeadPayload = {
   name: string
   email: string
   phone: string
   projectType?: string
   goal?: string
   budget?: string
-}) {
+}
+
+async function addNotionLead(data: LeadPayload): Promise<string | null> {
   const token = process.env.NOTION_TOKEN
-  if (!token) return
+  if (!token) return null
 
   const budgetMap: Record<string, string> = {
     "$1k-3k/mo": "$1k-3k/mo",
@@ -58,6 +75,67 @@ async function addNotionLead(data: {
     const text = await res.text()
     throw new Error(`Notion API ${res.status}: ${text}`)
   }
+
+  const json = (await res.json()) as { id?: string }
+  return json.id || null
+}
+
+async function updateNotionLeadFollowUps(
+  pageId: string,
+  scheduledIds: string[],
+  status: "Scheduled" | "Canceled" | "Completed" | "Failed"
+) {
+  const token = process.env.NOTION_TOKEN
+  if (!token) return
+  const res = await fetch(`https://api.notion.com/v1/pages/${pageId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "Notion-Version": "2022-06-28",
+    },
+    body: JSON.stringify({
+      properties: {
+        "Scheduled Emails": {
+          rich_text: [{ text: { content: scheduledIds.join(",") } }],
+        },
+        "Follow-up Status": { select: { name: status } },
+      },
+    }),
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Notion update ${res.status}: ${text.slice(0, 200)}`)
+  }
+}
+
+async function postToSheetsWebhook(data: LeadPayload) {
+  const url = process.env.SHEETS_WEBHOOK_URL
+  if (!url) return
+
+  const payload = {
+    timestamp: new Date().toISOString(),
+    name: data.name,
+    email: data.email,
+    phone: data.phone,
+    projectType: data.projectType || "",
+    goal: data.goal || "",
+    budget: data.budget || "",
+    status: "New",
+    source: "Website",
+  }
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    redirect: "follow",
+  })
+
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Sheets webhook ${res.status}: ${text.slice(0, 200)}`)
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -69,20 +147,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    const timestamp = new Date().toLocaleString("en-GB", { timeZone: "UTC" })
     const resend = getResend()
+    const contactedLink = buildContactedLink(email)
 
-    // ── 1. Log to Notion CRM ────────────────────────────────────────────────
-    try {
-      await addNotionLead({ name, email, phone, projectType, goal, budget })
-    } catch (err) {
-      console.error("Notion CRM error:", err instanceof Error ? err.message : String(err))
+    // ── 1. Dual-write to CRM: Notion + Google Sheet ─────────────────────────
+    const leadData = { name, email, phone, projectType, goal, budget }
+    const [notionResult, sheetsResult] = await Promise.allSettled([
+      addNotionLead(leadData),
+      postToSheetsWebhook(leadData),
+    ])
+    let notionPageId: string | null = null
+    if (notionResult.status === "fulfilled") {
+      notionPageId = notionResult.value
+    } else {
+      console.error("Notion CRM error:", notionResult.reason instanceof Error ? notionResult.reason.message : String(notionResult.reason))
+    }
+    if (sheetsResult.status === "rejected") {
+      console.error("Sheets webhook error:", sheetsResult.reason instanceof Error ? sheetsResult.reason.message : String(sheetsResult.reason))
     }
 
     // ── 2. Notify owner ──────────────────────────────────────────────────────
-    await resend.emails.send({
+    const ownerRes = await resend.emails.send({
       from: FROM_EMAIL,
-      to: OWNER_EMAIL,
+      to: OWNER_EMAIL.trim(),
+      replyTo: email,
       subject: `🔥 New Lead: ${name} — ${budget}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0a0a0f;color:#fff;padding:32px;border-radius:12px;">
@@ -96,17 +184,29 @@ export async function POST(req: NextRequest) {
             <tr><td style="padding:10px 0;color:#aaa;">Monthly Budget</td><td style="padding:10px 0;color:#FF2D55;font-weight:bold;">${budget}</td></tr>
           </table>
           <div style="margin-top:24px;padding:16px;background:#111;border-radius:8px;border-left:3px solid #FF2D55;">
-            <p style="margin:0;color:#aaa;font-size:13px;">Cal.com booking was opened for this lead.</p>
+            <p style="margin:0;color:#aaa;font-size:13px;">Cal.com booking was opened for this lead. 3-step follow-up sequence is scheduled.</p>
           </div>
+          ${
+            contactedLink
+              ? `<div style="margin-top:20px;text-align:center;">
+                   <a href="${contactedLink}" style="display:inline-block;background:#C8FF60;color:#050507;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:800;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;">✓ Mark as contacted &amp; cancel follow-ups</a>
+                   <p style="margin:10px 0 0;color:#444;font-size:11px;">One click — stops the sequence + sets Status=Contacted in Notion.</p>
+                 </div>`
+              : ""
+          }
         </div>
       `,
     })
+    if (ownerRes.error) {
+      throw new Error(`Resend owner email failed: ${ownerRes.error.message || JSON.stringify(ownerRes.error)}`)
+    }
 
     // ── 3. Follow-up to prospect ─────────────────────────────────────────────
     const firstName = name.split(" ")[0]
-    await resend.emails.send({
+    const leadRes = await resend.emails.send({
       from: FROM_EMAIL,
       to: email,
+      replyTo: REPLY_TO_EMAIL,
       subject: `You're in, ${firstName}. Here's what happens next.`,
       html: `<!DOCTYPE html>
 <html lang="en">
@@ -304,8 +404,34 @@ export async function POST(req: NextRequest) {
 </body>
 </html>`,
     })
+    if (leadRes.error) {
+      throw new Error(`Resend lead email failed: ${leadRes.error.message || JSON.stringify(leadRes.error)}`)
+    }
 
-    return NextResponse.json({ success: true })
+    // ── 4. Schedule 3-step follow-up sequence (+48h / +5d / +10d) ────────────
+    const scheduled = await scheduleFollowUps(
+      resend,
+      { name, email, projectType, goal, budget },
+      { from: FROM_EMAIL, replyTo: REPLY_TO_EMAIL }
+    )
+
+    // ── 5. Persist scheduled IDs to Notion so we can cancel on reply ────────
+    if (notionPageId && scheduled.length > 0) {
+      try {
+        await updateNotionLeadFollowUps(
+          notionPageId,
+          scheduled.map((s) => s.id),
+          scheduled.length === 3 ? "Scheduled" : "Failed"
+        )
+      } catch (err) {
+        console.error("Notion follow-up update error:", err instanceof Error ? err.message : String(err))
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      followUps: scheduled.map((s) => ({ key: s.key, scheduledAt: s.scheduledAt })),
+    })
   } catch (err) {
     console.error("Booking API error:", err)
     return NextResponse.json({ error: "Failed to process booking" }, { status: 500 })
