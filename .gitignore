@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local outreach scripts & state (contain prospect emails)
+/scripts/send-alexandra-*.mjs
+/scripts/schedule-alexandra-*.mjs
+/scripts/cancel-alexandra-*.mjs
+/scripts/send-audition-fee.mjs
+/data/
+
+# claude local
+.claude/

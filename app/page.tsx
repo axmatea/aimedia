@@ -46,6 +46,7 @@ const WorldMap = dynamic(
 
 // ── Config ──────────────────────────────────────────────────────────────────
 const CALENDLY_URL = "https://cal.com/axmedia/call"
+const CAL_DEFAULTS: Record<string, string> = { duration: "60", overlayCalendar: "true" }
 
 // ── Shared viewport config for whileInView ──────────────────────────────────
 const VP = { once: true, margin: "0px 0px -80px 0px" } as const
@@ -231,12 +232,12 @@ const HeroSection = memo(function HeroSection() {
           className="mt-12 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 lg:max-w-[55%]"
         >
           <p className="ai-muted text-sm md:text-base max-w-sm leading-relaxed">
-            AI-powered systems for go-to-market, content, and ops — built for Web3 projects, founders, agencies, and ambitious brands.
+            Systems for go-to-market, content, and ops — built for Web3 projects, founders, agencies, and ambitious brands.
           </p>
           <div className="flex gap-3 flex-shrink-0">
             <LiquidMetalButton label="Start a Project" onClick={() => scrollTo("booking")} />
             <button onClick={() => scrollTo("services")} className="px-8 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-sm font-semibold rounded-full hover:border-[#FF2D55] hover:text-[#FF2D55] transition-all">
-              View More →
+              See Services →
             </button>
           </div>
         </m.div>
@@ -253,6 +254,7 @@ const BookingSection = memo(function BookingSection() {
   const [contact, setContact] = useState({ name: "", email: "", phone: "" })
   const [emailError, setEmailError] = useState("")
   const [submitting, setSubmitting] = useState(false)
+  const [calBookingUrl, setCalBookingUrl] = useState("")
 
   const validateEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)
 
@@ -260,6 +262,21 @@ const BookingSection = memo(function BookingSection() {
     if (!contact.name || !contact.email || !contact.phone) return
     if (!validateEmail(contact.email)) { setEmailError("Please enter a valid email address"); return }
     setEmailError("")
+
+    // Build cal.com URL and open synchronously BEFORE any await,
+    // so the browser treats it as a user-initiated action (not blocked as a popup).
+    const params = new URLSearchParams({
+      ...CAL_DEFAULTS,
+      name: contact.name,
+      email: contact.email,
+      a1: quiz.projectType,
+      a2: quiz.goal,
+      a3: quiz.budget,
+    })
+    const fullCalUrl = `${CALENDLY_URL}?${params.toString()}`
+    setCalBookingUrl(fullCalUrl)
+    window.open(fullCalUrl, "_blank", "noopener,noreferrer")
+
     setSubmitting(true)
     try {
       await fetch("/api/booking", {
@@ -274,9 +291,7 @@ const BookingSection = memo(function BookingSection() {
           budget: quiz.budget,
         }),
       })
-    } catch (_) { /* silent — cal.com still opens */ }
-    const params = new URLSearchParams({ name: contact.name, email: contact.email, a1: quiz.projectType, a2: quiz.goal, a3: quiz.budget })
-    window.open(`${CALENDLY_URL}?${params.toString()}`, "_blank")
+    } catch (_) { /* silent — fallback link on step 2 always works */ }
     setSubmitting(false)
     setStep(2)
   }
@@ -402,12 +417,20 @@ const BookingSection = memo(function BookingSection() {
             {step === 2 && (
               <m.div key="step2" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35 }} className="max-w-md mx-auto text-center space-y-4">
                 <div className="w-16 h-16 rounded-full bg-[#FF2D55]/15 border border-[#FF2D55]/30 flex items-center justify-center mx-auto text-3xl">✓</div>
-                <Disp className="text-white text-4xl">YOUR CALL IS BOOKED.</Disp>
-                <p className="text-white/65 text-base">Your Cal.com booking page opened in a new tab.</p>
-                <p className="text-white/45 text-sm">Confirmation will be sent to <span className="text-white/80 font-semibold">{contact.email}</span></p>
+                <Disp className="text-white text-4xl">ONE LAST STEP.</Disp>
+                <p className="text-white/65 text-base">Pick a time slot on Cal.com to lock in your call.</p>
+                <a
+                  href={calBookingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 mt-2 bg-[#FF2D55] hover:bg-[#FF1745] text-white text-sm font-bold rounded-full transition-colors"
+                >
+                  Pick your time slot →
+                </a>
+                <p className="text-white/45 text-sm pt-2">Confirmation will be sent to <span className="text-white/80 font-semibold">{contact.email}</span></p>
                 <p className="text-white/30 text-xs">We&apos;ll review your answers and come fully prepared.</p>
-                <button onClick={() => { setStep(0); setQuiz({ projectType: "", goal: "", budget: "" }); setContact({ name: "", email: "", phone: "" }) }}
-                  className="text-[#FF2D55]/60 text-sm hover:text-[#FF2D55] transition-colors mt-4">Start over</button>
+                <button onClick={() => { setStep(0); setQuiz({ projectType: "", goal: "", budget: "" }); setContact({ name: "", email: "", phone: "" }); setCalBookingUrl("") }}
+                  className="text-[#FF2D55]/60 text-sm hover:text-[#FF2D55] transition-colors mt-4 block mx-auto">Start over</button>
               </m.div>
             )}
           </AnimatePresence>
