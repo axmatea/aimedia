@@ -32,12 +32,73 @@ const args = Object.fromEntries(
   })
 )
 
+// ─── Hard safety caps ──────────────────────────────────────────────────────
+// These cannot be overridden by CLI args. Protect domain reputation + comply
+// with the warm-up curve before scaling.
+const HARD_DAILY_CAP = 50            // never exceed 50 sends/day, regardless of --limit
+const DOMAIN_COOLDOWN_DAYS = 14      // never email two contacts at same domain within 14 days
+const WORK_HOUR_MIN = 10             // PT hour, inclusive
+const WORK_HOUR_MAX = 16             // PT hour, exclusive
+
 const CONFIRM = Boolean(args.confirm)
-const LIMIT = Number(args.limit || 5)
+const REQUESTED_LIMIT = Number(args.limit || 5)
+const LIMIT = Math.min(REQUESTED_LIMIT, HARD_DAILY_CAP)
 const BUCKET = args.bucket || "saas"
 const SKIP_DISCOVER = Boolean(args["skip-discover"])
 const SKIP_ENRICH = Boolean(args["skip-enrich"])
 const SKIP_SCHEDULE = Boolean(args["skip-schedule"])
+const SKIP_WINDOW = Boolean(args["skip-window"])  // for testing only
+
+if (REQUESTED_LIMIT > HARD_DAILY_CAP) {
+  console.warn(`[orchestrator] --limit=${REQUESTED_LIMIT} exceeds hard cap of ${HARD_DAILY_CAP}/day — capping to ${HARD_DAILY_CAP}`)
+}
+
+// ─── Weekday + work-hours window ──────────────────────────────────────────
+// Sends only fire Mon-Fri, 10:00-16:00 Pacific Time. Use --skip-window for
+// dry-runs / testing outside hours.
+function ptHour() {
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Los_Angeles",
+    hour: "numeric",
+    hour12: false,
+  })
+  return Number(fmt.format(new Date()))
+}
+
+function ptWeekday() {
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Los_Angeles",
+    weekday: "short",
+  })
+  return fmt.format(new Date()) // "Mon", "Tue", … "Sun"
+}
+
+function inSendWindow() {
+  const day = ptWeekday()
+  if (day === "Sat" || day === "Sun") return { ok: false, reason: `weekend (${day} PT)` }
+  const h = ptHour()
+  if (h < WORK_HOUR_MIN || h >= WORK_HOUR_MAX) {
+    return { ok: false, reason: `outside work hours (${h}:00 PT, allowed ${WORK_HOUR_MIN}:00-${WORK_HOUR_MAX}:00)` }
+  }
+  return { ok: true }
+}
+
+// ─── Per-domain cooldown ──────────────────────────────────────────────────
+// Returns set of domains that have been sent to within DOMAIN_COOLDOWN_DAYS.
+function recentlyEmailedDomains() {
+  const sent = readStore("sent")
+  const cutoff = Date.now() - DOMAIN_COOLDOWN_DAYS * 24 * 60 * 60 * 1000
+  const out = new Set()
+  for (const s of sent) {
+    const ts = new Date(s.createdAt || s.sentAt || 0).getTime()
+    if (ts < cutoff) continue
+    const email = s.email || ""
+    const at = email.lastIndexOf("@")
+    if (at < 0) continue
+    out.add(email.slice(at + 1).toLowerCase())
+  }
+  return out
+}
 
 function runScript(file, extraArgs = []) {
   return new Promise((resolve, reject) => {
@@ -71,6 +132,22 @@ function header(title) {
 async function main() {
   console.log(`[orchestrator] bucket=${BUCKET} limit=${LIMIT} confirm=${CONFIRM}`)
   console.log("[orchestrator] starting pool state:", countByStatus())
+
+  // ─── Window guard (hard block for live sends, allows dry-runs anytime) ───
+  if (CONFIRM && !SKIP_WINDOW) {
+    const w = inSendWindow()
+    if (!w.ok) {
+      console.error(`[orchestrator] refusing to run with --confirm: ${w.reason}`)
+      console.error(`[orchestrator] override only for testing: --skip-window`)
+      process.exit(2)
+    }
+  }
+
+  // ─── Per-domain cooldown info ────────────────────────────────────────────
+  const cooldown = recentlyEmailedDomains()
+  if (cooldown.size > 0) {
+    console.log(`[orchestrator] domains in cooldown (last ${DOMAIN_COOLDOWN_DAYS}d, skipped by send step): ${cooldown.size}`)
+  }
 
   // ── 1. Discover ───────────────────────────────────────────────────────────
   if (!SKIP_DISCOVER) {

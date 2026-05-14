@@ -61,14 +61,32 @@ export const BUCKETS = {
     },
   },
 
-  // Other buckets scaffolded — set `enabled: true` when ready to ship.
   web3: {
     id: "web3",
-    enabled: false,
     icpLabel: "Web3 Projects",
     description: "DAOs, NFT studios, DeFi protocols with growth budget",
-    painPoint: "community growth + token-launch attention without a generic Web3 agency",
-    promiseLine: "AI-built community engine + content velocity for token / NFT launches",
+    searchQueries: [
+      "DAO marketing growth 2025",
+      "NFT studio Series A founder 2025",
+      "Web3 protocol founder lead generation",
+      "DeFi protocol launch marketing 2025",
+      "indie Web3 founder community growth",
+      "crypto startup founder marketing operations",
+    ],
+    filterRules: {
+      mustBe: ["Web3 / DAO / NFT studio / DeFi protocol", "has token or NFT product"],
+      mustNotBe: [
+        "meme coin / pump scheme",
+        "consumer-only NFT marketplace without protocol",
+        "centralized exchange",
+        "rugged / abandoned project",
+      ],
+      employeeRange: { min: 2, max: 50 },
+    },
+    painPoint:
+      "community growth + token-launch attention without burning a Web3-generalist agency budget",
+    promiseLine:
+      "AI-built community engine + content velocity for token / NFT launches",
     caseStudy: {
       project: "XWECAN",
       tag: "Web3",
@@ -78,11 +96,30 @@ export const BUCKETS = {
 
   agency: {
     id: "agency",
-    enabled: false,
     icpLabel: "Agencies",
-    description: "Boutique marketing/creative agencies scaling content",
-    painPoint: "you're capped by team size; AI ops let you 3× output without 3× hires",
-    promiseLine: "white-label AI content + ops infrastructure for your client roster",
+    description: "Boutique marketing / creative agencies, 5–50 employees, scaling content output",
+    searchQueries: [
+      "boutique marketing agency $1M revenue 2025",
+      "indie creative agency content production team",
+      "founder-led B2B marketing agency 2025",
+      "small marketing agency hiring growth",
+      "boutique content agency $2-5M revenue",
+      "indie marketing agency scaling content output",
+    ],
+    filterRules: {
+      mustBe: ["marketing or creative agency", "boutique / small (under 50 people)"],
+      mustNotBe: [
+        "enterprise / holding-co agency (Series C+ or 100+ employees)",
+        "freelancer-only / one-person shop",
+        "single-service-only (just SEO or just paid)",
+        "directory / agency-listing site",
+      ],
+      employeeRange: { min: 3, max: 50 },
+    },
+    painPoint:
+      "output is capped by team size; AI ops let you 3× output without 3× the hires",
+    promiseLine:
+      "white-label AI content + ops infrastructure for your client roster",
     caseStudy: {
       project: "1SecondCopy",
       tag: "Content Agency",
@@ -92,11 +129,30 @@ export const BUCKETS = {
 
   dtc: {
     id: "dtc",
-    enabled: false,
     icpLabel: "DTC Brands",
-    description: "Shopify DTC brands $1M–$10M ARR, fashion / wellness / premium",
-    painPoint: "content + ad-creative volume is the bottleneck — manual production is too slow",
-    promiseLine: "AI content engine + ad creative pipeline tuned to your brand voice",
+    description: "Shopify DTC brands $1M–$10M ARR — fashion / wellness / premium",
+    searchQueries: [
+      "DTC brand Shopify $1M-10M ARR 2025",
+      "premium DTC fashion wellness brand founder",
+      "DTC founder content creative bottleneck",
+      "indie DTC brand scaling marketing 2025",
+      "Shopify Plus brand growth marketing team",
+      "DTC ecommerce founder ad creative volume",
+    ],
+    filterRules: {
+      mustBe: ["DTC brand", "Shopify / owned-storefront"],
+      mustNotBe: [
+        "Amazon-only / FBA seller",
+        "marketplace seller without own storefront",
+        "enterprise / $10M+ ARR with full in-house team",
+        "B2B / wholesale only",
+      ],
+      employeeRange: { min: 3, max: 80 },
+    },
+    painPoint:
+      "content + ad-creative volume is the actual bottleneck — manual production can't keep up with the testing budget",
+    promiseLine:
+      "AI content engine + ad creative pipeline tuned to your brand voice",
     caseStudy: {
       project: "Dad's Printing",
       tag: "Local Business",

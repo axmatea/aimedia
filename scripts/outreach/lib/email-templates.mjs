@@ -10,6 +10,7 @@
 
 const CAL_URL = "https://cal.com/axmedia/call"
 const SITE_URL = "https://aimedia.global"
+const LOGO_URL = "https://aimedia.global/email-logo.png"
 const SENDER_NAME = "Naÿl"
 const COMPANY_NAME = "AX Media Co"
 
@@ -38,6 +39,11 @@ function shell(inner, footerAddress) {
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr><td align="center" style="padding:40px 16px;">
 <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+<tr><td style="padding:0 0 32px;">
+  <a href="${SITE_URL}" style="text-decoration:none;border:0;display:inline-block;">
+    <img src="${LOGO_URL}" alt="AX Media Co" width="120" height="120" style="display:block;width:120px;height:auto;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;" />
+  </a>
+</td></tr>
 ${inner}
 ${footer(footerAddress)}
 </table>

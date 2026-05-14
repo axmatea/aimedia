@@ -52,6 +52,26 @@ const DRY_RUN = Boolean(args["dry-run"])
 const TEST_MODE = Boolean(args.test)
 const BUCKET_ID = args.bucket || "saas"
 const RATE_LIMIT_MS = Number(args["rate-ms"] || 30_000) // 30s between sends
+const DOMAIN_COOLDOWN_DAYS = Number(args["cooldown-days"] || 14)
+
+/**
+ * Set of email domains we sent to within the last DOMAIN_COOLDOWN_DAYS.
+ * Used to skip a prospect if we already pitched someone else at the same
+ * company recently — protects sender reputation and avoids looking sloppy.
+ */
+function recentlyEmailedDomains() {
+  const sent = readStore("sent")
+  const cutoff = Date.now() - DOMAIN_COOLDOWN_DAYS * 24 * 60 * 60 * 1000
+  const out = new Set()
+  for (const s of sent) {
+    const ts = new Date(s.createdAt || s.sentAt || 0).getTime()
+    if (!Number.isFinite(ts) || ts < cutoff) continue
+    const at = (s.email || "").lastIndexOf("@")
+    if (at < 0) continue
+    out.add(s.email.slice(at + 1).toLowerCase())
+  }
+  return out
+}
 
 const FROM = optionalEnv("FROM_EMAIL", "AI Media <info@aimedia.global>")
 const REPLY_TO = optionalEnv("REPLY_TO_EMAIL", "info@aimedia.global")
@@ -145,6 +165,11 @@ async function main() {
   )
   console.log(`[send] ${ready.length} enriched prospects in bucket=${BUCKET_ID}`)
 
+  const cooldownDomains = recentlyEmailedDomains()
+  if (cooldownDomains.size > 0) {
+    console.log(`[send] per-domain cooldown active: ${cooldownDomains.size} domains in last ${DOMAIN_COOLDOWN_DAYS}d`)
+  }
+
   let sent = 0
   let skipped = 0
   let errored = 0
@@ -163,6 +188,12 @@ async function main() {
     }
     if (wasSentTo(prospect.email)) {
       console.log(`  skip already-sent: ${prospect.email}`)
+      skipped++
+      continue
+    }
+    const domain = (prospect.email.split("@")[1] || "").toLowerCase()
+    if (domain && cooldownDomains.has(domain)) {
+      console.log(`  skip domain-cooldown: ${prospect.email} (we already emailed @${domain} in last ${DOMAIN_COOLDOWN_DAYS}d)`)
       skipped++
       continue
     }
