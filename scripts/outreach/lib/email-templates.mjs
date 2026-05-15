@@ -11,11 +11,21 @@
 const CAL_URL = "https://cal.com/axmedia/call"
 const SITE_URL = "https://aimedia.global"
 const LOGO_URL = "https://aimedia.global/email-logo.png"
-const SENDER_NAME = "Naÿl"
+const SENDER_NAME = "Farukh Abbas"
+const SENDER_TITLE = "Manager"
 const COMPANY_NAME = "AX Media Co"
 
 function safe(s) {
   return String(s ?? "").replace(/[<>]/g, (c) => (c === "<" ? "&lt;" : "&gt;"))
+}
+
+function signature() {
+  return `
+  <table cellpadding="0" cellspacing="0" border="0" style="margin-top:28px;">
+    <tr><td style="padding-bottom:4px;color:#111;font-size:15px;font-weight:600;letter-spacing:-0.005em;">— ${SENDER_NAME}</td></tr>
+    <tr><td style="padding-bottom:2px;color:#666;font-size:13px;">${SENDER_TITLE} · ${COMPANY_NAME}</td></tr>
+    <tr><td style="padding-bottom:2px;"><a href="${SITE_URL}" style="color:#FF2D55;text-decoration:none;font-size:13px;">aimedia.global</a></td></tr>
+  </table>`
 }
 
 function footer(footerAddress) {
@@ -75,7 +85,8 @@ ${CAL_URL}
 If not, just reply STOP and I'm out of your inbox.
 
 — ${SENDER_NAME}
-${COMPANY_NAME} · ${SITE_URL}`
+${SENDER_TITLE} · ${COMPANY_NAME}
+${SITE_URL}`
 
   const html = shell(
     `
@@ -86,9 +97,9 @@ ${COMPANY_NAME} · ${SITE_URL}`
     <p style="margin:0 0 24px;">Recent: <strong>${safe(cs.project)}</strong> (${safe(cs.tag)}) — ${safe(cs.result)}.</p>
     <p style="margin:0 0 12px;">If this is on your radar — 25 min on the calendar:</p>
     <p style="margin:0 0 24px;">
-      <a href="${CAL_URL}" style="display:inline-block;background:#FF2D55;color:#fff;text-decoration:none;padding:10px 20px;border-radius:24px;font-weight:600;font-size:14px;">Grab a slot →</a>
+      <a href="${CAL_URL}" style="display:inline-block;background:#FF2D55;color:#fff;text-decoration:none;padding:12px 24px;border-radius:24px;font-weight:600;font-size:14px;letter-spacing:0.02em;">Grab a slot →</a>
     </p>
-    <p style="margin:24px 0 0;color:#444;font-size:14px;">— ${SENDER_NAME}</p>
+    ${signature()}
   </td></tr>`,
     footerAddress
   )
@@ -112,7 +123,8 @@ ${CAL_URL}
 
 No pressure either way.
 
-— ${SENDER_NAME}`
+— ${SENDER_NAME}
+${SENDER_TITLE} · ${COMPANY_NAME}`
 
   const html = shell(
     `
@@ -121,10 +133,10 @@ No pressure either way.
     <p style="margin:0 0 16px;">Floating this back up in case it got buried. The note about <strong>${co}</strong> above.</p>
     <p style="margin:0 0 24px;">Worth 25 min, or not the right time?</p>
     <p style="margin:0 0 24px;">
-      <a href="${CAL_URL}" style="display:inline-block;background:#FF2D55;color:#fff;text-decoration:none;padding:10px 20px;border-radius:24px;font-weight:600;font-size:14px;">Pick a slot →</a>
+      <a href="${CAL_URL}" style="display:inline-block;background:#FF2D55;color:#fff;text-decoration:none;padding:12px 24px;border-radius:24px;font-weight:600;font-size:14px;letter-spacing:0.02em;">Pick a slot →</a>
     </p>
-    <p style="margin:0 0 0;color:#666;font-size:14px;">No pressure either way.</p>
-    <p style="margin:24px 0 0;color:#444;font-size:14px;">— ${SENDER_NAME}</p>
+    <p style="margin:0 0 8px;color:#666;font-size:14px;">No pressure either way.</p>
+    ${signature()}
   </td></tr>`,
     footerAddress
   )
@@ -145,7 +157,8 @@ Last note — closing your file on my side so I'm not in your inbox.
 If the timing ever shifts and AI ops becomes a thing you want to look at, hit reply and I'll re-open it. Otherwise, best of luck with the build.
 
 — ${SENDER_NAME}
-${COMPANY_NAME} · ${SITE_URL}`
+${SENDER_TITLE} · ${COMPANY_NAME}
+${SITE_URL}`
 
   const html = shell(
     `
@@ -153,7 +166,7 @@ ${COMPANY_NAME} · ${SITE_URL}`
     <p style="margin:0 0 16px;">${fn},</p>
     <p style="margin:0 0 16px;">Last note — closing your file on my side so I'm not in your inbox.</p>
     <p style="margin:0 0 16px;">If the timing ever shifts and AI ops becomes a thing you want to look at, hit reply and I'll re-open it. Otherwise, best of luck with the build.</p>
-    <p style="margin:24px 0 0;color:#444;font-size:14px;">— ${SENDER_NAME}<br/>${COMPANY_NAME} · ${SITE_URL}</p>
+    ${signature()}
   </td></tr>`,
     footerAddress
   )
