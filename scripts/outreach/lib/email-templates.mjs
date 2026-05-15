@@ -10,7 +10,7 @@
 
 const CAL_URL = "https://cal.com/axmedia/call"
 const SITE_URL = "https://aimedia.global"
-const LOGO_URL = "https://aimedia.global/email-logo.png"
+const LOGO_URL = "https://aimedia.global/email-logo.png?v=2"
 const SENDER_NAME = "Farukh Abbas"
 const SENDER_TITLE = "Manager"
 const COMPANY_NAME = "AX Media Co"
