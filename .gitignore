@@ -45,6 +45,8 @@ next-env.d.ts
 /scripts/schedule-alexandra-*.mjs
 /scripts/cancel-alexandra-*.mjs
 /scripts/send-audition-fee.mjs
+/scripts/outreach/send-selena-*.mjs
+/scripts/outreach/send-gamma-*.mjs
 /data/
 
 # claude local
