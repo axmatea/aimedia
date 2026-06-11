@@ -5,11 +5,11 @@ import { m, useReducedMotion } from "motion/react"
 import { Bot, Search, PenTool, BarChart3, Mail, Brain } from "lucide-react"
 
 const AGENTS = [
-  { icon: Search, label: "Lead Gen", color: "#7B2FFF", task: "Enriching 847 contacts" },
-  { icon: PenTool, label: "Content", color: "#FF2D55", task: "12 posts scheduled" },
-  { icon: BarChart3, label: "Analytics", color: "#0ACDCD", task: "Compiling report" },
-  { icon: Mail, label: "Outreach", color: "#C8FF60", lime: true, task: "234 emails sent" },
-  { icon: Brain, label: "Strategy", color: "#FF8C42", task: "3 campaigns live" },
+  { icon: Search, label: "Lead Gen", color: "#7B2FFF", tasks: ["Enriching 847 contacts", "Scoring 112 new leads", "Mapping ICP segment 4"] },
+  { icon: PenTool, label: "Content", color: "#FF2D55", tasks: ["12 posts scheduled", "Drafting reel script", "Testing 3 hook variants"] },
+  { icon: BarChart3, label: "Analytics", color: "#0ACDCD", tasks: ["Compiling report", "Tracking 14 funnels", "Anomaly scan: clear"] },
+  { icon: Mail, label: "Outreach", color: "#C8FF60", lime: true, tasks: ["234 emails sent", "31 replies handled", "6 calls being booked"] },
+  { icon: Brain, label: "Strategy", color: "#FF8C42", tasks: ["3 campaigns live", "Reallocating budget", "Planning next sprint"] },
 ]
 
 const RADIUS = 125
@@ -26,7 +26,15 @@ const BEAM_PERIOD = 2.8 // seconds; must match .agent-beam / .agent-rx in global
 export function AgentRadial() {
   const rootRef = useRef<HTMLDivElement>(null)
   const [paused, setPaused] = useState(false)
+  const [tick, setTick] = useState(0)
   const reduceMotion = useReducedMotion()
+
+  // Rotate agent task lines every 4s while on screen (live infrastructure feel)
+  useEffect(() => {
+    if (paused || reduceMotion) return
+    const t = setInterval(() => setTick((v) => v + 1), 4000)
+    return () => clearInterval(t)
+  }, [paused, reduceMotion])
 
   useEffect(() => {
     const el = rootRef.current
@@ -53,7 +61,7 @@ export function AgentRadial() {
       <div className="relative aspect-square w-full max-w-[340px] flex items-center justify-center">
         {/* Orbit rings */}
         <div
-          className="absolute rounded-full border border-dashed border-black/10 dark:border-white/8"
+          className="orbit-ring-drift absolute rounded-full border border-dashed border-black/10 dark:border-white/8"
           style={{ width: `${RADIUS * 2}px`, height: `${RADIUS * 2}px` }}
         />
         <div
@@ -72,6 +80,7 @@ export function AgentRadial() {
               const x2 = 101 * Math.cos(angle)
               const y2 = 101 * Math.sin(angle)
               const delay = `${(i * (BEAM_PERIOD / AGENTS.length)).toFixed(2)}s`
+              const beamStyle = { animationDelay: delay, "--beam-dur": `${(2.4 + i * 0.2).toFixed(1)}s` } as React.CSSProperties
               return (
                 <g key={agent.label}>
                   {/* Base rail */}
@@ -85,7 +94,7 @@ export function AgentRadial() {
                         stroke={agent.color} opacity={0.18}
                         className="agent-beam"
                         data-lime-stroke={agent.lime ? "" : undefined}
-                        style={{ animationDelay: delay }}
+                        style={beamStyle}
                       />
                       {/* Traveling data packet */}
                       <line
@@ -94,7 +103,7 @@ export function AgentRadial() {
                         stroke={agent.color}
                         className="agent-beam"
                         data-lime-stroke={agent.lime ? "" : undefined}
-                        style={{ animationDelay: delay }}
+                        style={beamStyle}
                       />
                     </>
                   )}
@@ -126,9 +135,9 @@ export function AgentRadial() {
                   >
                     {/* Agent node */}
                     <div
-                      className={`relative flex items-center justify-center w-11 h-11 rounded-full border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/[0.04] shadow-sm dark:shadow-none ${reduceMotion ? "" : "agent-rx"}`}
+                      className={`agent-node relative flex items-center justify-center w-11 h-11 rounded-full border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/[0.04] shadow-sm dark:shadow-none ${reduceMotion ? "" : "agent-rx"}`}
                       data-lime-glow={agent.lime ? "" : undefined}
-                      style={{ "--agent-glow": `${agent.color}55`, animationDelay: `${delay}s` } as React.CSSProperties}
+                      style={{ "--agent-glow": `${agent.color}55`, animationDelay: `${delay}s`, "--beam-dur": `${(2.4 + i * 0.2).toFixed(1)}s` } as React.CSSProperties}
                     >
                       <Icon size={18} style={{ color: agent.color }} />
                       {/* Status dot */}
@@ -139,7 +148,15 @@ export function AgentRadial() {
                     </div>
                     {/* Label + task */}
                     <span className="text-[8px] font-bold text-black/60 dark:text-white/60 whitespace-nowrap mt-0.5">{agent.label} Agent</span>
-                    <span className="text-[7px] font-mono text-black/35 dark:text-white/30 whitespace-nowrap">{agent.task}</span>
+                    <m.span
+                      key={agent.tasks[(tick + i) % agent.tasks.length]}
+                      initial={reduceMotion ? false : { opacity: 0, y: 3 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
+                      className="text-[8px] font-mono text-black/35 dark:text-white/30 whitespace-nowrap"
+                    >
+                      {agent.tasks[(tick + i) % agent.tasks.length]}
+                    </m.span>
                   </m.div>
                 </div>
               </div>

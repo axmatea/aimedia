@@ -673,23 +673,6 @@ export default function Home() {
 
       {/* Process section removed per user request */}
 
-      {/* ── Lime marquee ─────────────────────────────────────────────────── */}
-      <div className="marquee-shell marquee-mask py-4 border-b ai-border overflow-hidden bg-[#C8FF60]" aria-hidden>
-        <div className="flex animate-marquee-fast whitespace-nowrap -skew-x-6 items-center will-change-transform">
-          {[...Array(4)].flatMap((_, k) =>
-            ["BUILD FASTER", "LAUNCH LOUDER", "GROW SMARTER", "AI NATIVE", "SHIP TODAY"].map((item, i) => {
-              const idx = k * 5 + i
-              return (
-                <span key={idx} className="mx-6 flex items-center gap-6">
-                  <Disp className={`text-3xl md:text-4xl tracking-wide ${idx % 2 ? "marquee-outline" : "text-[#050507]"}`}>{item}</Disp>
-                  <span className="text-[#050507]/30 text-[10px]">◆</span>
-                </span>
-              )
-            })
-          )}
-        </div>
-      </div>
-
       {/* 07 SCALE — World Map */}
       <section className="ai-page py-20 px-6 overflow-hidden snap-start" style={{ contain: "layout paint" }}>
         <div className="max-w-6xl mx-auto">
