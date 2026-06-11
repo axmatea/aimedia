@@ -1,7 +1,7 @@
 "use client"
-import { motion, type PanInfo } from "framer-motion"
+import { motion, useReducedMotion, type PanInfo } from "framer-motion"
 import type React from "react"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
@@ -45,6 +45,18 @@ const initialNodes: WorkflowNode[] = [
   { id: "n4", type: "action",    title: "Launch Outreach",  description: "Personalized sequences",    icon: Mail,     color: "red",    position: { x: 80,  y: 230 } },
 ]
 
+// Simulated agent activity feed (in-view gated, zero cost off-screen)
+const FEED_EVENTS = [
+  { text: "Lead scored 92/100 · routed to outreach", color: "#7B2FFF" },
+  { text: "Follow-up email drafted · queued for send window", color: "#FF2D55" },
+  { text: "Meeting booked · Thursday 2:00 PM", color: "#C8FF60" },
+  { text: "CRM record enriched · 12 fields updated", color: "#0ACDCD" },
+  { text: "Reply detected · intent: interested", color: "#C8FF60" },
+  { text: "Invoice reminder sent · awaiting payment", color: "#FF8C42" },
+  { text: "New prospect added · ICP match 87%", color: "#7B2FFF" },
+  { text: "Weekly report compiled · 4 channels", color: "#0ACDCD" },
+]
+
 const initialConnections: WorkflowConnection[] = [
   { from: "n1", to: "n2" },
   { from: "n1", to: "n3" },
@@ -86,6 +98,35 @@ export function N8nWorkflowBlock() {
     height: Math.max(...initialNodes.map((n) => n.position.y + NODE_H)) + 30,
   }))
 
+  // Live agent feed: appends an event every 2.4-4.6s while the widget is on screen
+  const feedRootRef = useRef<HTMLDivElement>(null)
+  const reduceMotion = useReducedMotion()
+  const [feed, setFeed] = useState(() =>
+    FEED_EVENTS.slice(0, 4).map((e, i) => ({ id: i, ...e }))
+  )
+
+  useEffect(() => {
+    if (reduceMotion) return
+    const el = feedRootRef.current
+    if (!el) return
+    let timer: ReturnType<typeof setTimeout> | null = null
+    let counter = 4
+    let inView = false
+    const schedule = () => {
+      timer = setTimeout(() => {
+        setFeed((prev) => [...prev, { id: counter, ...FEED_EVENTS[counter % FEED_EVENTS.length] }].slice(-4))
+        counter++
+        schedule()
+      }, 2400 + Math.random() * 2200)
+    }
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !inView) { inView = true; schedule() }
+      else if (!entry.isIntersecting && inView) { inView = false; if (timer) clearTimeout(timer) }
+    }, { threshold: 0.2 })
+    obs.observe(el)
+    return () => { obs.disconnect(); if (timer) clearTimeout(timer) }
+  }, [reduceMotion])
+
   const onDragStart = (id: string) => {
     setDragging(id)
     const n = nodes.find((n) => n.id === id)
@@ -104,7 +145,7 @@ export function N8nWorkflowBlock() {
   }
 
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl border border-white/8 bg-black/40 backdrop-blur p-4">
+    <div ref={feedRootRef} className="relative w-full overflow-hidden rounded-2xl border border-white/8 bg-black/40 backdrop-blur p-4">
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -166,6 +207,25 @@ export function N8nWorkflowBlock() {
               </motion.div>
             )
           })}
+        </div>
+      </div>
+
+      {/* Live agent feed */}
+      <div className="mt-3 rounded-lg border border-white/6 bg-white/[0.02] px-4 py-3">
+        <p className="text-[9px] uppercase tracking-[0.25em] text-white/35 mb-2">Agent activity</p>
+        <div className="space-y-1.5">
+          {feed.map((ev) => (
+            <motion.div
+              key={ev.id}
+              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+              className="flex items-center gap-2"
+            >
+              <span className="h-1 w-1 rounded-full shrink-0" style={{ backgroundColor: ev.color }} />
+              <span className="text-[10px] font-mono text-white/55 truncate">{ev.text}</span>
+            </motion.div>
+          ))}
         </div>
       </div>
 
