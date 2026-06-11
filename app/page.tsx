@@ -654,7 +654,33 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Process section removed per user request */}
+      {/* 05 PROOF — Case Studies */}
+      <section className="ai-page py-20 px-6 border-b ai-border overflow-hidden snap-start" style={{ contain: "layout paint" }}>
+        <div className="max-w-6xl mx-auto">
+          <m.div {...fadeUp} className="mb-12">
+            <Tag>Proof</Tag>
+            <Disp className="ai-text text-[clamp(2rem,5vw,64px)] mt-4 block leading-[0.9]">
+              REAL SYSTEMS.<br /><span style={{ color: "#FF2D55" }}>REAL RESULTS.</span>
+            </Disp>
+          </m.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+            {CASE_STUDIES.map((cs, i) => (
+              <m.div key={cs.project} {...fadeUp} transition={{ delay: i * 0.08 }}
+                className="group relative rounded-2xl border border-white/8 overflow-hidden p-6 md:p-8 flex flex-col justify-between min-h-[200px] transition-all duration-300 hover:border-white/15"
+                style={{ backgroundColor: cs.color }}>
+                <div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1 rounded-full border" style={{ borderColor: `${cs.accent}40`, color: cs.accent }}>{cs.tag}</span>
+                  </div>
+                  <Disp className="text-white text-[clamp(1.5rem,3vw,36px)] block leading-[0.95] mb-4">{cs.project}</Disp>
+                </div>
+                <p className="text-white/60 text-sm md:text-base leading-relaxed font-medium">{cs.result}</p>
+                <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-[60px] opacity-20 pointer-events-none" style={{ backgroundColor: cs.accent }} />
+              </m.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ── Lime marquee ─────────────────────────────────────────────────── */}
       <div className="py-5 border-b ai-border overflow-hidden bg-[#C8FF60]" aria-hidden>
