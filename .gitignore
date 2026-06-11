@@ -47,7 +47,13 @@ next-env.d.ts
 /scripts/send-audition-fee.mjs
 /scripts/outreach/send-selena-*.mjs
 /scripts/outreach/send-gamma-*.mjs
+/scripts/outreach/send-sam-*.mjs
+/scripts/outreach/preview-naxmatea-*.mjs
 /data/
 
 # claude local
 .claude/
+/scripts/outreach/send-sam-docs.mjs
+/scripts/outreach/send-sam-phase1-confirm.mjs
+/scripts/outreach/send-sam-final.mjs
+/scripts/outreach/send-sam-nudge.mjs
