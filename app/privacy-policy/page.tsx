@@ -1,15 +1,17 @@
+import Link from "next/link"
+
 export default function PrivacyPolicy() {
   return (
     <main className="min-h-screen bg-[#050507] px-6 py-24">
       <div className="max-w-3xl mx-auto">
         <p className="text-white/20 text-[10px] uppercase tracking-[0.3em] font-bold mb-4">Legal</p>
         <h1 className="text-white text-4xl md:text-5xl font-black uppercase mb-2" style={{ fontFamily: "var(--font-bebas)" }}>Privacy Policy</h1>
-        <p className="text-white/30 text-sm mb-12">Last updated: March 25, 2026</p>
+        <p className="text-white/30 text-sm mb-12">Last updated: June 11, 2026</p>
 
         <div className="space-y-10 text-white/55 text-sm leading-relaxed">
           <section>
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">1. Who We Are</h2>
-            <p>AX Media ("we", "us", "our") is an AI automation agency. Our registered business contact is <span className="text-white/70">hello@axmedia.co</span>. This Privacy Policy explains how we collect, use, and protect your personal information when you visit our website or engage with our services.</p>
+            <p>AX Media (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is the AI automation brand of AXMATEA MEDIA CORP, a Florida corporation. Our business contact is <a href="mailto:info@aimedia.global" className="text-white/70 hover:text-[#FF2D55] transition-colors underline-offset-4 hover:underline">info@aimedia.global</a>. This Privacy Policy explains how we collect, use, and protect your personal information when you visit our website or engage with our services.</p>
           </section>
 
           <section>
@@ -38,7 +40,7 @@ export default function PrivacyPolicy() {
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">4. Third-Party Services</h2>
             <p>We use the following third-party tools that may process your data:</p>
             <ul className="list-disc list-inside space-y-1 mt-2 text-white/45">
-              <li><span className="text-white/65">Calendly</span> — for call scheduling (governed by Calendly's Privacy Policy)</li>
+              <li><span className="text-white/65">Cal.com</span> — for call scheduling (governed by the Cal.com Privacy Policy)</li>
               <li><span className="text-white/65">Vercel</span> — for website hosting and analytics</li>
             </ul>
           </section>
@@ -50,7 +52,7 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">6. Your Rights</h2>
-            <p>Under applicable law (GDPR, CCPA), you have the right to access, correct, delete, or port your personal data. To exercise these rights, email us at <span className="text-white/70">privacy@axmedia.co</span>.</p>
+            <p>Under applicable law (GDPR, CCPA), you have the right to access, correct, delete, or port your personal data. To exercise these rights, email us at <a href="mailto:info@aimedia.global" className="text-white/70 hover:text-[#FF2D55] transition-colors underline-offset-4 hover:underline">info@aimedia.global</a>.</p>
           </section>
 
           <section>
@@ -60,12 +62,12 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">8. Contact</h2>
-            <p>Questions about this policy? Contact us: <span className="text-white/70">privacy@axmedia.co</span></p>
+            <p>Questions about this policy? Contact us: <a href="mailto:info@aimedia.global" className="text-white/70 hover:text-[#FF2D55] transition-colors underline-offset-4 hover:underline">info@aimedia.global</a></p>
           </section>
         </div>
 
         <div className="mt-16 pt-8 border-t border-white/6">
-          <a href="/" className="text-[#FF2D55] text-sm hover:underline underline-offset-4">← Back to home</a>
+          <Link href="/" className="text-[#FF2D55] text-sm hover:underline underline-offset-4">← Back to home</Link>
         </div>
       </div>
     </main>

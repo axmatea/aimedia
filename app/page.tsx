@@ -703,7 +703,8 @@ export default function Home() {
             <img src="/logo-gen/v2-01-clean.png" alt="AI Media" className="h-8 w-auto invert dark:invert-0" loading="lazy" />
             <span className="ai-muted text-xs">© 2026 AI Media · aimedia.global</span>
           </div>
-          <div className="flex gap-6">
+          <div className="flex gap-6 flex-wrap justify-center">
+            <a href="mailto:info@aimedia.global" className="ai-muted text-xs hover:text-[#FF2D55] transition-colors">info@aimedia.global</a>
             <a href="/privacy-policy" className="ai-muted text-xs hover:text-[#FF2D55] transition-colors">Privacy</a>
             <a href="/cookies" className="ai-muted text-xs hover:text-[#FF2D55] transition-colors">Cookies</a>
             <a href="/legal" className="ai-muted text-xs hover:text-[#FF2D55] transition-colors">Legal</a>
