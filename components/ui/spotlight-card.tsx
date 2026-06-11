@@ -22,23 +22,9 @@ const glowColorMap = {
 
 const sizeMap = { sm: 'w-48 h-64', md: 'w-64 h-80', lg: 'w-80 h-96' };
 
-// Singleton CSS injected once per page
-let cssInjected = false;
-function injectGlowCSS() {
-  if (cssInjected || typeof document === 'undefined') return;
-  cssInjected = true;
-  const style = document.createElement('style');
-  style.id = 'glow-card-css';
-  style.textContent = `
-    [data-glow]::before,[data-glow]::after{pointer-events:none;content:"";position:absolute;inset:calc(var(--border-size)*-1);border:var(--border-size) solid transparent;border-radius:inherit;background-size:calc(100% + (2*var(--border-size))) calc(100% + (2*var(--border-size)));background-repeat:no-repeat;background-position:0 0;mask:linear-gradient(white,white),linear-gradient(white,white);mask-clip:padding-box,border-box;mask-composite:exclude;-webkit-mask-composite:xor;transition:opacity 0.3s ease;}
-    [data-glow]::before{background-image:radial-gradient(calc(var(--spotlight-size)*0.75) calc(var(--spotlight-size)*0.75) at calc(var(--x,0)*1px) calc(var(--y,0)*1px),hsl(var(--hue,210) calc(var(--saturation,100)*1%) calc(var(--lightness,50)*1%)/var(--border-spot-opacity,1)),transparent 100%);filter:brightness(2);}
-    [data-glow]::after{background-image:radial-gradient(calc(var(--spotlight-size)*0.5) calc(var(--spotlight-size)*0.5) at calc(var(--x,0)*1px) calc(var(--y,0)*1px),hsl(0 100% 100%/var(--border-light-opacity,0.5)),transparent 100%);}
-    [data-glow]{transition:box-shadow 0.3s ease,background-color 0.3s ease;}
-    [data-glow]:hover{--bg-spot-opacity:0.15;box-shadow:0 0 40px -12px hsl(var(--hue,210) 100% 60%/0.35),0 1rem 2rem -1rem black;}
-  `;
-  document.head.appendChild(style);
-}
-
+// All glow CSS lives in app/globals.css (single source of truth).
+// Activation is gated behind @media (hover: hover) and (pointer: fine),
+// so touch devices get clean static cards and free page scroll.
 const GlowCard: React.FC<GlowCardProps> = ({
   children,
   className = '',
@@ -51,13 +37,13 @@ const GlowCard: React.FC<GlowCardProps> = ({
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    injectGlowCSS();
-
     let rafId: number;
     const card = cardRef.current;
     if (!card) return;
 
     const syncPointer = (e: PointerEvent) => {
+      // Mouse-only: a finger on the card must scroll the page, never drive the glow
+      if (e.pointerType !== 'mouse') return;
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         if (!cardRef.current) return;
@@ -72,8 +58,10 @@ const GlowCard: React.FC<GlowCardProps> = ({
     };
 
     card.addEventListener('pointermove', syncPointer, { passive: true });
+    card.addEventListener('pointerenter', syncPointer, { passive: true });
     return () => {
       card.removeEventListener('pointermove', syncPointer);
+      card.removeEventListener('pointerenter', syncPointer);
       cancelAnimationFrame(rafId);
     };
   }, []);
@@ -92,13 +80,13 @@ const GlowCard: React.FC<GlowCardProps> = ({
     '--border-size': 'calc(var(--border, 2) * 1px)',
     '--spotlight-size': 'calc(var(--size, 150) * 1px)',
     '--hue': 'calc(var(--base) + (var(--xp, 0) * var(--spread, 0)))',
-    backgroundImage: `radial-gradient(var(--spotlight-size) var(--spotlight-size) at calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px), hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) calc(var(--lightness, 70) * 1%) / var(--bg-spot-opacity, 0.08)), transparent)`,
+    // Interior spotlight: applied as background-image only on :hover (globals.css)
+    '--glow-spot': `radial-gradient(var(--spotlight-size) var(--spotlight-size) at calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px), hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) calc(var(--lightness, 70) * 1%) / var(--bg-spot-opacity, 0.08)), transparent)`,
     backgroundColor: 'var(--backdrop, transparent)',
     backgroundSize: '100% 100%',
     backgroundPosition: '0 0',
     border: 'var(--border-size) solid var(--backup-border)',
     position: 'relative',
-    touchAction: 'none',
     ...(width !== undefined ? { width: typeof width === 'number' ? `${width}px` : width } : {}),
     ...(height !== undefined ? { height: typeof height === 'number' ? `${height}px` : height } : {}),
   };
@@ -108,7 +96,7 @@ const GlowCard: React.FC<GlowCardProps> = ({
       ref={cardRef}
       data-glow
       style={inlineStyles}
-      className={`rounded-2xl relative grid shadow-[0_1rem_2rem_-1rem_black] p-6 gap-4 backdrop-blur-[5px] ${!customSize ? sizeMap[size] : ''} ${className}`}
+      className={`rounded-2xl relative grid shadow-[0_1rem_2rem_-1rem_black] p-6 gap-4 ${!customSize ? sizeMap[size] : ''} ${className}`}
     >
       {children}
     </div>

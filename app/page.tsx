@@ -1,13 +1,14 @@
 "use client"
 
 import { useState, useEffect, memo } from "react"
-import { m, AnimatePresence } from "motion/react"
+import { m, AnimatePresence, useReducedMotion } from "motion/react"
 import dynamic from "next/dynamic"
 import { Spotlight } from "@/components/ui/spotlight"
 import { LiquidMetalButton } from "@/components/ui/liquid-metal-button"
 import ThemeToggle from "@/components/ui/toggle-theme"
 import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
+import { CountUp } from "@/components/ui/count-up"
 // ── Below-fold heavy components: lazy loaded for faster LCP ──────────────────
 const N8nWorkflowBlock = dynamic(
   () => import("@/components/ui/n8n-workflow-block-shadcnui").then((mod) => mod.N8nWorkflowBlock),
@@ -50,7 +51,8 @@ const CAL_DEFAULTS: Record<string, string> = { duration: "60", overlayCalendar: 
 
 // ── Shared viewport config for whileInView ──────────────────────────────────
 const VP = { once: true, margin: "0px 0px -80px 0px" } as const
-const fadeUp = { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: VP }
+const EASE_SWIFT: [number, number, number, number] = [0.2, 0.8, 0.2, 1]
+const fadeUp = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 }, viewport: VP, transition: { duration: 0.9, ease: EASE_SWIFT } }
 
 // ── Data ────────────────────────────────────────────────────────────────────
 const HERO_AUDIENCES = ["WEB3.", "FOUNDERS.", "AGENCIES.", "BRANDS.", "BUILDERS."]
@@ -102,7 +104,7 @@ const SERVICES = [
     tagline: "Find and convert your ideal customers — on autopilot.",
     body: "AI maps ideal buyers, enriches CRM, and runs multi-channel outreach at scale. Zero spray-and-pray.",
     metrics: [{ label: "Leads generated / week", value: "2,400+" }, { label: "Pipeline conversion lift", value: "6.8×" }],
-    tools: ["Clay", "Apollo", "Apify", "Claude API"],
+    tools: ["Ideal Buyer Lists", "Outreach on Autopilot", "Booked Meetings", "CRM Always Current"],
     steps: ["Mapping ideal customer profile...","Enriching and scoring leads...","Launching outreach sequences...","Monitoring conversion metrics..."],
   },
   {
@@ -111,7 +113,7 @@ const SERVICES = [
     tagline: "500+ content pieces a month. Zero manual work.",
     body: "AI posts to Instagram, LinkedIn, X, TikTok — on-brand, at scale. Scripts, thumbnails, emails, generated automatically.",
     metrics: [{ label: "Content pieces / month", value: "500+" }, { label: "Time saved vs in-house", value: "80 hrs" }],
-    tools: ["Claude API", "Remotion", "Beehiiv", "GPT-4o"],
+    tools: ["Content Engine", "Daily Posting", "Full Creative Dept", "Audience Growth"],
     steps: ["Defining brand voice & tone...","Creating multi-format content...","Scheduling to social channels...","Analyzing performance & iterating..."],
   },
   {
@@ -120,7 +122,7 @@ const SERVICES = [
     tagline: "Your full sales & ops infrastructure — on autopilot.",
     body: "Cold calling, CRM sync, community monitoring, reporting. Manual ops replaced with AI infrastructure, 24/7.",
     metrics: [{ label: "Automated actions / day", value: "1.2M+" }, { label: "Report delivery", value: "<30s" }],
-    tools: ["Modal", "n8n", "Zapier", "HubSpot"],
+    tools: ["Lead Pipeline", "Sales Funnel", "Full Sales Dept", "24/7 Follow-up"],
     steps: ["Auditing existing workflows...","Building AI cold-call sequences...","Connecting CRM & data sources...","Deploying to production..."],
   },
 ]
@@ -163,6 +165,11 @@ const Tag = ({ children }: { children: React.ReactNode }) => (
 // ── HeroSection: isolated so its interval doesn't re-render the whole page ──
 const HeroSection = memo(function HeroSection() {
   const [audienceIdx, setAudienceIdx] = useState(0)
+  const reduceMotion = useReducedMotion()
+  const riseLine = {
+    hidden: { y: reduceMotion ? "0%" : "105%" },
+    show: { y: "0%", transition: { duration: 0.8, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] } },
+  }
 
   useEffect(() => {
     const t = setInterval(() => setAudienceIdx((i) => (i + 1) % HERO_AUDIENCES.length), 2600)
@@ -190,7 +197,7 @@ const HeroSection = memo(function HeroSection() {
         className="hero-robot-shell robot-mobile absolute right-0 top-0 w-[100%] h-[55svh] lg:bottom-0 lg:w-[65%] lg:h-auto pointer-events-none block z-[2]"
         style={{ transform: "scale(1.35) translate3d(0, -8%, 0)", transformOrigin: "top center", willChange: "transform" }}
       >
-        <SplineScene scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode" className="w-full h-full dark:opacity-100 opacity-90 dark:mix-blend-normal mix-blend-screen lg:mix-blend-luminosity" />
+        <SplineScene scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode" mobileFallback="/robot-poster.webp" className="w-full h-full dark:opacity-100 opacity-90 dark:mix-blend-normal mix-blend-screen lg:mix-blend-luminosity" />
         <div className="ai-hero-fade-x absolute inset-y-0 left-0 w-[50%]" />
         <div className="ai-hero-fade-y absolute bottom-0 left-0 right-0 h-56" />
         <div className="ai-hero-fade-x absolute inset-y-0 right-0 w-[15%] rotate-180 block dark:hidden" />
@@ -206,9 +213,17 @@ const HeroSection = memo(function HeroSection() {
           <span className="ai-muted text-xs font-medium tracking-wider">12 active projects — 2 slots remaining</span>
         </m.div>
 
-        <m.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}>
-          <Disp className="block ai-text text-[clamp(2.8rem,12vw,180px)] leading-[0.85]">WE BUILD</Disp>
-          <Disp className="block text-[#FF2D55] text-[clamp(2.8rem,12vw,180px)] leading-[0.85]">AI SYSTEMS</Disp>
+        <m.div initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}>
+          <div className="overflow-hidden py-[0.04em] -my-[0.04em]">
+            <m.div variants={riseLine}>
+              <Disp className="block ai-text text-[clamp(2.8rem,12vw,180px)] leading-[0.85]">WE BUILD</Disp>
+            </m.div>
+          </div>
+          <div className="overflow-hidden py-[0.04em] -my-[0.04em]">
+            <m.div variants={riseLine}>
+              <Disp className="block text-[#FF2D55] text-[clamp(2.8rem,12vw,180px)] leading-[0.85]">AI SYSTEMS</Disp>
+            </m.div>
+          </div>
           <div className="overflow-hidden" style={{ height: "clamp(2.8rem,12vw,180px)" }}>
             <AnimatePresence mode="wait">
               <m.div
@@ -298,9 +313,9 @@ const BookingSection = memo(function BookingSection() {
 
   return (
     <div id="booking">
-      <div className="relative py-16 md:py-24 px-4 md:px-6 border-b border-white/5 overflow-hidden bg-[#050507]">
+      <div className="relative py-16 md:py-24 px-4 md:px-6 overflow-hidden bg-[#050507]">
         <ShaderAnimation className="absolute inset-0 w-full h-full opacity-80 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050507]/50 via-[#050507]/15 to-[#050507]/50 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050507] via-[#050507]/10 to-[#050507]/50 pointer-events-none" />
 
         <div className="relative z-10 max-w-2xl md:max-w-6xl mx-auto">
           <div className="text-center mb-8 md:mb-14">
@@ -344,7 +359,7 @@ const BookingSection = memo(function BookingSection() {
                         className={`px-4 py-2 rounded-full text-sm font-bold border transition-all duration-200 ${
                           quiz.projectType === opt
                             ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
-                            : "bg-white/5 border-white/15 text-white/55 hover:border-[#FF2D55]/40 hover:text-white/80"
+                            : "bg-white/10 border-white/30 text-white/80 hover:border-[#FF2D55]/60 hover:text-white"
                         }`}>
                         {opt}
                       </button>
@@ -361,7 +376,7 @@ const BookingSection = memo(function BookingSection() {
                         className={`px-4 py-2 rounded-full text-sm font-bold border transition-all duration-200 ${
                           quiz.goal === opt
                             ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
-                            : "bg-white/5 border-white/15 text-white/55 hover:border-[#FF2D55]/40 hover:text-white/80"
+                            : "bg-white/10 border-white/30 text-white/80 hover:border-[#FF2D55]/60 hover:text-white"
                         }`}>
                         {opt}
                       </button>
@@ -373,12 +388,12 @@ const BookingSection = memo(function BookingSection() {
                 <div>
                   <label className="text-white/90 text-base md:text-xl font-black block mb-3">Monthly budget?</label>
                   <div className="flex flex-wrap gap-2">
-                    {["$1–3k / mo", "$3–10k / mo", "$10–20k / mo", "$20k+ / mo"].map(opt => (
+                    {["$3–10k / mo", "$10–20k / mo", "$20k+ / mo"].map(opt => (
                       <button key={opt} onClick={() => setQuiz(p => ({ ...p, budget: opt }))}
                         className={`px-4 py-2 rounded-full text-sm font-bold border transition-all duration-200 ${
                           quiz.budget === opt
                             ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
-                            : "bg-white/5 border-white/15 text-white/55 hover:border-[#FF2D55]/40 hover:text-white/80"
+                            : "bg-white/10 border-white/30 text-white/80 hover:border-[#FF2D55]/60 hover:text-white"
                         }`}>
                         {opt}
                       </button>
@@ -402,12 +417,12 @@ const BookingSection = memo(function BookingSection() {
                     <label className="text-white/65 text-xs uppercase tracking-widest block mb-2 font-bold">{label}</label>
                     <input type={type} placeholder={ph} value={contact[field]}
                       onChange={e => { setContact(c => ({ ...c, [field]: e.target.value })); if (field === "email") setEmailError("") }}
-                      className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-[#FF2D55]/60 transition-colors" />
+                      className="w-full bg-white/5 border border-white/25 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#FF2D55]/60 transition-colors" />
                     {field === "email" && emailError && <p className="text-[#FF2D55] text-xs mt-1">{emailError}</p>}
                   </div>
                 ))}
                 <div className="flex gap-3 pt-2">
-                  <button onClick={() => setStep(0)} className="px-5 py-3 rounded-xl border border-white/15 text-white/55 text-sm hover:border-white/30 hover:text-white/75 transition-colors">← Back</button>
+                  <button onClick={() => setStep(0)} className="px-5 py-3 rounded-xl border border-white/30 text-white/75 text-sm hover:border-white/50 hover:text-white transition-colors">← Back</button>
                   <LiquidMetalButton label={submitting ? "Sending..." : "Continue to Schedule →"} onClick={handleContactContinue} className="flex-1 justify-center" />
                 </div>
                 {!(contact.name && contact.email && contact.phone) && <p className="text-white/35 text-xs text-center">All fields required</p>}
@@ -443,19 +458,19 @@ const BookingSection = memo(function BookingSection() {
 // ── Page ────────────────────────────────────────────────────────────────────
 export default function Home() {
   return (
-    <main className="w-full ai-page overflow-hidden grain snap-y snap-proximity">
+    <main className="w-full ai-page overflow-hidden grain">
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <nav className="ai-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-4 md:py-5 backdrop-blur-md border-b ai-border">
         <a href="#" className="flex items-center flex-shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-gen/v2-01-transparent.png" alt="AX Media" className="h-8 md:h-11 w-auto invert dark:invert-0" />
+          <img src="/logo-gen/v2-01-clean.png" alt="AX Media" className="h-8 md:h-11 w-auto invert dark:invert-0" />
         </a>
         <div className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((item) => (
             <a key={item.label} href={item.href}
               onClick={(e) => { e.preventDefault(); scrollTo(item.href.slice(1)) }}
-              className="px-5 py-2.5 ai-muted text-base font-bold hover:text-white hover:bg-white/12 hover:scale-105 rounded-full transition-all duration-200">
+              className="px-5 py-2.5 ai-muted text-base font-bold hover:!text-black dark:hover:!text-white hover:bg-black/10 dark:hover:bg-white/12 hover:scale-105 rounded-full transition-all duration-200">
               {item.label}
             </a>
           ))}
@@ -479,7 +494,7 @@ export default function Home() {
       <HeroSection />
 
       {/* ── Pink marquee ─────────────────────────────────────────────────── */}
-      <div className="py-5 border-y ai-border overflow-hidden bg-[#FF2D55]" aria-hidden>
+      <div className="marquee-shell marquee-mask py-5 border-y ai-border overflow-hidden bg-[#FF2D55]" aria-hidden>
         <div className="flex animate-marquee whitespace-nowrap">
           {[...TICKER, ...TICKER].map((item, i) => (
             <span key={i} className="text-white font-bold text-sm uppercase tracking-[0.2em] mx-6 flex items-center gap-6">
@@ -515,7 +530,7 @@ export default function Home() {
           </div>
           <div className="flex flex-wrap justify-center gap-4 md:gap-6">
             {WHO_WE_SERVE.map((w, i) => (
-              <m.div key={w.label} {...fadeUp} transition={{ delay: i * 0.07 }}
+              <m.div key={w.label} {...fadeUp} transition={{ delay: i * 0.07, duration: 0.9, ease: EASE_SWIFT }}
                 className="w-[calc(50%-8px)] sm:w-[200px] md:w-[210px]">
                 <GlowCard glowColor={w.glowColor} customSize className="w-full h-full min-h-[220px] sm:min-h-[280px]">
                   <div className="flex flex-col justify-between h-full py-3">
@@ -575,19 +590,19 @@ export default function Home() {
                 </div>
                 <Disp className="text-[clamp(2.5rem,6vw,72px)] leading-[0.88] whitespace-pre-line block mb-4" style={{ color: svc.textDark ? "#050507" : "#fff" }}>{svc.name}</Disp>
                 <p className="text-base md:text-lg leading-snug mb-3 font-semibold" style={{ color: svc.accent }}>{svc.tagline}</p>
-                <p className="text-sm md:text-base leading-relaxed mb-8" style={{ color: svc.textDark ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.5)" }}>{svc.body}</p>
+                <p className="text-sm md:text-base leading-relaxed mb-8" style={{ color: svc.textDark ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.7)" }}>{svc.body}</p>
                 <div className="flex gap-8 mb-6">
-                  {svc.metrics.map((m) => (
-                    <div key={m.label}>
-                      <Disp className="text-2xl" style={{ color: svc.textDark ? "#050507" : "#fff" }}>{m.value}</Disp>
-                      <p className="text-[10px] font-medium mt-0.5" style={{ color: svc.textDark ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.3)" }}>{m.label}</p>
+                  {svc.metrics.map((met) => (
+                    <div key={met.label}>
+                      <Disp className="text-2xl" style={{ color: svc.textDark ? "#050507" : "#fff" }}><CountUp value={met.value} /></Disp>
+                      <p className="text-[10px] font-medium mt-0.5" style={{ color: svc.textDark ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.55)" }}>{met.label}</p>
                     </div>
                   ))}
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   {svc.tools.map((tool) => (
                     <span key={tool} className="px-3 py-1 text-xs font-medium rounded-full border"
-                      style={{ borderColor: svc.textDark ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.1)", color: svc.textDark ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.35)" }}>
+                      style={{ borderColor: svc.textDark ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.18)", color: svc.textDark ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.65)" }}>
                       {tool}
                     </span>
                   ))}
@@ -646,9 +661,11 @@ export default function Home() {
                 </div>
               )}
 
-              <div className="absolute right-0 bottom-0 pointer-events-none select-none overflow-hidden" aria-hidden>
-                <Disp className="text-[300px] leading-none" style={{ color: svc.textDark ? "rgba(0,0,0,0.04)" : "rgba(255,255,255,0.03)" }}>{svc.id}</Disp>
-              </div>
+              {svc.id !== "01" && (
+                <div className="absolute right-0 bottom-0 pointer-events-none select-none overflow-hidden" aria-hidden>
+                  <Disp className="text-[300px] leading-none" style={{ color: svc.textDark ? "rgba(0,0,0,0.04)" : "rgba(255,255,255,0.03)" }}>{svc.id}</Disp>
+                </div>
+              )}
             </div>
           </section>
         ))}
@@ -657,20 +674,24 @@ export default function Home() {
       {/* Process section removed per user request */}
 
       {/* ── Lime marquee ─────────────────────────────────────────────────── */}
-      <div className="py-5 border-b ai-border overflow-hidden bg-[#C8FF60]" aria-hidden>
-        <div className="flex animate-marquee-slow whitespace-nowrap">
+      <div className="marquee-shell marquee-mask py-4 border-b ai-border overflow-hidden bg-[#C8FF60]" aria-hidden>
+        <div className="flex animate-marquee-fast whitespace-nowrap -skew-x-6 items-center will-change-transform">
           {[...Array(4)].flatMap((_, k) =>
-            ["BUILD FASTER", "LAUNCH LOUDER", "GROW SMARTER", "AI NATIVE", "SHIP TODAY"].map((item, i) => (
-              <span key={`${k}-${i}`} className="text-[#050507] font-bold text-sm uppercase tracking-[0.25em] mx-8 flex items-center gap-8">
-                {item} <span className="w-1.5 h-1.5 rounded-full bg-[#050507]/30 flex-shrink-0" />
-              </span>
-            ))
+            ["BUILD FASTER", "LAUNCH LOUDER", "GROW SMARTER", "AI NATIVE", "SHIP TODAY"].map((item, i) => {
+              const idx = k * 5 + i
+              return (
+                <span key={idx} className="mx-6 flex items-center gap-6">
+                  <Disp className={`text-3xl md:text-4xl tracking-wide ${idx % 2 ? "marquee-outline" : "text-[#050507]"}`}>{item}</Disp>
+                  <span className="text-[#050507]/30 text-[10px]">◆</span>
+                </span>
+              )
+            })
           )}
         </div>
       </div>
 
       {/* 07 SCALE — World Map */}
-      <section className="ai-page py-20 px-6 border-b ai-border overflow-hidden snap-start" style={{ contain: "layout paint" }}>
+      <section className="ai-page py-20 px-6 overflow-hidden snap-start" style={{ contain: "layout paint" }}>
         <div className="max-w-6xl mx-auto">
           <m.div {...fadeUp} className="text-center mb-10">
             <Tag>Global reach</Tag>
@@ -685,6 +706,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Smooth bridge into booking (no hard line) */}
+      <div aria-hidden className="ai-booking-bridge h-24 md:h-36 -mb-px" />
+
       {/* 08 CTA — Booking */}
       <BookingSection />
 
@@ -693,7 +717,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-gen/v2-01-transparent.png" alt="AI Media" className="h-8 w-auto invert dark:invert-0" loading="lazy" />
+            <img src="/logo-gen/v2-01-clean.png" alt="AI Media" className="h-8 w-auto invert dark:invert-0" loading="lazy" />
             <span className="ai-muted text-xs">© 2026 AI Media · aimedia.global</span>
           </div>
           <div className="flex gap-6">

@@ -1,32 +1,50 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
+import { m, useReducedMotion } from "motion/react"
 import { Bot, Search, PenTool, BarChart3, Mail, Brain } from "lucide-react"
 
 const AGENTS = [
   { icon: Search, label: "Lead Gen", color: "#7B2FFF", task: "Enriching 847 contacts" },
   { icon: PenTool, label: "Content", color: "#FF2D55", task: "12 posts scheduled" },
   { icon: BarChart3, label: "Analytics", color: "#0ACDCD", task: "Compiling report" },
-  { icon: Mail, label: "Outreach", color: "#C8FF60", darkColor: "#4a7a00", task: "234 emails sent" },
+  { icon: Mail, label: "Outreach", color: "#C8FF60", lime: true, task: "234 emails sent" },
   { icon: Brain, label: "Strategy", color: "#FF8C42", task: "3 campaigns live" },
 ]
 
+const RADIUS = 125
+const BEAM_PERIOD = 2.8 // seconds; must match .agent-beam / .agent-rx in globals.css
+
+/**
+ * Live AI Infrastructure diagram.
+ * Pure-CSS choreography (zero per-frame React renders):
+ * - constellation rotates via .orbit-rotor (90s), labels stay upright via .orbit-counter (reverse)
+ * - data packets travel orchestrator -> agent along SVG beams (stroke-dash animation)
+ * - agent nodes flash on packet arrival (.agent-rx box-shadow keyframe)
+ * - everything pauses off-screen via [data-paused] + animation-play-state
+ */
 export function AgentRadial() {
-  const radius = 125
-  const [angleOffset, setAngleOffset] = useState(0)
+  const rootRef = useRef<HTMLDivElement>(null)
+  const [paused, setPaused] = useState(false)
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
-    let animationFrame: number
-    const animate = () => {
-      setAngleOffset((prev) => prev + 0.0015)
-      animationFrame = requestAnimationFrame(animate)
-    }
-    animate()
-    return () => cancelAnimationFrame(animationFrame)
+    const el = rootRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => setPaused(!entry.isIntersecting),
+      { threshold: 0.1 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
   }, [])
 
   return (
-    <div className="relative w-full max-w-[400px] mx-auto flex flex-col items-center">
+    <div
+      ref={rootRef}
+      data-paused={paused ? "" : undefined}
+      className="relative w-full max-w-[400px] mx-auto flex flex-col items-center"
+    >
       {/* Title */}
       <div className="text-center mb-4">
         <p className="text-black/40 dark:text-white/40 text-[10px] font-mono uppercase tracking-[0.25em]">Live AI Infrastructure</p>
@@ -36,52 +54,107 @@ export function AgentRadial() {
         {/* Orbit rings */}
         <div
           className="absolute rounded-full border border-dashed border-black/10 dark:border-white/8"
-          style={{ width: `${radius * 2}px`, height: `${radius * 2}px` }}
+          style={{ width: `${RADIUS * 2}px`, height: `${RADIUS * 2}px` }}
         />
         <div
           className="absolute rounded-full border border-black/[0.05] dark:border-white/[0.03]"
-          style={{ width: `${radius * 2.5}px`, height: `${radius * 2.5}px` }}
+          style={{ width: `${RADIUS * 2.5}px`, height: `${RADIUS * 2.5}px` }}
         />
 
-        {/* Central Manager Agent */}
+        {/* Rotating constellation: beams + agents */}
+        <div className="orbit-rotor absolute inset-0">
+          {/* Connection beams */}
+          <svg className="absolute inset-0 w-full h-full" viewBox="-170 -170 340 340" fill="none" aria-hidden>
+            {AGENTS.map((agent, i) => {
+              const angle = (i / AGENTS.length) * 2 * Math.PI - Math.PI / 2
+              const x1 = 52 * Math.cos(angle)
+              const y1 = 52 * Math.sin(angle)
+              const x2 = 101 * Math.cos(angle)
+              const y2 = 101 * Math.sin(angle)
+              const delay = `${(i * (BEAM_PERIOD / AGENTS.length)).toFixed(2)}s`
+              return (
+                <g key={agent.label}>
+                  {/* Base rail */}
+                  <line x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="1" className="stroke-black/10 dark:stroke-white/[0.07]" />
+                  {!reduceMotion && (
+                    <>
+                      {/* Soft glow under the packet */}
+                      <line
+                        x1={x1} y1={y1} x2={x2} y2={y2}
+                        pathLength={100} strokeWidth="5" strokeLinecap="round" strokeDasharray="12 188"
+                        stroke={agent.color} opacity={0.18}
+                        className="agent-beam"
+                        data-lime-stroke={agent.lime ? "" : undefined}
+                        style={{ animationDelay: delay }}
+                      />
+                      {/* Traveling data packet */}
+                      <line
+                        x1={x1} y1={y1} x2={x2} y2={y2}
+                        pathLength={100} strokeWidth="2" strokeLinecap="round" strokeDasharray="12 188"
+                        stroke={agent.color}
+                        className="agent-beam"
+                        data-lime-stroke={agent.lime ? "" : undefined}
+                        style={{ animationDelay: delay }}
+                      />
+                    </>
+                  )}
+                </g>
+              )
+            })}
+          </svg>
+
+          {/* Orbiting sub-agents (counter-rotated to stay upright) */}
+          {AGENTS.map((agent, i) => {
+            const angle = (i / AGENTS.length) * 2 * Math.PI - Math.PI / 2
+            const x = RADIUS * Math.cos(angle)
+            const y = RADIUS * Math.sin(angle)
+            const Icon = agent.icon
+            const delay = (i * (BEAM_PERIOD / AGENTS.length)).toFixed(2)
+            return (
+              <div
+                key={agent.label}
+                className="absolute left-1/2 top-1/2"
+                style={{ transform: `translate(-50%, -50%) translate(${x}px, ${y}px)` }}
+              >
+                <div className="orbit-counter">
+                  <m.div
+                    className="flex flex-col items-center gap-0.5"
+                    initial={reduceMotion ? false : { opacity: 0, scale: 0.4 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, amount: 0.4 }}
+                    transition={{ duration: 0.6, delay: i * 0.09, ease: [0.2, 0.8, 0.2, 1] }}
+                  >
+                    {/* Agent node */}
+                    <div
+                      className={`relative flex items-center justify-center w-11 h-11 rounded-full border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/[0.04] shadow-sm dark:shadow-none ${reduceMotion ? "" : "agent-rx"}`}
+                      data-lime-glow={agent.lime ? "" : undefined}
+                      style={{ "--agent-glow": `${agent.color}55`, animationDelay: `${delay}s` } as React.CSSProperties}
+                    >
+                      <Icon size={18} style={{ color: agent.color }} />
+                      {/* Status dot */}
+                      <span
+                        className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-[#0a0a0f]"
+                        style={{ backgroundColor: agent.color }}
+                      />
+                    </div>
+                    {/* Label + task */}
+                    <span className="text-[8px] font-bold text-black/60 dark:text-white/60 whitespace-nowrap mt-0.5">{agent.label} Agent</span>
+                    <span className="text-[7px] font-mono text-black/35 dark:text-white/30 whitespace-nowrap">{agent.task}</span>
+                  </m.div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Central Orchestrator */}
         <div className="relative z-10 flex flex-col items-center justify-center w-[88px] h-[88px] rounded-full bg-gradient-to-br from-[#7B2FFF] to-[#FF2D55] shadow-[0_0_50px_rgba(123,47,255,0.25)]">
           <Bot className="text-white w-9 h-9" />
           <span className="text-[7px] font-bold text-white/90 mt-1 uppercase tracking-[0.15em]">Orchestrator</span>
-          {/* Slow pulse */}
+          {/* Two-tone sonar */}
           <div className="absolute inset-[-4px] rounded-full border border-[#7B2FFF]/30 animate-[ping_3s_ease-in-out_infinite]" />
+          <div className="absolute inset-[-4px] rounded-full border border-[#FF2D55]/20 animate-[ping_3s_ease-in-out_infinite]" style={{ animationDelay: "1.5s" }} />
         </div>
-
-        {/* Orbiting sub-agents */}
-        {AGENTS.map((agent, index) => {
-          const angle = (index / AGENTS.length) * 2 * Math.PI + angleOffset
-          const x = radius * Math.cos(angle)
-          const y = radius * Math.sin(angle)
-          const Icon = agent.icon
-
-          return (
-            <div
-              key={index}
-              className="absolute flex flex-col items-center gap-0.5"
-              style={{ transform: `translate(${x}px, ${y}px)` }}
-            >
-              {/* Agent node */}
-              <div
-                className="relative flex items-center justify-center w-11 h-11 rounded-full border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/[0.04] backdrop-blur-sm shadow-sm dark:shadow-none"
-                style={{ boxShadow: `0 0 24px ${agent.color}15` }}
-              >
-                <Icon size={18} style={{ color: agent.color }} />
-                {/* Status dot */}
-                <span
-                  className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-[#0a0a0f]"
-                  style={{ backgroundColor: agent.color }}
-                />
-              </div>
-              {/* Label + task */}
-              <span className="text-[8px] font-bold text-black/60 dark:text-white/60 whitespace-nowrap mt-0.5">{agent.label} Agent</span>
-              <span className="text-[7px] font-mono text-black/30 dark:text-white/25 whitespace-nowrap">{agent.task}</span>
-            </div>
-          )
-        })}
       </div>
 
       {/* Status footer */}

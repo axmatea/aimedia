@@ -62,6 +62,8 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
   }, [])
 
   const appRef = useRef<SplineApp | null>(null)
+  const visibleRef = useRef(true)
+  const startLerpRef = useRef<(() => void) | null>(null)
   const headRef = useRef<{ rotation: { x: number; y: number; z: number } } | null>(null)
   const headBaseRotation = useRef({ x: 0, y: 0, z: 0 })
   const rafRef = useRef<number | null>(null)
@@ -103,6 +105,7 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
     if (isInteractive) {
       // Forward global mouse to canvas (activates built-in Spline events too)
       forwardMouse = (e: MouseEvent) => {
+        if (!visibleRef.current) return
         canvas?.dispatchEvent(new MouseEvent('mousemove', {
           bubbles: false, cancelable: true,
           clientX: e.clientX, clientY: e.clientY,
@@ -138,6 +141,9 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
           headRef.current.rotation.x = headBaseRotation.current.x + currentRef.current.y * MAX_X
         }
       }
+      startLerpRef.current = () => {
+        if (rafRef.current === null) rafRef.current = requestAnimationFrame(animate)
+      }
       rafRef.current = requestAnimationFrame(animate)
     }
 
@@ -146,7 +152,10 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
       if (forwardMouse) {
         window.removeEventListener('mousemove', forwardMouse)
       }
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+      }
     }
     splineApp._splineCleanup = cleanup
 
@@ -158,23 +167,32 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        const app = appRef.current
-        if (!app) return
-        // Stop / start the Spline render loop
-        if (entry.isIntersecting) {
-          app.play?.()
-        } else {
-          app.stop?.()
+    const setActive = (active: boolean) => {
+      visibleRef.current = active
+      const app = appRef.current
+      if (active) {
+        app?.play?.()
+        startLerpRef.current?.()
+      } else {
+        app?.stop?.()
+        if (rafRef.current !== null) {
+          cancelAnimationFrame(rafRef.current)
+          rafRef.current = null
         }
-      },
+      }
+    }
+    const obs = new IntersectionObserver(
+      ([entry]) => setActive(entry.isIntersecting),
       { threshold: 0.05 }
     )
     obs.observe(el)
+    // Pause everything when the tab is hidden (battery / thermal)
+    const onVis = () => setActive(!document.hidden)
+    document.addEventListener('visibilitychange', onVis)
     return () => {
       obs.disconnect()
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      document.removeEventListener('visibilitychange', onVis)
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
       if (appRef.current) {
         appRef.current._splineCleanup?.()
       }

@@ -176,7 +176,7 @@ export function N8nWorkflowBlock() {
           <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#FF2D55] inline-block" />{connections.length} Connections</span>
           <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#7B2FFF] inline-block" />Running 24/7</span>
         </div>
-        <span className="text-[9px] uppercase tracking-[0.2em] text-white/20">Powered by Claude API</span>
+        <span className="text-[9px] uppercase tracking-[0.2em] text-white/35">Works while you sleep</span>
       </div>
     </div>
   )

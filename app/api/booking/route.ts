@@ -39,11 +39,11 @@ async function addNotionLead(data: LeadPayload): Promise<string | null> {
   const token = process.env.NOTION_TOKEN
   if (!token) return null
 
+  // Keys must EXACTLY match the budget chip strings in app/page.tsx (BookingSection)
   const budgetMap: Record<string, string> = {
-    "$1k-3k/mo": "$1k-3k/mo",
-    "$3k-5k/mo": "$3k-5k/mo",
-    "$5k-10k/mo": "$5k-10k/mo",
-    "$10k+/mo": "$10k+/mo",
+    "$3–10k / mo": "$3–10k / mo",
+    "$10–20k / mo": "$10–20k / mo",
+    "$20k+ / mo": "$20k+ / mo",
   }
   const budgetOption = data.budget ? (budgetMap[data.budget] ?? null) : null
 

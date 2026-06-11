@@ -117,7 +117,10 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* ── GlowCard border effect (permanent, no JS injection needed) ── */
+/* ── GlowCard border effect (single source of truth; hover-capable devices only) ── */
+[data-glow] {
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
 [data-glow]::before,
 [data-glow]::after {
   pointer-events: none;
@@ -126,14 +129,15 @@
   inset: calc(var(--border-size) * -1);
   border: var(--border-size) solid transparent;
   border-radius: inherit;
-  background-attachment: fixed;
   background-size: calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)));
   background-repeat: no-repeat;
-  background-position: 50% 50%;
+  background-position: 0 0;
   mask: linear-gradient(white, white), linear-gradient(white, white);
   mask-clip: padding-box, border-box;
   mask-composite: exclude;
   -webkit-mask-composite: xor;
+  opacity: 0;
+  transition: opacity 0.25s ease;
 }
 [data-glow]::before {
   background-image: radial-gradient(
@@ -151,6 +155,22 @@
     hsl(0 100% 100% / var(--border-light-opacity, 0.5)),
     transparent 100%
   );
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-glow]:hover::before,
+  [data-glow]:hover::after {
+    opacity: 1;
+  }
+  [data-glow]:hover {
+    --bg-spot-opacity: 0.15;
+    background-image: var(--glow-spot);
+    box-shadow: 0 0 40px -12px hsl(var(--hue, 210) 100% 60% / 0.35), 0 1rem 2rem -1rem black;
+  }
+}
+[data-glow]:focus-visible {
+  outline: 2px solid var(--ai-hot);
+  outline-offset: 3px;
 }
 
 /* ── Brand tokens ── */
@@ -171,7 +191,46 @@
   to   { transform: translateX(-50%); }
 }
 .animate-marquee { animation: marquee 50s linear infinite; }
-.animate-marquee-slow { animation: marquee 80s linear infinite; }
+.animate-marquee-fast { animation: marquee 30s linear infinite; }
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+.marquee-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px #050507;
+}
+@media (hover: hover) {
+  .marquee-shell:hover .animate-marquee,
+  .marquee-shell:hover .animate-marquee-fast { animation-play-state: paused; }
+}
+
+/* ── Agent radial orchestrator (pure CSS choreography) ── */
+@keyframes orbit { to { transform: rotate(360deg); } }
+.orbit-rotor   { animation: orbit 90s linear infinite; }
+.orbit-counter { animation: orbit 90s linear infinite reverse; }
+@keyframes beam-travel {
+  from { stroke-dashoffset: 12; }
+  to   { stroke-dashoffset: -100; }
+}
+.agent-beam { animation: beam-travel 2.8s ease-in-out infinite; }
+@keyframes agent-rx {
+  0%, 62% { box-shadow: 0 0 0 0 transparent; }
+  80%     { box-shadow: 0 0 20px 2px var(--agent-glow, transparent); }
+  100%    { box-shadow: 0 0 0 0 transparent; }
+}
+.agent-rx { animation: agent-rx 2.8s ease-in-out infinite; }
+[data-paused] .orbit-rotor,
+[data-paused] .orbit-counter,
+[data-paused] .agent-beam,
+[data-paused] .agent-rx { animation-play-state: paused; }
+/* Lime agent needs darker accents on the light theme */
+html:not(.dark) [data-lime-stroke] { stroke: #4a7a00 !important; }
+html:not(.dark) .agent-rx[data-lime-glow] { --agent-glow: rgba(74, 122, 0, 0.35) !important; }
+
+/* ── Map → booking transition bridge ── */
+.ai-booking-bridge { background: linear-gradient(to bottom, transparent, #050507); }
+html:not(.dark) .ai-booking-bridge { background: linear-gradient(to bottom, #F5F4F0, #050507); }
 
 /* ── Glitch ── */
 @keyframes glitch {
