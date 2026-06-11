@@ -31,15 +31,14 @@ type SplineApp = Application & {
 const HEAD_NAMES = ['Head', 'head', 'Robot_Head', 'robot_head', 'HEAD', 'Helmet', 'helmet', 'Skull', 'skull']
 
 export function SplineScene({ scene, className, onLoad, mobileFallback }: SplineSceneProps) {
-  const [isMobile, setIsMobile] = useState(false)
+  // Poster shows instantly while the 3D scene boots, then the live scene takes over
+  const [sceneReady, setSceneReady] = useState(false)
   const interactiveRef = useRef(true)
   useEffect(() => {
-    const mobileQuery = window.matchMedia('(max-width: 768px)')
     const finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 
     const syncViewportState = () => {
-      setIsMobile(mobileQuery.matches)
       interactiveRef.current = finePointerQuery.matches && !reducedMotionQuery.matches
     }
 
@@ -51,7 +50,6 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
     }
 
     const cleanups = [
-      addChangeListener(mobileQuery, syncViewportState),
       addChangeListener(finePointerQuery, syncViewportState),
       addChangeListener(reducedMotionQuery, syncViewportState),
     ]
@@ -159,6 +157,7 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
     }
     splineApp._splineCleanup = cleanup
 
+    setSceneReady(true)
     onLoad?.(app)
   }, [onLoad])
 
@@ -199,25 +198,19 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
     }
   }, [])
 
-  // On mobile with a fallback image: skip the entire 3D scene → saves ~5s LCP
-  if (isMobile && mobileFallback) {
-    return (
-      <div className="w-full h-full flex items-center justify-center">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={mobileFallback} alt="" className={className} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
-      </div>
-    )
-  }
-
   return (
-    <div ref={containerRef} className="w-full h-full">
-      <Suspense
-        fallback={
-          <div className="w-full h-full flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-[#FF2D55]/30 border-t-[#FF2D55] rounded-full animate-spin" />
-          </div>
-        }
-      >
+    <div ref={containerRef} className="w-full h-full relative">
+      {/* Instant poster while the 3D runtime + scene load; live animated robot replaces it */}
+      {mobileFallback && !sceneReady && (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={mobileFallback}
+          alt=""
+          className={className}
+          style={{ objectFit: 'contain', width: '100%', height: '100%', position: 'absolute', inset: 0 }}
+        />
+      )}
+      <Suspense fallback={null}>
         <Spline scene={scene} className={className} onLoad={handleLoad} />
       </Suspense>
     </div>
