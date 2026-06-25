@@ -426,9 +426,9 @@ html:not(.dark) .ai-booking-bridge { background: linear-gradient(to bottom, #F5F
   }
 }
 
-/* ── Smooth scroll + snap ── */
+/* ── Smooth scroll (Lenis) ── */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: smooth;       /* fallback when Lenis is off (reduced-motion) */
   scroll-padding-top: 80px;
   height: 100%;
 }
@@ -439,19 +439,12 @@ html, body {
   overflow-x: clip;
 }
 
-/* Snap scrolling — GPU-accelerated, native FPS */
-.snap-y {
-  scroll-snap-type: y proximity;
-}
-.snap-start {
-  scroll-snap-align: start;
-  scroll-snap-stop: normal;
-}
-
-/* Disable snap on very short viewports (mobile landscape) */
-@media (max-height: 500px) {
-  .snap-y { scroll-snap-type: none; }
-}
+/* Lenis: when active it owns scrolling, so disable native smooth-scroll to
+   avoid the two fighting. */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
 
 /* ── Content visibility: skip rendering for off-screen sections ── */
 /* Browser skips paint/layout for sections until they scroll into view */
@@ -561,10 +554,6 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
 
 /* Mobile robot positioning */
 @media (max-width: 1023px) {
-  .snap-y {
-    scroll-snap-type: none;
-  }
-
   .hero-robot-shell {
     contain: paint;
     transform: translateZ(0) !important;

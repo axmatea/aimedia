@@ -12,7 +12,6 @@ export type CaseStudy = {
   accent: string
 }
 
-// Map a brand accent hex to the nearest GlowCard hue bucket
 const glowFor = (accent: string): "purple" | "red" | "green" | "blue" => {
   const a = accent.toUpperCase()
   if (a.includes("7B2FFF") || a.includes("A78BFA")) return "purple"
@@ -22,7 +21,7 @@ const glowFor = (accent: string): "purple" | "red" | "green" | "blue" => {
 }
 
 // Halal-safe qualitative outcomes by industry. No client names, no fabricated
-// hard metrics. Specific numbers stay behind `verified` (shared under NDA on the call).
+// hard metrics. Specifics stay behind `verified` (shared under NDA on the call).
 const QUALITATIVE: Record<string, string> = {
   "Content Agency": "Booked calls compound week over week. No new headcount.",
   SaaS: "A revenue pipeline that runs itself from day one.",
@@ -40,10 +39,10 @@ const VP = { once: true, margin: "0px 0px -80px 0px" } as const
 const EASE_SWIFT: [number, number, number, number] = [0.2, 0.8, 0.2, 1]
 
 /**
- * PROOF / OUTCOMES section. Renders the missing credibility beat.
- * Default is halal-safe: anonymized (industry + qualitative outcome, no client
- * names, no invented metrics). Flip `anonymized={false} verified` once the owner
- * confirms real case studies to show client names + animated metrics.
+ * PROOF / OUTCOMES — the missing credibility beat.
+ * Halal-safe by default (anonymized: industry + qualitative outcome, no client
+ * names, no invented metrics). Flip anonymized={false} verified once real cases
+ * are confirmed to show client names + animated numbers.
  */
 export function ProofSection({
   items,
@@ -87,9 +86,7 @@ export function ProofSection({
                   <div className="flex flex-col justify-between h-full gap-6">
                     <div className="flex items-center justify-between">
                       <span className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: c.accent }} />
-                      {sub && (
-                        <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40">{sub}</span>
-                      )}
+                      {sub && <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40">{sub}</span>}
                     </div>
                     <div>
                       <Disp className="text-white text-[clamp(1.6rem,3vw,2.4rem)] block mb-3 leading-[0.95]">{headline}</Disp>
@@ -108,9 +105,8 @@ export function ProofSection({
   )
 }
 
-// When verified real metrics are shown, animate the leading number in the result.
 function CountUpInline({ text }: { text: string }) {
-  const m2 = text.match(/^([^\d]*)([\d,]+(?:\.\d+)?[^\s]*)(\s.*)?$/)
+  const m2 = text.match(/^([^\d]*)([\d,]+(?:\.\d+)?[^\s]*)(\s[\s\S]*)?$/)
   if (!m2) return <>{text}</>
   return (
     <>

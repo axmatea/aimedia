@@ -10,6 +10,8 @@ import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import { CountUp } from "@/components/ui/count-up"
 import { ProofSection } from "@/components/ui/proof-section"
+import { ScrollSkew } from "@/components/ui/scroll-skew"
+import { lenisScrollTo } from "@/components/providers/SmoothScroll"
 // ── Below-fold heavy components: lazy loaded for faster LCP ──────────────────
 const N8nWorkflowBlock = dynamic(
   () => import("@/components/ui/n8n-workflow-block-shadcnui").then((mod) => mod.N8nWorkflowBlock),
@@ -149,7 +151,7 @@ const NAV_LINKS = [
 ]
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
-const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
+const scrollTo = (id: string) => lenisScrollTo(`#${id}`)
 
 const Disp = ({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) => (
   <span className={`font-display leading-none tracking-wide uppercase ${className}`} style={{ fontFamily: "var(--font-bebas)", ...style }}>
@@ -178,7 +180,7 @@ const HeroSection = memo(function HeroSection() {
   }, [])
 
   return (
-    <section className="hero-section min-h-[100svh] relative overflow-hidden flex flex-col justify-end pb-16 pt-32 px-6 md:px-10 snap-start">
+    <section className="hero-section min-h-[100svh] relative overflow-hidden flex flex-col justify-end pb-16 pt-32 px-6 md:px-10">
       <div className="hidden lg:block"><Spotlight size={500} /></div>
 
       {/* Backgrounds — reduced blur for GPU perf */}
@@ -211,11 +213,7 @@ const HeroSection = memo(function HeroSection() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C8FF60] opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C8FF60]" />
           </span>
-          <span className="ai-muted text-xs font-medium tracking-wider inline-flex items-center gap-2">
-            12 active projects
-            <span className="ax-slash ax-slash--pulse" aria-hidden />
-            2 slots remaining
-          </span>
+          <span className="ai-muted text-xs font-medium tracking-wider">12 active projects · 2 slots remaining</span>
         </m.div>
 
         <m.div initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}>
@@ -500,6 +498,7 @@ export default function Home() {
 
       {/* ── Pink marquee ─────────────────────────────────────────────────── */}
       <div className="marquee-shell marquee-mask py-5 border-y ai-border overflow-hidden bg-[#FF2D55]" aria-hidden>
+        <ScrollSkew className="will-change-transform">
         <div className="flex animate-marquee whitespace-nowrap">
           {[...TICKER, ...TICKER].map((item, i) => (
             <span key={i} className="text-white font-bold text-sm uppercase tracking-[0.2em] mx-6 flex items-center gap-6">
@@ -507,30 +506,21 @@ export default function Home() {
             </span>
           ))}
         </div>
+        </ScrollSkew>
       </div>
 
-      {/* 02 CREDIBILITY: the stack we build with, the channels we ship to */}
+      {/* 02 CREDIBILITY */}
       <div className="ai-page border-b ai-border py-12 px-6">
-        <div className="max-w-6xl mx-auto space-y-10">
-          <div className="flex flex-col items-center gap-4">
-            <span className="ax-slash ax-slash--rule ax-slash--pulse" aria-hidden />
-            <p className="text-center ai-muted text-xs uppercase tracking-[0.3em] font-bold">
-              The stack we build with, the channels we ship to
-            </p>
-          </div>
-          <div className="space-y-3">
-            <p className="ai-muted text-[10px] font-mono uppercase tracking-[0.3em] text-center md:text-left">Built with</p>
-            <LogoCloud logos={TRUSTED_LOGOS} />
-          </div>
-          <div className="space-y-3">
-            <p className="ai-muted text-[10px] font-mono uppercase tracking-[0.3em] text-center md:text-left">We ship to</p>
-            <LogoCloud logos={FEATURED_LOGOS} />
-          </div>
+        <div className="max-w-6xl mx-auto">
+          <p className="text-center ai-muted text-xs uppercase tracking-[0.3em] font-bold mb-10">
+            Trusted by fast-moving teams worldwide
+          </p>
+          <LogoCloud logos={[...TRUSTED_LOGOS, ...FEATURED_LOGOS]} />
         </div>
       </div>
 
       {/* 03 FOR WHO */}
-      <section id="built-for" className="ai-page py-20 px-6 border-b ai-border overflow-hidden snap-start" style={{ contain: "layout paint" }}>
+      <section id="built-for" className="ai-page py-20 px-6 border-b ai-border overflow-hidden" style={{ contain: "layout paint" }}>
         <div className="max-w-6xl mx-auto">
           <div className="flex items-end justify-between mb-12 gap-4 flex-wrap">
             <div>
@@ -563,7 +553,7 @@ export default function Home() {
       </section>
 
       {/* AI Team Never Sleeps */}
-      <section id="ai-team" className="ai-panel py-20 px-6 border-b ai-border relative overflow-hidden snap-start" style={{ contain: "layout paint" }}>
+      <section id="ai-team" className="ai-panel py-20 px-6 border-b ai-border relative overflow-hidden" style={{ contain: "layout paint" }}>
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div className="relative z-10">
             <Tag>The Intelligence</Tag>
@@ -593,7 +583,7 @@ export default function Home() {
       {/* 04 SOLUTION — Services */}
       <div id="services">
         {SERVICES.map((svc, i) => (
-          <section key={svc.id} className="py-24 px-6 border-b ai-border relative overflow-hidden snap-start" style={{ backgroundColor: svc.bg, contain: "layout paint" }}>
+          <section key={svc.id} className="py-24 px-6 border-b ai-border relative overflow-hidden" style={{ backgroundColor: svc.bg, contain: "layout paint" }}>
             <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center relative z-10">
               <div className={i % 2 === 1 ? "md:order-last" : ""}>
                 <div className="flex items-center gap-3 mb-6">
@@ -690,7 +680,7 @@ export default function Home() {
       <ProofSection items={CASE_STUDIES} />
 
       {/* 07 SCALE — World Map */}
-      <section className="ai-page py-20 px-6 overflow-hidden snap-start" style={{ contain: "layout paint" }}>
+      <section className="ai-page py-20 px-6 overflow-hidden" style={{ contain: "layout paint" }}>
         <div className="max-w-6xl mx-auto">
           <m.div {...fadeUp} className="text-center mb-10">
             <Tag>Global reach</Tag>

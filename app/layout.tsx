@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Space_Grotesk, Bebas_Neue } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { LazyMotion, domAnimation } from "motion/react";
+import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import "./globals.css";
 
 const bebas = Bebas_Neue({ weight: "400", variable: "--font-bebas", subsets: ["latin"], display: "swap", preload: true, adjustFontFallback: true });
@@ -106,6 +107,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="min-h-full flex flex-col bg-[#050507] text-white antialiased" style={{ fontFamily: "var(--font-space)" }}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <LazyMotion features={domAnimation}>
+            <SmoothScroll />
             {children}
           </LazyMotion>
         </ThemeProvider>
