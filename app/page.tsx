@@ -101,7 +101,7 @@ const SERVICES = [
   {
     id: "01", name: "GO-TO-MARKET\nENGINE", tag: "GROWTH",
     bg: "#0E0718", accent: "#7B2FFF", textDark: false,
-    tagline: "Find and convert your ideal customers — on autopilot.",
+    tagline: "Find and convert your ideal customers, on autopilot.",
     body: "AI maps ideal buyers, enriches CRM, and runs multi-channel outreach at scale. Zero spray-and-pray.",
     metrics: [{ label: "Leads generated / week", value: "2,400+" }, { label: "Pipeline conversion lift", value: "6.8×" }],
     tools: ["Ideal Buyer Lists", "Outreach on Autopilot", "Booked Meetings", "CRM Always Current"],
@@ -111,7 +111,7 @@ const SERVICES = [
     id: "02", name: "CONTENT\nSYSTEM", tag: "CONTENT",
     bg: "#0A0A0F", accent: "#A78BFA", textDark: false,
     tagline: "500+ content pieces a month. Zero manual work.",
-    body: "AI posts to Instagram, LinkedIn, X, TikTok — on-brand, at scale. Scripts, thumbnails, emails, generated automatically.",
+    body: "AI posts to Instagram, LinkedIn, X, TikTok. On-brand, at scale. Scripts, thumbnails, emails, generated automatically.",
     metrics: [{ label: "Content pieces / month", value: "500+" }, { label: "Time saved vs in-house", value: "80 hrs" }],
     tools: ["Content Engine", "Daily Posting", "Full Creative Dept", "Audience Growth"],
     steps: ["Defining brand voice & tone...","Creating multi-format content...","Scheduling to social channels...","Analyzing performance & iterating..."],
@@ -119,7 +119,7 @@ const SERVICES = [
   {
     id: "03", name: "AI OPS\nPIPELINE", tag: "AUTOMATION",
     bg: "#C8FF60", accent: "#050507", textDark: true,
-    tagline: "Your full sales & ops infrastructure — on autopilot.",
+    tagline: "Your full sales and ops infrastructure, on autopilot.",
     body: "Cold calling, CRM sync, community monitoring, reporting. Manual ops replaced with AI infrastructure, 24/7.",
     metrics: [{ label: "Automated actions / day", value: "1.2M+" }, { label: "Report delivery", value: "<30s" }],
     tools: ["Lead Pipeline", "Sales Funnel", "Full Sales Dept", "24/7 Follow-up"],
@@ -210,7 +210,11 @@ const HeroSection = memo(function HeroSection() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C8FF60] opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C8FF60]" />
           </span>
-          <span className="ai-muted text-xs font-medium tracking-wider">12 active projects — 2 slots remaining</span>
+          <span className="ai-muted text-xs font-medium tracking-wider inline-flex items-center gap-2">
+            12 active projects
+            <span className="ax-slash ax-slash--pulse" aria-hidden />
+            2 slots remaining
+          </span>
         </m.div>
 
         <m.div initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}>
@@ -247,7 +251,7 @@ const HeroSection = memo(function HeroSection() {
           className="mt-12 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 lg:max-w-[55%]"
         >
           <p className="ai-muted text-sm md:text-base max-w-sm leading-relaxed">
-            Systems for go-to-market, content, and ops — built for Web3 projects, founders, agencies, and ambitious brands.
+            Systems for go-to-market, content, and ops. Built for Web3 projects, founders, agencies, and ambitious brands.
           </p>
           <div className="flex gap-3 flex-shrink-0">
             <LiquidMetalButton label="Start a Project" onClick={() => scrollTo("booking")} />
@@ -324,7 +328,7 @@ const BookingSection = memo(function BookingSection() {
               BOOK YOUR<br /><span style={{ color: "#FF2D55" }}>30 MINUTES.</span>
             </Disp>
             <p className="text-white/65 text-sm md:text-lg mt-4 max-w-lg mx-auto leading-relaxed">
-              We audit your stack and show you exactly which AI systems will move the needle — no fluff, just outcomes.
+              We audit your stack and show you exactly which AI systems will move the needle. No fluff, just outcomes.
             </p>
             <p className="text-white/25 text-xs md:text-sm mt-2 italic tracking-wide">The fabric of digital reality.</p>
           </div>
@@ -504,12 +508,15 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 02 CREDIBILITY — Unified carousel */}
+      {/* 02 CREDIBILITY: Unified carousel */}
       <div className="ai-page border-b ai-border py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          <p className="text-center ai-muted text-xs uppercase tracking-[0.3em] font-bold mb-10">
-            Trusted by fast-moving teams worldwide
-          </p>
+          <div className="flex flex-col items-center gap-4 mb-10">
+            <span className="ax-slash ax-slash--rule ax-slash--pulse" aria-hidden />
+            <p className="text-center ai-muted text-xs uppercase tracking-[0.3em] font-bold">
+              Trusted by fast-moving teams worldwide
+            </p>
+          </div>
           <LogoCloud logos={[...TRUSTED_LOGOS, ...FEATURED_LOGOS]} />
         </div>
       </div>
@@ -525,7 +532,7 @@ export default function Home() {
               </Disp>
             </div>
             <p className="ai-muted text-sm max-w-xs leading-relaxed">
-              From early-stage founders to Web3 protocols — we build AI systems that scale with your ambitions.
+              From early-stage founders to Web3 protocols, we build AI systems that scale with your ambitions.
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-4 md:gap-6">
@@ -558,7 +565,7 @@ export default function Home() {
               </Disp>
             </m.div>
             <p className="ai-muted text-sm leading-relaxed mt-6 mb-8 max-w-sm">
-              Autonomous agents that run lead gen, create content, and monitor data — 24/7, without errors or delays.
+              Autonomous agents that run lead gen, create content, and monitor data. 24/7, without errors or delays.
             </p>
             <div className="flex flex-col gap-3">
               {["Deploys in 7 days", "You own the code", "Production-grade infra", "No vendor lock-in"].map((f) => (
@@ -619,7 +626,7 @@ export default function Home() {
                   <div>
                     <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-2">AI UGC Creators</p>
                     <p className="text-white/70 font-bold text-sm mb-1">Your AI content team</p>
-                    <p className="text-white/35 text-xs leading-relaxed">AI-generated personas that post, engage, and grow your audience — automatically, 24/7.</p>
+                    <p className="text-white/35 text-xs leading-relaxed">AI-generated personas that post, engage, and grow your audience automatically, 24/7.</p>
                   </div>
                   <AIUGCCreators />
                   <div className="space-y-2 pt-2">
@@ -682,7 +689,7 @@ export default function Home() {
               CLIENTS ACROSS<br /><span style={{ color: "#FF2D55" }}>18+ COUNTRIES.</span>
             </Disp>
             <p className="ai-muted text-sm mt-4 max-w-md mx-auto">
-              From New York to Dubai, London to Tokyo — our AI systems run 24/7 across every timezone.
+              From New York to Dubai, London to Tokyo. Our AI systems run 24/7 across every timezone.
             </p>
           </m.div>
           <WorldMap dots={MAP_DOTS} lineColor="#FF2D55" showLabels />

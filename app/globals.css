@@ -173,16 +173,106 @@
   outline-offset: 3px;
 }
 
-/* ── Brand tokens ── */
+/* ── AX Media Design System — canonical tokens ──────────────────────────────
+   Source of truth: /Users/axmatea/Downloads/AX Media Design System
+   Encoded namespace: AXMediaDesignSystem_04b5d9 (_ds_manifest.json)
+   The --ax-* tokens below mirror the DS exactly. The legacy --ai-* tokens
+   alias to them for backward compatibility with existing components and
+   utility classes (ai-page, ai-text, ai-muted, etc).
+   Edits to this section must stay in sync with the DS manifest.
+*/
 :root {
-  --ai-bg:      #050507;
-  --ai-surface: #0C0C0F;
-  --ai-hot:     #FF2D55;
-  --ai-lime:    #C8FF60;
-  --ai-purple:  #7B2FFF;
-  --ai-stroke:  rgba(255,255,255,0.07);
+  /* Surfaces */
+  --ax-bg:         #050507;
+  --ax-surface:    #0C0C0F;
+  --ax-surface-2:  #14141A;
+  --ax-panel:      #0A0A0F;
+  --ax-paper:      #F5F4F0;
+  --ax-paper-2:    #ECEAE5;
+
+  /* Accents */
+  --ax-hot:        #FF2D55;
+  --ax-hot-press:  #FF1745;
+  --ax-hot-soft:   rgba(255,45,85,0.15);
+  --ax-lime:       #C8FF60;
+  --ax-purple:     #7B2FFF;
+  --ax-aqua:       #0ACDCD;
+  --ax-orange:     #FF8C42;
+  --ax-blue:       #2D8CFF;
+
+  /* Strokes and ink */
+  --ax-stroke:     rgba(255,255,255,0.07);
+  --ax-stroke-2:   rgba(255,255,255,0.18);
+  --ax-ink:        #050507;
+  --ax-muted:      rgba(255,255,255,0.45);
+
+  /* Motion: easings and durations match DS spec exactly */
+  --ax-ease-swift:  cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ax-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ax-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ax-dur-fast:    0.2s;
+  --ax-dur-base:    0.3s;
+  --ax-dur-slow:    0.6s;
+  --ax-dur-reveal:  0.9s;
+
+  /* Radii — pill is the brand default for actions */
+  --ax-radius-sm:   12px;
+  --ax-radius-md:   16px;
+  --ax-radius-lg:   24px;
+  --ax-radius-xl:   32px;
+  --ax-radius-pill: 9999px;
+
+  /* Signature graphic device */
+  --slash-angle:    -24deg;
+  --slash-color:    #FF2D55;
+
+  /* Legacy aliases — keep wiring stable for existing markup */
+  --ai-bg:      var(--ax-bg);
+  --ai-surface: var(--ax-surface);
+  --ai-hot:     var(--ax-hot);
+  --ai-lime:    var(--ax-lime);
+  --ai-purple:  var(--ax-purple);
+  --ai-stroke:  var(--ax-stroke);
   --font-display: var(--font-bebas);
   --font-body:    var(--font-space);
+}
+
+/* ── AX Slash motif — the wordmark's red diagonal, extracted as a system device ──
+   Per DS: use .ax-slash inline next to typography, .ax-slash--rule as a
+   section divider, .ax-slash--pulse to add the brand heartbeat.
+*/
+.ax-slash {
+  display: inline-block;
+  width: 22px;
+  height: 2px;
+  background: var(--slash-color);
+  transform: rotate(var(--slash-angle));
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.ax-slash--rule {
+  width: 44px;
+  height: 3px;
+  border-radius: 2px;
+}
+.ax-slash--pulse {
+  animation: ax-slash-breathe 3.6s ease-in-out infinite;
+  transform-origin: center;
+  will-change: opacity, transform;
+}
+@keyframes ax-slash-breathe {
+  0%, 100% { opacity: 0.65; transform: rotate(var(--slash-angle)) scaleX(0.92); }
+  50%      { opacity: 1;    transform: rotate(var(--slash-angle)) scaleX(1.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ax-slash--pulse { animation: none; opacity: 1; transform: rotate(var(--slash-angle)); }
+}
+
+/* Inline eyebrow row: slash + eyebrow text, centered or left-aligned */
+.ax-eyebrow-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
 }
 
 /* ── Marquee ── */

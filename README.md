@@ -1,5 +1,7 @@
 # AI Media Project
 
+Parent MOC: [[MOC — Projects]]
+
 Active AI Media web project.
 
 ## Run
