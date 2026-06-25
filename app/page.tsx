@@ -9,6 +9,7 @@ import ThemeToggle from "@/components/ui/toggle-theme"
 import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import { CountUp } from "@/components/ui/count-up"
+import { ProofSection } from "@/components/ui/proof-section"
 // ── Below-fold heavy components: lazy loaded for faster LCP ──────────────────
 const N8nWorkflowBlock = dynamic(
   () => import("@/components/ui/n8n-workflow-block-shadcnui").then((mod) => mod.N8nWorkflowBlock),
@@ -508,16 +509,23 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 02 CREDIBILITY: Unified carousel */}
+      {/* 02 CREDIBILITY: the stack we build with, the channels we ship to */}
       <div className="ai-page border-b ai-border py-12 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col items-center gap-4 mb-10">
+        <div className="max-w-6xl mx-auto space-y-10">
+          <div className="flex flex-col items-center gap-4">
             <span className="ax-slash ax-slash--rule ax-slash--pulse" aria-hidden />
             <p className="text-center ai-muted text-xs uppercase tracking-[0.3em] font-bold">
-              Trusted by fast-moving teams worldwide
+              The stack we build with, the channels we ship to
             </p>
           </div>
-          <LogoCloud logos={[...TRUSTED_LOGOS, ...FEATURED_LOGOS]} />
+          <div className="space-y-3">
+            <p className="ai-muted text-[10px] font-mono uppercase tracking-[0.3em] text-center md:text-left">Built with</p>
+            <LogoCloud logos={TRUSTED_LOGOS} />
+          </div>
+          <div className="space-y-3">
+            <p className="ai-muted text-[10px] font-mono uppercase tracking-[0.3em] text-center md:text-left">We ship to</p>
+            <LogoCloud logos={FEATURED_LOGOS} />
+          </div>
         </div>
       </div>
 
@@ -678,7 +686,8 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Process section removed per user request */}
+      {/* 06 PROOF — Outcomes we engineer (anonymized until real case studies confirmed) */}
+      <ProofSection items={CASE_STUDIES} />
 
       {/* 07 SCALE — World Map */}
       <section className="ai-page py-20 px-6 overflow-hidden snap-start" style={{ contain: "layout paint" }}>
@@ -691,6 +700,11 @@ export default function Home() {
             <p className="ai-muted text-sm mt-4 max-w-md mx-auto">
               From New York to Dubai, London to Tokyo. Our AI systems run 24/7 across every timezone.
             </p>
+            <div className="flex flex-wrap justify-center gap-2.5 mt-6">
+              {["24/7 across every timezone", "Reports in under 30 seconds", "Systems you fully own"].map((chip) => (
+                <span key={chip} className="ai-card text-[11px] font-medium px-3.5 py-1.5 rounded-full border ai-border">{chip}</span>
+              ))}
+            </div>
           </m.div>
           <WorldMap dots={MAP_DOTS} lineColor="#FF2D55" showLabels />
         </div>
