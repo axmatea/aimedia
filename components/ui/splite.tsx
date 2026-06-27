@@ -33,8 +33,17 @@ const HEAD_NAMES = ['Head', 'head', 'Robot_Head', 'robot_head', 'HEAD', 'Helmet'
 export function SplineScene({ scene, className, onLoad, mobileFallback }: SplineSceneProps) {
   // Poster shows instantly while the 3D scene boots, then the live scene takes over
   const [sceneReady, setSceneReady] = useState(false)
+  // Desktop gate: below 1024px we never mount the 3D runtime, the static poster
+  // is the whole hero. Saves the full Spline JS + WASM + GPU cost on phones (LCP win).
+  // null until measured on the client so we do not flash-mount the scene.
+  const [isDesktop, setIsDesktop] = useState<boolean | null>(null)
   const interactiveRef = useRef(true)
   useEffect(() => {
+    const desktopQuery = window.matchMedia('(min-width: 1024px)')
+    const syncDesktop = () => setIsDesktop(desktopQuery.matches)
+    syncDesktop()
+    desktopQuery.addEventListener?.('change', syncDesktop)
+
     const finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 
@@ -55,6 +64,7 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
     ]
 
     return () => {
+      desktopQuery.removeEventListener?.('change', syncDesktop)
       cleanups.forEach((cleanup) => cleanup())
     }
   }, [])
@@ -198,10 +208,16 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
     }
   }, [])
 
+  // Mount the live scene only on desktop, and only once the viewport is measured.
+  const showScene = isDesktop === true
+  // Poster covers mobile entirely, plus the brief pre-measure window and the
+  // desktop boot period before the 3D scene is ready.
+  const showPoster = Boolean(mobileFallback) && (!showScene || !sceneReady)
+
   return (
     <div ref={containerRef} className="w-full h-full relative">
-      {/* Instant poster while the 3D runtime + scene load; live animated robot replaces it */}
-      {mobileFallback && !sceneReady && (
+      {/* Instant poster while the 3D runtime + scene load; live animated robot replaces it on desktop */}
+      {showPoster && (
         /* eslint-disable-next-line @next/next/no-img-element */
         <img
           src={mobileFallback}
@@ -210,9 +226,11 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
           style={{ objectFit: 'contain', width: '100%', height: '100%', position: 'absolute', inset: 0 }}
         />
       )}
-      <Suspense fallback={null}>
-        <Spline scene={scene} className={className} onLoad={handleLoad} />
-      </Suspense>
+      {showScene && (
+        <Suspense fallback={null}>
+          <Spline scene={scene} className={className} onLoad={handleLoad} />
+        </Suspense>
+      )}
     </div>
   )
 }
