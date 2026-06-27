@@ -5,6 +5,7 @@ import { m, AnimatePresence, useReducedMotion } from "motion/react"
 import dynamic from "next/dynamic"
 import { Spotlight } from "@/components/ui/spotlight"
 import { LiquidMetalButton } from "@/components/ui/liquid-metal-button"
+import { Magnetic } from "@/components/ui/magnetic"
 import ThemeToggle from "@/components/ui/toggle-theme"
 import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
@@ -404,7 +405,7 @@ const BookingSection = memo(function BookingSection() {
                   </div>
                 </div>
 
-                <LiquidMetalButton label="Continue →" onClick={() => { if (quiz.projectType && quiz.goal && quiz.budget) setStep(1) }} className="w-full justify-center" />
+                <Magnetic className="w-full"><LiquidMetalButton label="Continue →" onClick={() => { if (quiz.projectType && quiz.goal && quiz.budget) setStep(1) }} className="w-full justify-center" /></Magnetic>
                 {!(quiz.projectType && quiz.goal && quiz.budget) && <p className="text-white/40 text-xs text-center">Select all options to continue</p>}
               </m.div>
             )}
@@ -420,13 +421,13 @@ const BookingSection = memo(function BookingSection() {
                     <label className="text-white/65 text-xs uppercase tracking-widest block mb-2 font-bold">{label}</label>
                     <input type={type} placeholder={ph} value={contact[field]}
                       onChange={e => { setContact(c => ({ ...c, [field]: e.target.value })); if (field === "email") setEmailError("") }}
-                      className="w-full bg-white/5 border border-white/25 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#FF2D55]/60 transition-colors" />
+                      className="w-full bg-white/5 border border-white/25 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#FF2D55]/70 focus:bg-white/[0.07] focus:shadow-[0_0_0_3px_rgba(255,45,85,0.12)] transition-[border-color,box-shadow,background-color] duration-200" />
                     {field === "email" && emailError && <p className="text-[#FF2D55] text-xs mt-1">{emailError}</p>}
                   </div>
                 ))}
                 <div className="flex gap-3 pt-2">
                   <button onClick={() => setStep(0)} className="px-5 py-3 rounded-xl border border-white/30 text-white/75 text-sm hover:border-white/50 hover:text-white transition-colors">← Back</button>
-                  <LiquidMetalButton label={submitting ? "Sending..." : "Continue to Schedule →"} onClick={handleContactContinue} className="flex-1 justify-center" />
+                  <Magnetic className="flex-1"><LiquidMetalButton label={submitting ? "Sending..." : "Continue to Schedule →"} onClick={handleContactContinue} className="w-full justify-center" /></Magnetic>
                 </div>
                 {!(contact.name && contact.email && contact.phone) && <p className="text-white/35 text-xs text-center">All fields required</p>}
               </m.div>
