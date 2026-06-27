@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: "%s | AI Media",
   },
   description:
-    "AI growth agency for Web3, Founders & Brands. We build lead gen systems, content automation & AI ops pipelines. Results: $180K ARR · 2,400+ leads/wk · CAC −67%.",
+    "AI growth agency for Web3, Founders & Brands. We build lead gen systems, content automation & AI ops pipelines that compound: leads on autopilot, a content engine that runs while you sleep, and sales ops that never stop.",
   metadataBase: new URL("https://aimedia.global"),
   alternates: { canonical: "https://aimedia.global" },
   keywords: [
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "AI Media · AI Growth Agency | Web3, Founders & Brands",
     description:
-      "AI growth agency for Web3, Founders & Brands. Lead gen systems, content automation, AI ops pipelines. Real results: $180K ARR · 2,400+ leads/wk.",
+      "AI growth agency for Web3, Founders & Brands. Lead gen systems, content automation, AI ops pipelines that compound: leads on autopilot and a content engine that runs while you sleep.",
     url: "https://aimedia.global",
     siteName: "AI Media",
     type: "website",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "AI Media — AI Growth Agency for Web3, Founders & Brands",
+        alt: "AI Media · AI Growth Agency for Web3, Founders & Brands",
       },
     ],
   },
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     creator: "@ai.mediaco",
     title: "AI Media · AI Growth Agency",
     description:
-      "We build AI systems: lead gen · content · ops automation. $180K ARR · 2,400+ leads/wk. For Web3, Founders & Brands.",
+      "We build AI systems: lead gen · content · ops automation that compound. Leads on autopilot, content that runs while you sleep. For Web3, Founders & Brands.",
     images: ["/og-image.jpg"],
   },
   robots: {
@@ -83,9 +83,9 @@ const jsonLd = {
     "@type": "OfferCatalog",
     name: "AI Growth Systems",
     itemListElement: [
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Go-to-Market Engine", description: "AI-powered lead generation delivering 2,400+ verified leads per week." } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Content System", description: "500+ content pieces per month, auto-published across all channels." } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI Ops Pipeline", description: "1.2M+ automated actions per day — sales and ops on autopilot." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Go-to-Market Engine", description: "AI-powered lead generation that fills your pipeline on autopilot with qualified buyers." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Content System", description: "A content engine that runs while you sleep, auto-published across all channels." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI Ops Pipeline", description: "Sales and ops on autopilot, with automated follow-up that never stops." } },
     ],
   },
 };
