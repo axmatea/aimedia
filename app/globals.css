@@ -276,7 +276,7 @@
   --content-wide: 1360px;                        /* hero + world map */
   --stack:       clamp(16px, 2vw, 28px);
 
-  /* 3. Color system — monochrome ink ramp (oklch, dark-first) */
+  /* 3. Color system: monochrome ink ramp (oklch, dark-first) */
   --ink-950: oklch(0.16 0.006 275);   /* ~#050507 canvas */
   --ink-900: oklch(0.19 0.006 275);   /* raised surface  */
   --ink-850: oklch(0.22 0.006 275);   /* card            */
@@ -296,7 +296,7 @@
   --red-line:   color-mix(in oklch, var(--red) 40%, transparent);
   --red-glow:   color-mix(in oklch, var(--red) 35%, transparent);
 
-  /* 4. Motion vocabulary — spec names alias the DS --ax-* tokens (single source) */
+  /* 4. Motion vocabulary: spec names alias the DS --ax-* tokens (single source) */
   --ease-swift:  var(--ax-ease-swift);   /* default: reveals, hovers */
   --ease-out:    var(--ax-ease-out);     /* long, decelerating draws */
   --ease-spring: var(--ax-ease-spring);  /* headline rise only */
@@ -306,7 +306,7 @@
   --dur-reveal:  var(--ax-dur-reveal);
 }
 
-/* Demoted data colors — allowed ONLY inside data-viz widgets, never structural */
+/* Demoted data colors: allowed ONLY inside data-viz widgets, never structural */
 .ax-dataviz {
   --dv-purple: #7B2FFF;  --dv-lime: #C8FF60;  --dv-aqua: #0ACDCD;
   --dv-orange: #FF8C42;  --dv-blue: #2D8CFF;

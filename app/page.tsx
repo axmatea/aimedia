@@ -162,9 +162,13 @@ const Disp = ({ children, className = "", style }: { children: React.ReactNode; 
   </span>
 )
 
+// Eyebrow pill with the signature slash as a recurring section through-line
 const Tag = ({ children }: { children: React.ReactNode }) => (
-  <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full ai-tag">
-    {children}
+  <span className="ax-eyebrow-row">
+    <span className="ax-slash" aria-hidden />
+    <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full ai-tag">
+      {children}
+    </span>
   </span>
 )
 
@@ -186,16 +190,35 @@ const HeroSection = memo(function HeroSection() {
     <section className="hero-section min-h-[100svh] relative overflow-hidden flex flex-col justify-end pb-16 pt-32 px-6 md:px-10">
       <div className="hidden lg:block"><Spotlight size={500} /></div>
 
-      {/* Backgrounds — one tight red-tinted bloom, monochrome grid (v2: purple bloom retired) */}
+      {/* Backgrounds: one tight red-tinted bloom, monochrome grid (v2: purple bloom retired) */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
         <div className="absolute top-0 right-0 w-[620px] h-[560px] bg-[#FF2D55]/6 rounded-full blur-[90px]" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:80px_80px]" />
       </div>
 
-      {/* Lightning behind robot — subtle ambient in the brand-red family, hidden in light mode */}
+      {/* Lightning behind robot: subtle ambient in the brand-red family, hidden in light mode */}
       <div className="absolute right-0 top-0 w-[75%] h-full pointer-events-none hidden dark:lg:block z-[1] opacity-30 mix-blend-screen">
         <Lightning hue={350} xOffset={0.3} speed={1.0} intensity={0.35} size={2.2} />
       </div>
+
+      {/* Signature red slash: draws once on mount, timed to land as the headline settles.
+          Reduced motion: renders static at full length. Compositor-only (scaleX). */}
+      <m.div
+        aria-hidden
+        className="absolute z-[3] pointer-events-none"
+        style={{
+          left: "-3%", top: "48%",
+          width: "clamp(220px, 42vw, 560px)", height: "2px",
+          background: "var(--red)",
+          boxShadow: "0 0 24px var(--red-glow)",
+          transformOrigin: "left center",
+          rotate: -24,
+          opacity: 0.5,
+        }}
+        initial={{ scaleX: reduceMotion ? 1 : 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: reduceMotion ? 0 : 0.5 }}
+      />
 
       {/* Robot */}
       <div
@@ -246,10 +269,15 @@ const HeroSection = memo(function HeroSection() {
           </div>
         </m.div>
 
+        {/* Accent underline: static slash rule ties the headline to the wordmark motif */}
+        <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.9 }} className="mt-6">
+          <span className="ax-slash ax-slash--rule" aria-hidden style={{ width: "84px", height: "3px" }} />
+        </m.div>
+
         <m.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.25 }}
-          className="mt-12 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 lg:max-w-[55%]"
+          className="mt-8 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 lg:max-w-[55%]"
         >
           <p className="ai-muted text-sm md:text-base max-w-sm leading-relaxed">
             Systems for go-to-market, content, and ops. Built for Web3 projects, founders, agencies, and ambitious brands.
@@ -319,7 +347,10 @@ function BookingFlow() {
   return (
     <div className="relative z-10 max-w-2xl md:max-w-6xl mx-auto">
           <div className="text-center mb-8 md:mb-14">
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/60">Free strategy call</span>
+            <span className="ax-eyebrow-row">
+              <span className="ax-slash" aria-hidden />
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/60">Free strategy call</span>
+            </span>
             <Disp className="text-white block mt-4" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
               BOOK YOUR<br /><span style={{ color: "var(--red)" }}>30 MINUTES.</span>
             </Disp>
@@ -645,6 +676,7 @@ export default function Home() {
             <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center relative z-10">
               <div className={i % 2 === 1 ? "md:order-last" : ""}>
                 <div className="flex items-center gap-3 mb-6">
+                  <span className="ax-slash" aria-hidden />
                   <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 rounded-full border"
                     style={{ borderColor: "rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.5)" }}>
                     {svc.tag}
@@ -672,7 +704,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Service-specific data-viz panel — multi-color lives only inside .ax-dataviz */}
+              {/* Service-specific data-viz panel: multi-color lives only inside .ax-dataviz */}
               <div className="ax-dataviz">
                 {svc.id === "01" ? (
                   <LeadFunnel />
@@ -748,6 +780,10 @@ export default function Home() {
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
       <footer className="ai-page py-10 px-6 border-t ai-border">
+        {/* Slash divider: closes the page with the motif the hero opened with */}
+        <div className="max-w-6xl mx-auto mb-8 flex justify-center">
+          <span className="ax-slash ax-slash--rule" aria-hidden style={{ width: "64px", height: "3px" }} />
+        </div>
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             {/* Theme-aware wordmark: light variant on light theme, dark variant on dark theme */}
