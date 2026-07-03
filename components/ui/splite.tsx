@@ -9,7 +9,7 @@ interface SplineSceneProps {
   scene: string
   className?: string
   onLoad?: (app: Application) => void
-  /** Optional static fallback image for mobile (saves ~5s LCP on phones) */
+  /** Static poster shown as the loading placeholder until the live scene is interactive */
   mobileFallback?: string
 }
 
@@ -27,45 +27,83 @@ type SplineApp = Application & {
   _splineCleanup?: () => void
 }
 
+// Cap the canvas backing store on phones so retina (dpr 2-3) does not melt the GPU.
+// Only CSS-transparent backing resolution changes here, layout is untouched.
+const MOBILE_DPR_CAP = 1.5
+
 // Possible head object names across common Spline robot scenes
 const HEAD_NAMES = ['Head', 'head', 'Robot_Head', 'robot_head', 'HEAD', 'Helmet', 'helmet', 'Skull', 'skull']
 
 export function SplineScene({ scene, className, onLoad, mobileFallback }: SplineSceneProps) {
   // Poster shows instantly while the 3D scene boots, then the live scene takes over
   const [sceneReady, setSceneReady] = useState(false)
-  // Desktop gate: below 1024px we never mount the 3D runtime, the static poster
-  // is the whole hero. Saves the full Spline JS + WASM + GPU cost on phones (LCP win).
-  // null until measured on the client so we do not flash-mount the scene.
-  const [isDesktop, setIsDesktop] = useState<boolean | null>(null)
+  // Motion gate: null until measured on the client. false only when the OS asks for
+  // reduced motion, in which case the static poster stays as the whole hero (a11y).
+  // The scene now renders on every viewport size, phones included.
+  const [motionOk, setMotionOk] = useState<boolean | null>(null)
+  // Lazy init: only mount the Spline runtime once the hero is near the viewport.
+  const [inView, setInView] = useState(false)
+  // Head mouse-follow lerp only runs on fine-pointer (cursor) devices. On touch the
+  // scene still plays its own idle animation, we just skip the wasted pointer work.
   const interactiveRef = useRef(true)
-  useEffect(() => {
-    const desktopQuery = window.matchMedia('(min-width: 1024px)')
-    const syncDesktop = () => setIsDesktop(desktopQuery.matches)
-    syncDesktop()
-    desktopQuery.addEventListener?.('change', syncDesktop)
 
+  useEffect(() => {
     const finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 
-    const syncViewportState = () => {
+    const syncMotion = () => setMotionOk(!reducedMotionQuery.matches)
+    const syncInteractive = () => {
       interactiveRef.current = finePointerQuery.matches && !reducedMotionQuery.matches
     }
 
-    syncViewportState()
+    syncMotion()
+    syncInteractive()
 
-    const addChangeListener = (query: MediaQueryList, handler: () => void) => {
-      query.addEventListener?.('change', handler)
-      return () => query.removeEventListener?.('change', handler)
+    const onReduced = () => {
+      syncMotion()
+      syncInteractive()
     }
+    const onPointer = () => syncInteractive()
 
-    const cleanups = [
-      addChangeListener(finePointerQuery, syncViewportState),
-      addChangeListener(reducedMotionQuery, syncViewportState),
-    ]
+    reducedMotionQuery.addEventListener?.('change', onReduced)
+    finePointerQuery.addEventListener?.('change', onPointer)
 
     return () => {
-      desktopQuery.removeEventListener?.('change', syncDesktop)
-      cleanups.forEach((cleanup) => cleanup())
+      reducedMotionQuery.removeEventListener?.('change', onReduced)
+      finePointerQuery.removeEventListener?.('change', onPointer)
+    }
+  }, [])
+
+  // Cap devicePixelRatio on coarse-pointer (touch) devices. Desktop keeps full
+  // crispness. The runtime reads window.devicePixelRatio live (init + per frame),
+  // so we shadow the getter for the lifetime of the mounted hero and restore on unmount.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const coarse =
+      window.matchMedia('(pointer: coarse)').matches ||
+      !window.matchMedia('(pointer: fine)').matches
+    if (!coarse || window.devicePixelRatio <= MOBILE_DPR_CAP) return
+
+    const proto = Object.getPrototypeOf(window)
+    const realGet = Object.getOwnPropertyDescriptor(proto, 'devicePixelRatio')?.get
+    try {
+      Object.defineProperty(window, 'devicePixelRatio', {
+        configurable: true,
+        get() {
+          const real = realGet ? Number(realGet.call(window)) : MOBILE_DPR_CAP
+          return Math.min(real, MOBILE_DPR_CAP)
+        },
+      })
+    } catch {
+      return
+    }
+
+    return () => {
+      try {
+        delete (window as unknown as { devicePixelRatio?: number }).devicePixelRatio
+      } catch {
+        // leave the cap in place if the environment blocks deletion
+      }
     }
   }, [])
 
@@ -171,7 +209,7 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
     onLoad?.(app)
   }, [onLoad])
 
-  // Pause Spline animation loop when off-screen to save GPU
+  // Lazy-init when near the viewport, then pause the render loop when off-screen.
   const containerRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const el = containerRef.current
@@ -191,8 +229,14 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
       }
     }
     const obs = new IntersectionObserver(
-      ([entry]) => setActive(entry.isIntersecting),
-      { threshold: 0.05 }
+      ([entry]) => {
+        // Mount the runtime once when it first approaches view, keep it mounted
+        // afterwards so scrolling does not trigger an expensive reload.
+        if (entry.isIntersecting) setInView(true)
+        setActive(entry.isIntersecting)
+      },
+      // rootMargin preloads slightly before the hero scrolls in
+      { threshold: 0.05, rootMargin: '200px' }
     )
     obs.observe(el)
     // Pause everything when the tab is hidden (battery / thermal)
@@ -208,15 +252,16 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
     }
   }, [])
 
-  // Mount the live scene only on desktop, and only once the viewport is measured.
-  const showScene = isDesktop === true
-  // Poster covers mobile entirely, plus the brief pre-measure window and the
-  // desktop boot period before the 3D scene is ready.
+  // Render the live scene on every viewport once motion is allowed and the hero is
+  // near view. Reduced-motion keeps the poster only.
+  const showScene = motionOk === true && inView
+  // Poster covers the brief pre-measure window, the boot period before the scene is
+  // ready, and stays permanently when reduced motion is requested.
   const showPoster = Boolean(mobileFallback) && (!showScene || !sceneReady)
 
   return (
     <div ref={containerRef} className="w-full h-full relative">
-      {/* Instant poster while the 3D runtime + scene load; live animated robot replaces it on desktop */}
+      {/* Instant poster placeholder while the 3D runtime + scene load; live animated robot replaces it */}
       {showPoster && (
         /* eslint-disable-next-line @next/next/no-img-element */
         <img
