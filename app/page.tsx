@@ -339,7 +339,7 @@ function BookingFlow() {
           budget: quiz.budget,
         }),
       })
-    } catch (_) { /* silent — fallback link on step 2 always works */ }
+    } catch { /* silent: fallback link on step 2 always works */ }
     setSubmitting(false)
     setStep(2)
   }

@@ -58,7 +58,6 @@ export function WorldMap({
   return (
     <div className="w-full aspect-[2/1] rounded-2xl relative overflow-hidden">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
         className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] pointer-events-none select-none object-cover opacity-80"
