@@ -63,13 +63,14 @@ const HERO_AUDIENCES = ["WEB3.", "FOUNDERS.", "AGENCIES.", "BRANDS.", "BUILDERS.
 
 const TICKER = ["GO-TO-MARKET","LEAD GENERATION","CONTENT AT SCALE","AI AUTOMATION","COMMUNITY GROWTH","SOCIAL MEDIA","BUSINESS DEVELOPMENT","NFT LAUNCHES","DAO TOOLING","WEB3 NATIVE"]
 
+// Monochrome glyphs, single red hover glow. Distinction is shape + label, not hue.
 const WHO_WE_SERVE = [
-  { label: "Web3 Projects", sub: "DAOs, NFT Studios, DeFi Protocols", color: "#7B2FFF", glowColor: "purple" as const, icon: "⬡" },
-  { label: "Founders", sub: "Pre-seed to Series B", color: "#FF2D55", glowColor: "red" as const, icon: "◈" },
-  { label: "Agencies", sub: "Marketing & Creative Studios", color: "#C8FF60", glowColor: "green" as const, icon: "◉" },
-  { label: "DTC Brands", sub: "Fashion, Wellness, Premium", color: "#0ACDCD", glowColor: "blue" as const, icon: "◈" },
-  { label: "Enterprise", sub: "Sales & Ops Automation at Scale", color: "#FF8C42", glowColor: "orange" as const, icon: "◎" },
-  { label: "SaaS & Products", sub: "B2B Tools, Platforms & Apps", color: "#2D8CFF", glowColor: "blue" as const, icon: "◇" },
+  { label: "Web3 Projects", sub: "DAOs, NFT Studios, DeFi Protocols", color: "#F5F4F0", glowColor: "red" as const, icon: "⬡" },
+  { label: "Founders", sub: "Pre-seed to Series B", color: "#F5F4F0", glowColor: "red" as const, icon: "◈" },
+  { label: "Agencies", sub: "Marketing & Creative Studios", color: "#F5F4F0", glowColor: "red" as const, icon: "◉" },
+  { label: "DTC Brands", sub: "Fashion, Wellness, Premium", color: "#F5F4F0", glowColor: "red" as const, icon: "◈" },
+  { label: "Enterprise", sub: "Sales & Ops Automation at Scale", color: "#F5F4F0", glowColor: "red" as const, icon: "◎" },
+  { label: "SaaS & Products", sub: "B2B Tools, Platforms & Apps", color: "#F5F4F0", glowColor: "red" as const, icon: "◇" },
 ]
 
 // Tools we actually use and integrate with
@@ -101,41 +102,40 @@ const MAP_DOTS = [
   { start: { lat: 55.7558, lng: 37.6176, label: "Moscow" }, end: { lat: 25.2048, lng: 55.2708, label: "Dubai" } },
 ]
 
+// Monochrome + red: all three services live on the dark canvas, differentiated
+// by the red index slash and the ghost number, not by background color.
 const SERVICES = [
   {
     id: "01", name: "GO-TO-MARKET\nENGINE", tag: "GROWTH",
-    bg: "#0E0718", accent: "#7B2FFF", textDark: false,
+    bg: "#050507",
     tagline: "Find and convert your ideal customers, on autopilot.",
     body: "AI maps ideal buyers, enriches CRM, and runs multi-channel outreach at scale. Zero spray-and-pray.",
     metrics: [{ label: "Leads generated / week", value: "2,400+" }, { label: "Pipeline conversion lift", value: "6.8×" }],
     tools: ["Ideal Buyer Lists", "Outreach on Autopilot", "Booked Meetings", "CRM Always Current"],
-    steps: ["Mapping ideal customer profile...","Enriching and scoring leads...","Launching outreach sequences...","Monitoring conversion metrics..."],
   },
   {
     id: "02", name: "CONTENT\nSYSTEM", tag: "CONTENT",
-    bg: "#0A0A0F", accent: "#A78BFA", textDark: false,
+    bg: "#0A0A0F",
     tagline: "500+ content pieces a month. Zero manual work.",
     body: "AI posts to Instagram, LinkedIn, X, TikTok. On-brand, at scale. Scripts, thumbnails, emails, generated automatically.",
     metrics: [{ label: "Content pieces / month", value: "500+" }, { label: "Time saved vs in-house", value: "80 hrs" }],
     tools: ["Content Engine", "Daily Posting", "Full Creative Dept", "Audience Growth"],
-    steps: ["Defining brand voice & tone...","Creating multi-format content...","Scheduling to social channels...","Analyzing performance & iterating..."],
   },
   {
     id: "03", name: "AI OPS\nPIPELINE", tag: "AUTOMATION",
-    bg: "#C8FF60", accent: "#050507", textDark: true,
+    bg: "#050507",
     tagline: "Your full sales and ops infrastructure, on autopilot.",
     body: "Cold calling, CRM sync, community monitoring, reporting. Manual ops replaced with AI infrastructure, 24/7.",
     metrics: [{ label: "Automated actions / day", value: "1.2M+" }, { label: "Report delivery", value: "<30s" }],
     tools: ["Lead Pipeline", "Sales Funnel", "Full Sales Dept", "24/7 Follow-up"],
-    steps: ["Auditing existing workflows...","Building AI cold-call sequences...","Connecting CRM & data sources...","Deploying to production..."],
   },
 ]
 
 const CASE_STUDIES = [
-  { project: "1SecondCopy", tag: "Content Agency", result: "3× more booked calls per week without adding headcount.", color: "#1A0A2E", accent: "#7B2FFF" },
-  { project: "AfterCall", tag: "SaaS", result: "$180k ARR in the first 90 days from automated pipeline.", color: "#1A0005", accent: "#FF2D55" },
-  { project: "Dad's Printing", tag: "Local Business", result: "CAC dropped 67%. AI handles the full pipeline.", color: "#050507", accent: "#C8FF60" },
-  { project: "XWECAN", tag: "Web3", result: "2,200 qualified leads contacted before launch day.", color: "#030B03", accent: "#C8FF60" },
+  { project: "1SecondCopy", tag: "Content Agency", result: "3× more booked calls per week without adding headcount.", color: "#0A0A0F", accent: "#FF2D55" },
+  { project: "AfterCall", tag: "SaaS", result: "$180k ARR in the first 90 days from automated pipeline.", color: "#0A0A0F", accent: "#FF2D55" },
+  { project: "Dad's Printing", tag: "Local Business", result: "CAC dropped 67%. AI handles the full pipeline.", color: "#050507", accent: "#FF2D55" },
+  { project: "XWECAN", tag: "Web3", result: "2,200 qualified leads contacted before launch day.", color: "#050507", accent: "#FF2D55" },
 ]
 
 const PROCESS = [
@@ -186,16 +186,15 @@ const HeroSection = memo(function HeroSection() {
     <section className="hero-section min-h-[100svh] relative overflow-hidden flex flex-col justify-end pb-16 pt-32 px-6 md:px-10">
       <div className="hidden lg:block"><Spotlight size={500} /></div>
 
-      {/* Backgrounds — reduced blur for GPU perf */}
+      {/* Backgrounds — one tight red-tinted bloom, monochrome grid (v2: purple bloom retired) */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#7B2FFF]/10 rounded-full blur-[80px]" />
-        <div className="absolute bottom-0 left-1/3 w-[400px] h-[350px] bg-[#FF2D55]/7 rounded-full blur-[60px]" />
+        <div className="absolute top-0 right-0 w-[620px] h-[560px] bg-[#FF2D55]/6 rounded-full blur-[90px]" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:80px_80px]" />
       </div>
 
-      {/* Lightning behind robot — subtle ambient, hidden in light mode (black canvas) */}
+      {/* Lightning behind robot — subtle ambient in the brand-red family, hidden in light mode */}
       <div className="absolute right-0 top-0 w-[75%] h-full pointer-events-none hidden dark:lg:block z-[1] opacity-30 mix-blend-screen">
-        <Lightning hue={260} xOffset={0.3} speed={1.0} intensity={0.35} size={2.2} />
+        <Lightning hue={350} xOffset={0.3} speed={1.0} intensity={0.35} size={2.2} />
       </div>
 
       {/* Robot */}
@@ -213,8 +212,8 @@ const HeroSection = memo(function HeroSection() {
       <div className="relative z-10 max-w-[1440px] mx-auto w-full">
         <m.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex items-center gap-2 mb-10">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C8FF60] opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C8FF60]" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF2D55] opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF2D55]" />
           </span>
           <span className="ai-muted text-xs font-medium tracking-wider">12 active projects · 2 slots remaining</span>
         </m.div>
@@ -627,7 +626,7 @@ export default function Home() {
             <div className="flex flex-col gap-3">
               {["Deploys in 7 days", "You own the code", "Production-grade infra", "No vendor lock-in"].map((f) => (
                 <div key={f} className="flex items-center gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a] dark:bg-[#C8FF60] flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF2D55] flex-shrink-0" />
                   <span className="ai-muted text-sm">{f}</span>
                 </div>
               ))}
@@ -647,87 +646,66 @@ export default function Home() {
               <div className={i % 2 === 1 ? "md:order-last" : ""}>
                 <div className="flex items-center gap-3 mb-6">
                   <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 rounded-full border"
-                    style={{ borderColor: svc.textDark ? "rgba(0,0,0,0.2)" : "rgba(255,255,255,0.2)", color: svc.textDark ? "rgba(0,0,0,0.5)" : "rgba(255,255,255,0.5)" }}>
+                    style={{ borderColor: "rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.5)" }}>
                     {svc.tag}
                   </span>
-                  <span className="text-xs font-bold" style={{ color: svc.textDark ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.2)" }}>{svc.id}</span>
+                  <span className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.2)" }}>{svc.id}</span>
                 </div>
-                <Disp className="whitespace-pre-line block mb-4" style={{ color: svc.textDark ? "#050507" : "#fff", fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>{svc.name}</Disp>
-                <p className="text-base md:text-lg leading-snug mb-3 font-semibold" style={{ color: svc.accent }}>{svc.tagline}</p>
-                <p className="text-sm md:text-base leading-relaxed mb-8" style={{ color: svc.textDark ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.7)" }}>{svc.body}</p>
+                <Disp className="whitespace-pre-line block mb-4" style={{ color: "#fff", fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>{svc.name}</Disp>
+                <p className="text-base md:text-lg leading-snug mb-3 font-semibold" style={{ color: "var(--red)" }}>{svc.tagline}</p>
+                <p className="text-sm md:text-base leading-relaxed mb-8" style={{ color: "rgba(255,255,255,0.7)" }}>{svc.body}</p>
                 <div className="flex gap-8 mb-6">
                   {svc.metrics.map((met) => (
                     <div key={met.label}>
-                      <Disp className="text-2xl" style={{ color: svc.textDark ? "#050507" : "#fff" }}><CountUp value={met.value} /></Disp>
-                      <p className="text-[10px] font-medium mt-0.5" style={{ color: svc.textDark ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.55)" }}>{met.label}</p>
+                      <Disp className="text-2xl" style={{ color: "#fff" }}><CountUp value={met.value} /></Disp>
+                      <p className="text-[10px] font-medium mt-0.5" style={{ color: "rgba(255,255,255,0.55)" }}>{met.label}</p>
                     </div>
                   ))}
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   {svc.tools.map((tool) => (
                     <span key={tool} className="px-3 py-1 text-xs font-medium rounded-full border"
-                      style={{ borderColor: svc.textDark ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.18)", color: svc.textDark ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.65)" }}>
+                      style={{ borderColor: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.65)" }}>
                       {tool}
                     </span>
                   ))}
                 </div>
               </div>
 
-              {/* Service-specific right panel */}
-              {svc.id === "01" ? (
-                <LeadFunnel />
-              ) : svc.id === "03" ? (
-                <N8nWorkflowBlock />
-              ) : svc.id === "02" ? (
-                <div className="rounded-3xl overflow-hidden border border-white/8 bg-[#0C0C0F] p-8 space-y-6">
-                  <div>
-                    <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-2">AI UGC Creators</p>
-                    <p className="text-white/70 font-bold text-sm mb-1">Your AI content team</p>
-                    <p className="text-white/35 text-xs leading-relaxed">AI-generated personas that post, engage, and grow your audience automatically, 24/7.</p>
-                  </div>
-                  <AIUGCCreators />
-                  <div className="space-y-2 pt-2">
-                    {[
-                      { platform: "Instagram", posts: "3 posts/day", color: "#E1306C" },
-                      { platform: "LinkedIn", posts: "2 posts/day", color: "#0A66C2" },
-                      { platform: "TikTok", posts: "5 videos/week", color: "#fff" },
-                      { platform: "X / Twitter", posts: "8 tweets/day", color: "#fff" },
-                    ].map((p) => (
-                      <div key={p.platform} className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.03] border border-white/5">
-                        <span className="text-xs font-bold" style={{ color: p.color }}>{p.platform}</span>
-                        <span className="text-[10px] font-mono text-[#C8FF60]">{p.posts} ✓</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="rounded-3xl overflow-hidden border" style={{ borderColor: svc.textDark ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.07)" }}>
-                  <div className="flex items-center gap-2 px-5 py-4 border-b"
-                    style={{ backgroundColor: svc.textDark ? "rgba(0,0,0,0.05)" : "rgba(255,255,255,0.04)", borderColor: svc.textDark ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.06)" }}>
-                    {[0, 1, 2].map((j) => <div key={j} className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: svc.textDark ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.1)" }} />)}
-                    <span className="ml-2 text-xs font-mono" style={{ color: svc.textDark ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.2)" }}>pipeline.{svc.id}.py</span>
-                  </div>
-                  <div className="p-6 space-y-3" style={{ backgroundColor: svc.textDark ? "rgba(0,0,0,0.05)" : "rgba(0,0,0,0.2)" }}>
-                    {svc.steps.map((step, j) => (
-                      <div key={j} className="flex items-center justify-between py-2 border-b last:border-0"
-                        style={{ borderColor: svc.textDark ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.05)" }}>
-                        <div className="flex items-center gap-3">
-                          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: svc.textDark ? "rgba(0,0,0,0.2)" : "rgba(255,255,255,0.15)" }} />
-                          <span className="text-xs font-mono" style={{ color: svc.textDark ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.4)" }}>{step}</span>
+              {/* Service-specific data-viz panel — multi-color lives only inside .ax-dataviz */}
+              <div className="ax-dataviz">
+                {svc.id === "01" ? (
+                  <LeadFunnel />
+                ) : svc.id === "03" ? (
+                  <N8nWorkflowBlock />
+                ) : (
+                  <div className="rounded-3xl overflow-hidden border border-white/8 bg-[#0C0C0F] p-8 space-y-6">
+                    <div>
+                      <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-2">AI UGC Creators</p>
+                      <p className="text-white/70 font-bold text-sm mb-1">Your AI content team</p>
+                      <p className="text-white/35 text-xs leading-relaxed">AI-generated personas that post, engage, and grow your audience automatically, 24/7.</p>
+                    </div>
+                    <AIUGCCreators />
+                    <div className="space-y-2 pt-2">
+                      {[
+                        { platform: "Instagram", posts: "3 posts/day", color: "#E1306C" },
+                        { platform: "LinkedIn", posts: "2 posts/day", color: "#0A66C2" },
+                        { platform: "TikTok", posts: "5 videos/week", color: "#fff" },
+                        { platform: "X / Twitter", posts: "8 tweets/day", color: "#fff" },
+                      ].map((p) => (
+                        <div key={p.platform} className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.03] border border-white/5">
+                          <span className="text-xs font-bold" style={{ color: p.color }}>{p.platform}</span>
+                          <span className="text-[10px] font-mono text-white/45">{p.posts} ✓</span>
                         </div>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{
-                          backgroundColor: j < 2 ? (svc.textDark ? "rgba(0,180,0,0.12)" : "rgba(200,255,96,0.15)") : j === 2 ? "rgba(123,47,255,0.2)" : (svc.textDark ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.06)"),
-                          color: j < 2 ? (svc.textDark ? "rgb(0,140,0)" : "#C8FF60") : j === 2 ? "#a78bfa" : (svc.textDark ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.25)"),
-                        }}>{j < 2 ? "Done" : j === 2 ? "Running" : "Queued"}</span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
 
               {svc.id !== "01" && (
                 <div className="absolute right-0 bottom-0 pointer-events-none select-none overflow-hidden" aria-hidden>
-                  <Disp className="text-[300px] leading-none" style={{ color: svc.textDark ? "rgba(0,0,0,0.04)" : "rgba(255,255,255,0.03)" }}>{svc.id}</Disp>
+                  <Disp className="text-[300px] leading-none" style={{ color: "rgba(255,255,255,0.03)" }}>{svc.id}</Disp>
                 </div>
               )}
             </div>
