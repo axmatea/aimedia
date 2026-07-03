@@ -467,8 +467,11 @@ export default function Home() {
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <nav className="ai-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-4 md:py-5 backdrop-blur-md border-b ai-border">
         <a href="#" className="flex items-center flex-shrink-0">
+          {/* Theme-aware wordmark: light variant on light theme, dark variant on dark theme */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-gen/v2-01-clean.png" alt="AX Media" className="h-8 md:h-11 w-auto invert dark:invert-0" />
+          <img src="/ax-logo-light.svg" alt="AX Media Company" decoding="async" fetchPriority="high" className="h-8 md:h-11 w-auto block dark:hidden" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/ax-logo-dark.svg" alt="AX Media Company" decoding="async" fetchPriority="high" className="h-8 md:h-11 w-auto hidden dark:block" />
         </a>
         <div className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((item) => (
@@ -711,8 +714,11 @@ export default function Home() {
       <footer className="ai-page py-10 px-6 border-t ai-border">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
+            {/* Theme-aware wordmark: light variant on light theme, dark variant on dark theme */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-gen/v2-01-clean.png" alt="AI Media" className="h-8 w-auto invert dark:invert-0" loading="lazy" />
+            <img src="/ax-logo-light.svg" alt="AX Media Company" className="h-8 w-auto block dark:hidden" loading="lazy" decoding="async" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/ax-logo-dark.svg" alt="AX Media Company" className="h-8 w-auto hidden dark:block" loading="lazy" decoding="async" />
             <span className="ai-muted text-xs">© 2026 AI Media · aimedia.global</span>
           </div>
           <div className="flex gap-6 flex-wrap justify-center">

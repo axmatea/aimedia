@@ -43,10 +43,10 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-ax-media.png",
         width: 1200,
         height: 630,
-        alt: "AI Media · AI Growth Agency for Web3, Founders & Brands",
+        alt: "AX Media Company · AI Growth Agency for Web3, Founders & Brands",
       },
     ],
   },
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     title: "AI Media · AI Growth Agency",
     description:
       "We build AI systems: lead gen · content · ops automation that compound. Leads on autopilot, content that runs while you sleep. For Web3, Founders & Brands.",
-    images: ["/og-image.jpg"],
+    images: ["/og-ax-media.png"],
   },
   robots: {
     index: true,
@@ -71,7 +71,7 @@ const jsonLd = {
   "@type": "Organization",
   name: "AI Media",
   url: "https://aimedia.global",
-  logo: "https://aimedia.global/og-image.jpg",
+  logo: "https://aimedia.global/og-ax-media.png",
   description:
     "AI growth agency building lead gen systems, content automation, and AI ops pipelines for Web3 projects, founders, and brands.",
   foundingDate: "2024",
