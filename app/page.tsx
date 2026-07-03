@@ -222,15 +222,15 @@ const HeroSection = memo(function HeroSection() {
         <m.div initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}>
           <div className="overflow-hidden py-[0.04em] -my-[0.04em]">
             <m.div variants={riseLine}>
-              <Disp className="block ai-text text-[clamp(2.8rem,12vw,180px)] leading-[0.85]">WE BUILD</Disp>
+              <Disp className="block ai-text" style={{ fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>WE BUILD</Disp>
             </m.div>
           </div>
           <div className="overflow-hidden py-[0.04em] -my-[0.04em]">
             <m.div variants={riseLine}>
-              <Disp className="block text-[#FF2D55] text-[clamp(2.8rem,12vw,180px)] leading-[0.85]">AI SYSTEMS</Disp>
+              <Disp className="block" style={{ color: "var(--red)", fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>AI SYSTEMS</Disp>
             </m.div>
           </div>
-          <div className="overflow-hidden" style={{ height: "clamp(2.8rem,12vw,180px)" }}>
+          <div className="overflow-hidden" style={{ height: "var(--fs-mega)" }}>
             <AnimatePresence mode="wait">
               <m.div
                 key={audienceIdx}
@@ -239,7 +239,7 @@ const HeroSection = memo(function HeroSection() {
                 exit={{ y: "-100%", opacity: 0 }}
                 transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
               >
-                <Disp className="block ai-muted text-[clamp(2.8rem,12vw,180px)] leading-[0.85]">
+                <Disp className="block ai-muted" style={{ fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>
                   FOR {HERO_AUDIENCES[audienceIdx]}
                 </Disp>
               </m.div>
@@ -321,8 +321,8 @@ function BookingFlow() {
     <div className="relative z-10 max-w-2xl md:max-w-6xl mx-auto">
           <div className="text-center mb-8 md:mb-14">
             <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/60">Free strategy call</span>
-            <Disp className="text-white text-[clamp(2.5rem,8vw,88px)] block mt-4 leading-[0.88]">
-              BOOK YOUR<br /><span style={{ color: "#FF2D55" }}>30 MINUTES.</span>
+            <Disp className="text-white block mt-4" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
+              BOOK YOUR<br /><span style={{ color: "var(--red)" }}>30 MINUTES.</span>
             </Disp>
             <p className="text-white/65 text-sm md:text-lg mt-4 max-w-lg mx-auto leading-relaxed">
               We audit your stack and show you exactly which AI systems will move the needle. No fluff, just outcomes.
@@ -584,8 +584,8 @@ export default function Home() {
           <div className="flex items-end justify-between mb-12 gap-4 flex-wrap">
             <div>
               <Tag>Who we build for</Tag>
-              <Disp className="ai-text text-[clamp(2rem,5vw,64px)] mt-4 block leading-[0.9]">
-                BUILT FOR<br />EVERY AMBITIOUS<br /><span style={{ color: "#FF2D55" }}>PROJECT.</span>
+              <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
+                BUILT FOR<br />EVERY AMBITIOUS<br /><span style={{ color: "var(--red)" }}>PROJECT.</span>
               </Disp>
             </div>
             <p className="ai-muted text-sm max-w-xs leading-relaxed">
@@ -617,8 +617,8 @@ export default function Home() {
           <div className="relative z-10">
             <Tag>The Intelligence</Tag>
             <m.div {...fadeUp} transition={{ duration: 0.6 }} className="mt-6">
-              <Disp className="ai-text text-[clamp(2.5rem,6vw,72px)] block leading-[0.9]">
-                YOUR AI TEAM<br />NEVER<br /><span style={{ color: "#FF2D55" }}>SLEEPS.</span>
+              <Disp className="ai-text block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
+                YOUR AI TEAM<br />NEVER<br /><span style={{ color: "var(--red)" }}>SLEEPS.</span>
               </Disp>
             </m.div>
             <p className="ai-muted text-sm leading-relaxed mt-6 mb-8 max-w-sm">
@@ -652,7 +652,7 @@ export default function Home() {
                   </span>
                   <span className="text-xs font-bold" style={{ color: svc.textDark ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.2)" }}>{svc.id}</span>
                 </div>
-                <Disp className="text-[clamp(2.5rem,6vw,72px)] leading-[0.88] whitespace-pre-line block mb-4" style={{ color: svc.textDark ? "#050507" : "#fff" }}>{svc.name}</Disp>
+                <Disp className="whitespace-pre-line block mb-4" style={{ color: svc.textDark ? "#050507" : "#fff", fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>{svc.name}</Disp>
                 <p className="text-base md:text-lg leading-snug mb-3 font-semibold" style={{ color: svc.accent }}>{svc.tagline}</p>
                 <p className="text-sm md:text-base leading-relaxed mb-8" style={{ color: svc.textDark ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.7)" }}>{svc.body}</p>
                 <div className="flex gap-8 mb-6">
@@ -743,8 +743,8 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <m.div {...fadeUp} className="text-center mb-10">
             <Tag>Global reach</Tag>
-            <Disp className="ai-text text-[clamp(2rem,5vw,56px)] mt-4 block leading-[0.9]">
-              CLIENTS ACROSS<br /><span style={{ color: "#FF2D55" }}>18+ COUNTRIES.</span>
+            <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
+              CLIENTS ACROSS<br /><span style={{ color: "var(--red)" }}>18+ COUNTRIES.</span>
             </Disp>
             <p className="ai-muted text-sm mt-4 max-w-md mx-auto">
               From New York to Dubai, London to Tokyo. Our AI systems run 24/7 across every timezone.

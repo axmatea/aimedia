@@ -240,6 +240,84 @@
   --font-body:    var(--font-space);
 }
 
+/* ── Design Direction v2 tokens ──────────────────────────────────────────────
+   Source of truth: 01_PROJECTS/aimedia/design-system/DESIGN_DIRECTION_V2.md
+   Four token blocks: typography scale, spacing rhythm, color system
+   (monochrome ink ramp + single signature red), motion vocabulary.
+   These are the ONLY type/space/color/motion language for the page.
+*/
+:root {
+  /* 1. Typography scale (fluid, Bebas display + Space Grotesk body) */
+  --fs-mega:     clamp(2.6rem, 10.5vw, 168px);  /* hero only, one per page */
+  --fs-display:  clamp(2.25rem, 5.2vw, 68px);   /* section headline */
+  --fs-title:    clamp(1.9rem, 4vw, 52px);      /* sub-section / large card */
+  --fs-headline: clamp(1.5rem, 2.6vw, 34px);    /* card title, proof headline */
+  --fs-lead:  clamp(1.05rem, 1.4vw, 1.25rem);   /* lead paragraph under a headline */
+  --fs-body:  1rem;
+  --fs-sm:    0.875rem;
+  --fs-xs:    0.75rem;
+  --fs-2xs:   0.6875rem;                          /* eyebrow */
+  --lh-mega:    0.86;
+  --lh-display: 0.9;
+  --lh-snug:    1.15;
+  --lh-body:    1.6;
+  --tr-display: 0.01em;
+  --tr-eyebrow: 0.24em;
+  --tr-body:    0;
+
+  /* 2. Spacing rhythm */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
+  --space-9: 96px; --space-10: 128px;
+  --section-y:       clamp(88px, 9vw, 148px);   /* one vertical rhythm everywhere */
+  --section-y-tight: clamp(56px, 6vw, 96px);    /* credibility strip, footer */
+  --gutter:      clamp(20px, 5vw, 40px);         /* page horizontal padding */
+  --content-max: 1200px;                         /* editorial measure */
+  --content-wide: 1360px;                        /* hero + world map */
+  --stack:       clamp(16px, 2vw, 28px);
+
+  /* 3. Color system — monochrome ink ramp (oklch, dark-first) */
+  --ink-950: oklch(0.16 0.006 275);   /* ~#050507 canvas */
+  --ink-900: oklch(0.19 0.006 275);   /* raised surface  */
+  --ink-850: oklch(0.22 0.006 275);   /* card            */
+  --ink-800: oklch(0.27 0.006 275);
+  --ink-500: oklch(0.55 0.004 275);   /* muted text */
+  --ink-300: oklch(0.72 0.003 275);   /* secondary text */
+  --ink-100: oklch(0.93 0.002 275);   /* body text */
+  --ink-050: oklch(0.98 0 0);         /* near-white headline */
+  --line-1: color-mix(in oklch, var(--ink-050) 8%, transparent);   /* hairline */
+  --line-2: color-mix(in oklch, var(--ink-050) 16%, transparent);  /* tag border */
+
+  /* Signature red ramp, derived from one token (#FF2D55, oklch(0.64 0.23 16)) */
+  --red:        var(--ax-hot);
+  --red-press:  color-mix(in oklch, var(--red) 88%, black);
+  --red-hover:  color-mix(in oklch, var(--red) 92%, white);
+  --red-soft:   color-mix(in oklch, var(--red) 15%, transparent);
+  --red-line:   color-mix(in oklch, var(--red) 40%, transparent);
+  --red-glow:   color-mix(in oklch, var(--red) 35%, transparent);
+
+  /* 4. Motion vocabulary — spec names alias the DS --ax-* tokens (single source) */
+  --ease-swift:  var(--ax-ease-swift);   /* default: reveals, hovers */
+  --ease-out:    var(--ax-ease-out);     /* long, decelerating draws */
+  --ease-spring: var(--ax-ease-spring);  /* headline rise only */
+  --dur-fast:    var(--ax-dur-fast);
+  --dur-base:    var(--ax-dur-base);
+  --dur-slow:    var(--ax-dur-slow);
+  --dur-reveal:  var(--ax-dur-reveal);
+}
+
+/* Demoted data colors — allowed ONLY inside data-viz widgets, never structural */
+.ax-dataviz {
+  --dv-purple: #7B2FFF;  --dv-lime: #C8FF60;  --dv-aqua: #0ACDCD;
+  --dv-orange: #FF8C42;  --dv-blue: #2D8CFF;
+}
+
+/* Light theme drives the same hairline tokens from ink, not hardcoded rgba */
+html:not(.dark) {
+  --line-1: color-mix(in oklch, black 7%, transparent);
+  --line-2: color-mix(in oklch, black 14%, transparent);
+}
+
 /* ── AX Slash motif — the wordmark's red diagonal, extracted as a system device ──
    Per DS: use .ax-slash inline next to typography, .ax-slash--rule as a
    section divider, .ax-slash--pulse to add the brand heartbeat.

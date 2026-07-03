@@ -59,8 +59,8 @@ export function ProofSection({
         <div className="flex items-end justify-between mb-12 gap-6 flex-wrap">
           <m.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={VP} transition={{ duration: 0.9, ease: EASE_SWIFT }}>
             <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full ai-tag">Outcomes</span>
-            <Disp className="ai-text text-[clamp(2rem,5.5vw,68px)] mt-4 block leading-[0.9]">
-              OUTCOMES WE<br /><span style={{ color: "#FF2D55" }}>ENGINEER.</span>
+            <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
+              OUTCOMES WE<br /><span style={{ color: "var(--red)" }}>ENGINEER.</span>
             </Disp>
           </m.div>
           <m.p
