@@ -182,6 +182,9 @@
    Edits to this section must stay in sync with the DS manifest.
 */
 :root {
+  /* Brand-tinted native form controls (checkboxes, radios, range, progress) */
+  accent-color: var(--ax-hot, #FF2D55);
+
   /* Surfaces */
   --ax-bg:         #050507;
   --ax-surface:    #0C0C0F;
@@ -424,6 +427,41 @@ html:not(.dark) .ai-booking-bridge { background: linear-gradient(to bottom, #F5F
     @apply bg-[#050507] text-white;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
+
+  /* Modern text flow: even headline line lengths, no orphan last words in copy.
+     balance is widely supported, pretty is newer and degrades gracefully. */
+  :is(h1, h2, h3), .font-display {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Replaced media never overflows its box and keeps intrinsic ratio when only
+     one dimension is set. Robot poster uses inline width/height which wins here. */
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ── Booking modal: native <dialog> (showModal gives focus trap + inerting) ── */
+.booking-dialog {
+  margin: auto;
+  width: min(94vw, 680px);
+  max-height: min(90vh, 900px);
+  padding: 0;
+  border: 1px solid var(--ax-stroke-2);
+  border-radius: var(--ax-radius-lg);
+  background: #050507;
+  color: #fff;
+  overflow: auto;
+  box-shadow: 0 40px 120px -20px rgba(0, 0, 0, 0.8);
+}
+.booking-dialog::backdrop {
+  background: rgba(5, 5, 7, 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
 }
 
 /* ── Smooth scroll (Lenis) ── */

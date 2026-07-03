@@ -267,6 +267,8 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
         <img
           src={mobileFallback}
           alt=""
+          decoding="async"
+          fetchPriority="high"
           className={className}
           style={{ objectFit: 'contain', width: '100%', height: '100%', position: 'absolute', inset: 0 }}
         />

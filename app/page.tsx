@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, memo } from "react"
+import { useState, useEffect, useRef, memo } from "react"
 import { m, AnimatePresence, useReducedMotion } from "motion/react"
 import dynamic from "next/dynamic"
 import { Spotlight } from "@/components/ui/spotlight"
@@ -153,6 +153,8 @@ const NAV_LINKS = [
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 const scrollTo = (id: string) => lenisScrollTo(`#${id}`)
+// Opens the native <dialog> booking modal from anywhere (decoupled from memo trees)
+const openBooking = () => window.dispatchEvent(new Event("open-booking"))
 
 const Disp = ({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) => (
   <span className={`font-display leading-none tracking-wide uppercase ${className}`} style={{ fontFamily: "var(--font-bebas)", ...style }}>
@@ -266,8 +268,8 @@ const HeroSection = memo(function HeroSection() {
   )
 })
 
-// ── BookingSection ───────────────────────────────────────────────────────────
-const BookingSection = memo(function BookingSection() {
+// ── BookingFlow: 3-step quiz + contact + schedule, reused inline and in the modal ──
+function BookingFlow() {
   const [step, setStep] = useState<0 | 1 | 2>(0)
   const [quiz, setQuiz] = useState({ projectType: "", goal: "", budget: "" })
   const [contact, setContact] = useState({ name: "", email: "", phone: "" })
@@ -316,12 +318,7 @@ const BookingSection = memo(function BookingSection() {
   }
 
   return (
-    <div id="booking">
-      <div className="relative py-16 md:py-24 px-4 md:px-6 overflow-hidden bg-[#050507]">
-        <ShaderAnimation className="absolute inset-0 w-full h-full opacity-80 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050507] via-[#050507]/10 to-[#050507]/50 pointer-events-none" />
-
-        <div className="relative z-10 max-w-2xl md:max-w-6xl mx-auto">
+    <div className="relative z-10 max-w-2xl md:max-w-6xl mx-auto">
           <div className="text-center mb-8 md:mb-14">
             <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/60">Free strategy call</span>
             <Disp className="text-white text-[clamp(2.5rem,8vw,88px)] block mt-4 leading-[0.88]">
@@ -453,9 +450,67 @@ const BookingSection = memo(function BookingSection() {
               </m.div>
             )}
           </AnimatePresence>
-        </div>
+    </div>
+  )
+}
+
+// ── BookingSection: inline finale on the page, shader background + booking flow ──
+const BookingSection = memo(function BookingSection() {
+  return (
+    <div id="booking">
+      <div className="relative py-16 md:py-24 px-4 md:px-6 overflow-hidden bg-[#050507]">
+        <ShaderAnimation className="absolute inset-0 w-full h-full opacity-80 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050507] via-[#050507]/10 to-[#050507]/50 pointer-events-none" />
+        <BookingFlow />
       </div>
     </div>
+  )
+})
+
+// ── BookingDialog: native <dialog> modal opened by the sticky nav CTA + Contact ──
+// showModal() provides the focus trap, Esc-to-close, and background inerting natively,
+// so no manual inert on <main> is needed (that would also inert this dialog).
+const BookingDialog = memo(function BookingDialog() {
+  const ref = useRef<HTMLDialogElement>(null)
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    const onOpen = () => {
+      const dlg = ref.current
+      if (!dlg || dlg.open) return
+      setOpen(true)
+      dlg.showModal()
+    }
+    window.addEventListener("open-booking", onOpen)
+    return () => window.removeEventListener("open-booking", onOpen)
+  }, [])
+
+  const close = () => ref.current?.close()
+
+  return (
+    <dialog
+      ref={ref}
+      aria-label="Book a strategy call"
+      className="booking-dialog"
+      onClose={() => setOpen(false)}
+      onClick={(e) => { if (e.target === ref.current) close() }}
+    >
+      {open && (
+        <div className="relative bg-[#050507]">
+          <button
+            type="button"
+            onClick={close}
+            aria-label="Close booking"
+            className="absolute right-4 top-4 z-20 w-9 h-9 rounded-full border border-white/20 text-white/70 hover:text-white hover:border-white/40 transition-colors flex items-center justify-center"
+          >
+            ✕
+          </button>
+          <div className="px-4 md:px-8 py-12 md:py-14">
+            <BookingFlow />
+          </div>
+        </div>
+      )}
+    </dialog>
   )
 })
 
@@ -476,7 +531,7 @@ export default function Home() {
         <div className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((item) => (
             <a key={item.label} href={item.href}
-              onClick={(e) => { e.preventDefault(); scrollTo(item.href.slice(1)) }}
+              onClick={(e) => { e.preventDefault(); if (item.href === "#booking") openBooking(); else scrollTo(item.href.slice(1)) }}
               className="px-5 py-2.5 ai-muted text-base font-bold hover:!text-black dark:hover:!text-white hover:bg-black/10 dark:hover:bg-white/12 hover:scale-105 rounded-full transition-all duration-200">
               {item.label}
             </a>
@@ -485,7 +540,7 @@ export default function Home() {
         <div className="flex items-center gap-2 md:gap-4">
           <ThemeToggle />
           <button
-            onClick={() => scrollTo("booking")}
+            onClick={openBooking}
             className="group relative px-4 md:px-6 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-bold tracking-wider uppercase overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-95 border-2 border-[#FF2D55] dark:border-[#FF2D55]/60 hover:border-[#FF2D55] text-[#FF2D55] dark:text-white"
           >
             <span className="absolute inset-0 bg-[#FF2D55]/20 dark:bg-[#FF2D55]/15 group-hover:bg-[#FF2D55]/30 transition-colors duration-300" />
@@ -707,8 +762,11 @@ export default function Home() {
       {/* Smooth bridge into booking (no hard line) */}
       <div aria-hidden className="ai-booking-bridge h-24 md:h-36 -mb-px" />
 
-      {/* 08 CTA — Booking */}
+      {/* 08 CTA — Booking (inline finale) */}
       <BookingSection />
+
+      {/* Native <dialog> booking modal, opened by the sticky nav CTA + Contact link */}
+      <BookingDialog />
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
       <footer className="ai-page py-10 px-6 border-t ai-border">
