@@ -318,9 +318,9 @@ html:not(.dark) {
   --line-2: color-mix(in oklch, black 14%, transparent);
 }
 
-/* ── AX Slash motif — the wordmark's red diagonal, extracted as a system device ──
-   Per DS: use .ax-slash inline next to typography, .ax-slash--rule as a
-   section divider, .ax-slash--pulse to add the brand heartbeat.
+/* ── AX Slash motif — the wordmark's red diagonal, kept as ONE restrained accent ──
+   Used only once: the static accent rule under the hero headline. The wordmark
+   already carries the diagonal, so it is not repeated on section eyebrows.
 */
 .ax-slash {
   display: inline-block;
@@ -335,25 +335,6 @@ html:not(.dark) {
   width: 44px;
   height: 3px;
   border-radius: 2px;
-}
-.ax-slash--pulse {
-  animation: ax-slash-breathe 3.6s ease-in-out infinite;
-  transform-origin: center;
-  will-change: opacity, transform;
-}
-@keyframes ax-slash-breathe {
-  0%, 100% { opacity: 0.65; transform: rotate(var(--slash-angle)) scaleX(0.92); }
-  50%      { opacity: 1;    transform: rotate(var(--slash-angle)) scaleX(1.08); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ax-slash--pulse { animation: none; opacity: 1; transform: rotate(var(--slash-angle)); }
-}
-
-/* Inline eyebrow row: slash + eyebrow text, centered or left-aligned */
-.ax-eyebrow-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
 }
 
 /* ── Marquee ── */

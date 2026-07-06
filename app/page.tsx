@@ -162,13 +162,10 @@ const Disp = ({ children, className = "", style }: { children: React.ReactNode; 
   </span>
 )
 
-// Eyebrow pill with the signature slash as a recurring section through-line
+// Eyebrow pill: plain section label, no per-section slash (the wordmark carries the motif)
 const Tag = ({ children }: { children: React.ReactNode }) => (
-  <span className="ax-eyebrow-row">
-    <span className="ax-slash" aria-hidden />
-    <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full ai-tag">
-      {children}
-    </span>
+  <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full ai-tag">
+    {children}
   </span>
 )
 
@@ -200,25 +197,6 @@ const HeroSection = memo(function HeroSection() {
       <div className="absolute right-0 top-0 w-[75%] h-full pointer-events-none hidden dark:lg:block z-[1] opacity-30 mix-blend-screen">
         <Lightning hue={350} xOffset={0.3} speed={1.0} intensity={0.35} size={2.2} />
       </div>
-
-      {/* Signature red slash: draws once on mount, timed to land as the headline settles.
-          Reduced motion: renders static at full length. Compositor-only (scaleX). */}
-      <m.div
-        aria-hidden
-        className="absolute z-[3] pointer-events-none"
-        style={{
-          left: "-3%", top: "48%",
-          width: "clamp(220px, 42vw, 560px)", height: "2px",
-          background: "var(--red)",
-          boxShadow: "0 0 24px var(--red-glow)",
-          transformOrigin: "left center",
-          rotate: -24,
-          opacity: 0.5,
-        }}
-        initial={{ scaleX: reduceMotion ? 1 : 0 }}
-        animate={{ scaleX: 1 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: reduceMotion ? 0 : 0.5 }}
-      />
 
       {/* Robot */}
       <div
@@ -347,10 +325,7 @@ function BookingFlow() {
   return (
     <div className="relative z-10 max-w-2xl md:max-w-6xl mx-auto">
           <div className="text-center mb-8 md:mb-14">
-            <span className="ax-eyebrow-row">
-              <span className="ax-slash" aria-hidden />
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/60">Free strategy call</span>
-            </span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/60">Free strategy call</span>
             <Disp className="text-white block mt-4" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
               BOOK YOUR<br /><span style={{ color: "var(--red)" }}>30 MINUTES.</span>
             </Disp>
@@ -676,7 +651,6 @@ export default function Home() {
             <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center relative z-10">
               <div className={i % 2 === 1 ? "md:order-last" : ""}>
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="ax-slash" aria-hidden />
                   <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 rounded-full border"
                     style={{ borderColor: "rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.5)" }}>
                     {svc.tag}
@@ -780,10 +754,6 @@ export default function Home() {
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
       <footer className="ai-page py-10 px-6 border-t ai-border">
-        {/* Slash divider: closes the page with the motif the hero opened with */}
-        <div className="max-w-6xl mx-auto mb-8 flex justify-center">
-          <span className="ax-slash ax-slash--rule" aria-hidden style={{ width: "64px", height: "3px" }} />
-        </div>
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             {/* Theme-aware wordmark: light variant on light theme, dark variant on dark theme */}
