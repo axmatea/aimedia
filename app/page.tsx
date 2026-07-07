@@ -714,10 +714,16 @@ export default function Home() {
                         { platform: "LinkedIn", posts: "2 posts/day", color: "#0A66C2" },
                         { platform: "TikTok", posts: "5 videos/week", color: "#fff" },
                         { platform: "X / Twitter", posts: "8 tweets/day", color: "#fff" },
-                      ].map((p) => (
+                      ].map((p, pi) => (
                         <div key={p.platform} className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.03] border border-white/5">
                           <span className="text-xs font-bold" style={{ color: p.color }}>{p.platform}</span>
-                          <span className="text-[10px] font-mono text-white/45">{p.posts} ✓</span>
+                          <span className="text-[10px] font-mono text-white/45 inline-flex items-center gap-1.5">
+                            {p.posts}
+                            <span className="relative inline-flex h-1.5 w-1.5" style={{ ["--i" as string]: pi }} aria-hidden>
+                              <span className="ugc-ping absolute inline-flex h-full w-full rounded-full bg-white/35" />
+                              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white/30" />
+                            </span>
+                          </span>
                         </div>
                       ))}
                     </div>
