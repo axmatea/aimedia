@@ -257,7 +257,7 @@ const HeroSection = memo(function HeroSection() {
             Systems for go-to-market, content, and ops. Built for Web3 projects, founders, agencies, and ambitious brands.
           </p>
           <div className="flex gap-3 flex-shrink-0">
-            <LiquidMetalButton label="Start a Project" onClick={() => scrollTo("booking")} />
+            <LiquidMetalButton label="Start a Project" onClick={openBooking} />
             <button onClick={() => scrollTo("services")} className="px-8 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-sm font-semibold rounded-full hover:border-[#FF2D55] hover:text-[#FF2D55] transition-all">
               See Services →
             </button>
@@ -285,8 +285,7 @@ function BookingFlow() {
     if (!validateEmail(contact.email)) { setEmailError("Please enter a valid email address"); return }
     setEmailError("")
 
-    // Build cal.com URL and open synchronously BEFORE any await,
-    // so the browser treats it as a user-initiated action (not blocked as a popup).
+    // Build the prefilled cal.com URL; step 2 presents it as the single primary CTA.
     const params = new URLSearchParams({
       ...CAL_DEFAULTS,
       name: contact.name,
@@ -297,7 +296,6 @@ function BookingFlow() {
     })
     const fullCalUrl = `${CALENDLY_URL}?${params.toString()}`
     setCalBookingUrl(fullCalUrl)
-    window.open(fullCalUrl, "_blank", "noopener,noreferrer")
 
     setSubmitting(true)
     try {
@@ -435,15 +433,18 @@ function BookingFlow() {
               <m.div key="step2" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35 }} className="max-w-md mx-auto text-center space-y-4">
                 <div className="w-16 h-16 rounded-full bg-[#FF2D55]/15 border border-[#FF2D55]/30 flex items-center justify-center mx-auto text-3xl">✓</div>
                 <Disp className="text-white text-4xl">ONE LAST STEP.</Disp>
-                <p className="text-white/65 text-base">Pick a time slot on Cal.com to lock in your call.</p>
-                <a
-                  href={calBookingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 mt-2 bg-[#FF2D55] hover:bg-[#FF1745] text-white text-sm font-bold rounded-full transition-colors"
-                >
-                  Pick your time slot →
-                </a>
+                <p className="text-white/65 text-base">You are one click away. Pick a time on Cal.com and the call is locked.</p>
+                <Magnetic className="inline-block">
+                  <a
+                    href={calBookingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    autoFocus
+                    className="inline-flex items-center justify-center gap-2 px-10 py-4 mt-2 bg-[#FF2D55] hover:bg-[#FF1745] text-white text-base font-bold rounded-full transition-colors shadow-[0_24px_70px_-20px_rgba(255,45,85,0.7)]"
+                  >
+                    Pick a time on Cal.com →
+                  </a>
+                </Magnetic>
                 <p className="text-white/45 text-sm pt-2">Confirmation will be sent to <span className="text-white/80 font-semibold">{contact.email}</span></p>
                 <p className="text-white/30 text-xs">We&apos;ll review your answers and come fully prepared.</p>
                 <button onClick={() => { setStep(0); setQuiz({ projectType: "", goal: "", budget: "" }); setContact({ name: "", email: "", phone: "" }); setCalBookingUrl("") }}
@@ -451,6 +452,14 @@ function BookingFlow() {
               </m.div>
             )}
           </AnimatePresence>
+
+          {/* Email escape hatch: always available in both the inline section and the modal */}
+          <p className="text-center text-white/40 text-xs mt-8">
+            Prefer email?{" "}
+            <a href="mailto:info@aimedia.global" className="underline underline-offset-2 hover:text-[#FF2D55] transition-colors">
+              info@aimedia.global
+            </a>
+          </p>
     </div>
   )
 }
