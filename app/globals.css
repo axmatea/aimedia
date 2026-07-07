@@ -337,6 +337,18 @@ html:not(.dark) {
   border-radius: 2px;
 }
 
+/* Tighten perceived mark-to-wordmark spacing from the exported logo asset. */
+.ax-wordmark {
+  max-width: clamp(132px, 16vw, 190px);
+  object-fit: contain;
+  object-position: left center;
+  filter: contrast(1.08) saturate(1.08);
+}
+
+.dark .ax-wordmark {
+  filter: contrast(1.12) saturate(1.12) drop-shadow(0 0 18px rgba(255,45,85,0.16));
+}
+
 /* ── Marquee ── */
 @keyframes marquee {
   from { transform: translateX(0); }

@@ -11,7 +11,7 @@ import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import { CountUp } from "@/components/ui/count-up"
 import { ProofSection } from "@/components/ui/proof-section"
-import { ScrollSkew } from "@/components/ui/scroll-skew"
+
 import { lenisScrollTo } from "@/components/providers/SmoothScroll"
 // ── Below-fold heavy components: lazy loaded for faster LCP ──────────────────
 const N8nWorkflowBlock = dynamic(
@@ -187,10 +187,11 @@ const HeroSection = memo(function HeroSection() {
     <section className="hero-section min-h-[100svh] relative overflow-hidden flex flex-col justify-end pb-16 pt-32 px-6 md:px-10">
       <div className="hidden lg:block"><Spotlight size={500} /></div>
 
-      {/* Backgrounds: one tight red-tinted bloom, monochrome grid (v2: purple bloom retired) */}
+      {/* Backgrounds: stronger red bloom, softer grid. Avoid visible line artifacts. */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute top-0 right-0 w-[620px] h-[560px] bg-[#FF2D55]/6 rounded-full blur-[90px]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:80px_80px]" />
+        <div className="absolute -top-16 right-0 w-[680px] h-[620px] bg-[#FF2D55]/12 rounded-full blur-[110px]" />
+        <div className="absolute bottom-0 left-0 w-[520px] h-[380px] bg-[#7B2FFF]/8 rounded-full blur-[120px]" />
+        <div className="absolute inset-0 opacity-35 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:88px_88px]" />
       </div>
 
       {/* Lightning behind robot: subtle ambient in the brand-red family, hidden in light mode */}
@@ -327,17 +328,17 @@ function BookingFlow() {
           <div className="text-center mb-8 md:mb-14">
             <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/60">Free strategy call</span>
             <Disp className="text-white block mt-4" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
-              BOOK YOUR<br /><span style={{ color: "var(--red)" }}>30 MINUTES.</span>
+              BOOK A<br /><span style={{ color: "var(--red)" }}>STRATEGY CALL.</span>
             </Disp>
             <p className="text-white/65 text-sm md:text-lg mt-4 max-w-lg mx-auto leading-relaxed">
-              We audit your stack and show you exactly which AI systems will move the needle. No fluff, just outcomes.
+              Answer three quick filters, then pick a time. We come prepared with the highest-leverage AI systems for your business.
             </p>
             <p className="text-white/25 text-xs md:text-sm mt-2 italic tracking-wide">The fabric of digital reality.</p>
           </div>
 
           {/* Step indicator */}
           <div className="flex items-center justify-center gap-1.5 md:gap-2 mb-6 md:mb-10">
-            {["Your Project", "Contact", "Schedule"].map((label, i) => (
+            {["Fit", "Contact", "Time"].map((label, i) => (
               <div key={label} className="flex items-center gap-1 md:gap-2">
                 <div className="flex items-center gap-1 md:gap-1.5">
                   <div className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold transition-all" style={{
@@ -354,7 +355,7 @@ function BookingFlow() {
 
           <AnimatePresence mode="wait">
             {step === 0 && (
-              <m.div key="step0" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }} className="max-w-2xl mx-auto space-y-6 md:space-y-8">
+              <m.div key="step0" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }} className="max-w-2xl mx-auto space-y-6 md:space-y-8 rounded-3xl border border-white/10 bg-white/[0.035] p-5 md:p-8 shadow-[0_30px_90px_-45px_rgba(255,45,85,0.65)]">
 
                 {/* Project type */}
                 <div>
@@ -407,13 +408,13 @@ function BookingFlow() {
                   </div>
                 </div>
 
-                <Magnetic className="w-full"><LiquidMetalButton label="Continue →" onClick={() => { if (quiz.projectType && quiz.goal && quiz.budget) setStep(1) }} className="w-full justify-center" /></Magnetic>
+                <Magnetic className="w-full"><LiquidMetalButton label="Continue to contact →" onClick={() => { if (quiz.projectType && quiz.goal && quiz.budget) setStep(1) }} className="w-full justify-center" /></Magnetic>
                 {!(quiz.projectType && quiz.goal && quiz.budget) && <p className="text-white/40 text-xs text-center">Select all options to continue</p>}
               </m.div>
             )}
 
             {step === 1 && (
-              <m.div key="step1" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }} className="max-w-md mx-auto space-y-4">
+              <m.div key="step1" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }} className="max-w-md mx-auto space-y-4 rounded-3xl border border-white/10 bg-white/[0.035] p-5 md:p-7 shadow-[0_30px_90px_-45px_rgba(255,45,85,0.65)]">
                 {[
                   { field: "name" as const, label: "Your name", type: "text", ph: "First name" },
                   { field: "email" as const, label: "Email address", type: "email", ph: "you@company.com" },
@@ -529,9 +530,9 @@ export default function Home() {
         <a href="#" className="flex items-center flex-shrink-0">
           {/* Theme-aware wordmark: light variant on light theme, dark variant on dark theme */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/ax-logo-light.svg" alt="AX Media Company" decoding="async" fetchPriority="high" className="h-8 md:h-11 w-auto block dark:hidden" />
+          <img src="/ax-logo-light.svg" alt="AX Media Company" decoding="async" fetchPriority="high" className="ax-wordmark h-8 md:h-11 w-auto block dark:hidden" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/ax-logo-dark.svg" alt="AX Media Company" decoding="async" fetchPriority="high" className="h-8 md:h-11 w-auto hidden dark:block" />
+          <img src="/ax-logo-dark.svg" alt="AX Media Company" decoding="async" fetchPriority="high" className="ax-wordmark h-8 md:h-11 w-auto hidden dark:block" />
         </a>
         <div className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((item) => (
@@ -562,7 +563,7 @@ export default function Home() {
 
       {/* ── Pink marquee ─────────────────────────────────────────────────── */}
       <div className="marquee-shell marquee-mask py-5 border-y ai-border overflow-hidden bg-[#FF2D55]" aria-hidden>
-        <ScrollSkew className="will-change-transform">
+        <div>
         <div className="flex animate-marquee whitespace-nowrap">
           {[...TICKER, ...TICKER].map((item, i) => (
             <span key={i} className="text-white font-bold text-sm uppercase tracking-[0.2em] mx-6 flex items-center gap-6">
@@ -570,7 +571,7 @@ export default function Home() {
             </span>
           ))}
         </div>
-        </ScrollSkew>
+        </div>
       </div>
 
       {/* 02 CREDIBILITY */}
