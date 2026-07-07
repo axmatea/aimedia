@@ -548,6 +548,16 @@ export default function Home() {
           ))}
         </div>
         <div className="flex items-center gap-2 md:gap-4">
+          <a
+            href="mailto:info@aimedia.global"
+            className="hidden lg:inline-flex items-center gap-1.5 ai-muted text-xs font-medium hover:text-[#FF2D55] transition-colors"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+              <path d="m22 7-10 6L2 7" />
+            </svg>
+            info@aimedia.global
+          </a>
           <ThemeToggle />
           <button
             onClick={openBooking}
