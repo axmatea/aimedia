@@ -754,9 +754,9 @@ export default function Home() {
           <div className="flex items-center gap-3">
             {/* Theme-aware wordmark: light variant on light theme, dark variant on dark theme */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/ax-logo-light.svg" alt="AX Media Company" className="h-8 w-auto block dark:hidden" loading="lazy" decoding="async" />
+            <img src="/ax-logo-light.svg" alt="AX Media Company" className="ax-wordmark h-8 w-auto block dark:hidden" loading="lazy" decoding="async" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/ax-logo-dark.svg" alt="AX Media Company" className="h-8 w-auto hidden dark:block" loading="lazy" decoding="async" />
+            <img src="/ax-logo-dark.svg" alt="AX Media Company" className="ax-wordmark h-8 w-auto hidden dark:block" loading="lazy" decoding="async" />
             <span className="ai-muted text-xs">© 2026 AI Media · aimedia.global</span>
           </div>
           <div className="flex gap-6 flex-wrap justify-center">
