@@ -318,25 +318,6 @@ html:not(.dark) {
   --line-2: color-mix(in oklch, black 14%, transparent);
 }
 
-/* ── AX Slash motif — the wordmark's red diagonal, kept as ONE restrained accent ──
-   Used only once: the static accent rule under the hero headline. The wordmark
-   already carries the diagonal, so it is not repeated on section eyebrows.
-*/
-.ax-slash {
-  display: inline-block;
-  width: 22px;
-  height: 2px;
-  background: var(--slash-color);
-  transform: rotate(var(--slash-angle));
-  vertical-align: middle;
-  flex-shrink: 0;
-}
-.ax-slash--rule {
-  width: 44px;
-  height: 3px;
-  border-radius: 2px;
-}
-
 /* Tighten perceived mark-to-wordmark spacing from the exported logo asset. */
 .ax-wordmark {
   max-width: clamp(132px, 16vw, 190px);

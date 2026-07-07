@@ -248,15 +248,10 @@ const HeroSection = memo(function HeroSection() {
           </div>
         </m.div>
 
-        {/* Accent underline: static slash rule ties the headline to the wordmark motif */}
-        <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.9 }} className="mt-6">
-          <span className="ax-slash ax-slash--rule" aria-hidden style={{ width: "84px", height: "3px" }} />
-        </m.div>
-
         <m.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.25 }}
-          className="mt-8 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 lg:max-w-[55%]"
+          className="mt-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 lg:max-w-[55%]"
         >
           <p className="ai-muted text-sm md:text-base max-w-sm leading-relaxed">
             Systems for go-to-market, content, and ops. Built for Web3 projects, founders, agencies, and ambitious brands.
