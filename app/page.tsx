@@ -11,6 +11,7 @@ import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import { CountUp } from "@/components/ui/count-up"
 import { ProofSection } from "@/components/ui/proof-section"
+import { SERVE_ICONS } from "@/components/ui/serve-icons"
 
 import { lenisScrollTo } from "@/components/providers/SmoothScroll"
 // ── Below-fold heavy components: lazy loaded for faster LCP ──────────────────
@@ -63,14 +64,14 @@ const HERO_AUDIENCES = ["WEB3.", "FOUNDERS.", "AGENCIES.", "BRANDS.", "BUILDERS.
 
 const TICKER = ["GO-TO-MARKET","LEAD GENERATION","CONTENT AT SCALE","AI AUTOMATION","COMMUNITY GROWTH","SOCIAL MEDIA","BUSINESS DEVELOPMENT","NFT LAUNCHES","DAO TOOLING","WEB3 NATIVE"]
 
-// Monochrome glyphs, single red hover glow. Distinction is shape + label, not hue.
+// Monochrome animated stroke icons, single red accent each. Distinction is shape + label, not hue.
 const WHO_WE_SERVE = [
-  { label: "Web3 Projects", sub: "DAOs, NFT Studios, DeFi Protocols", color: "#F5F4F0", glowColor: "red" as const, icon: "⬡" },
-  { label: "Founders", sub: "Pre-seed to Series B", color: "#F5F4F0", glowColor: "red" as const, icon: "◈" },
-  { label: "Agencies", sub: "Marketing & Creative Studios", color: "#F5F4F0", glowColor: "red" as const, icon: "◉" },
-  { label: "DTC Brands", sub: "Fashion, Wellness, Premium", color: "#F5F4F0", glowColor: "red" as const, icon: "◈" },
-  { label: "Enterprise", sub: "Sales & Ops Automation at Scale", color: "#F5F4F0", glowColor: "red" as const, icon: "◎" },
-  { label: "SaaS & Products", sub: "B2B Tools, Platforms & Apps", color: "#F5F4F0", glowColor: "red" as const, icon: "◇" },
+  { label: "Web3 Projects", sub: "DAOs, NFT Studios, DeFi Protocols", color: "#F5F4F0", glowColor: "red" as const, icon: "web3" as const },
+  { label: "Founders", sub: "Pre-seed to Series B", color: "#F5F4F0", glowColor: "red" as const, icon: "founders" as const },
+  { label: "Agencies", sub: "Marketing & Creative Studios", color: "#F5F4F0", glowColor: "red" as const, icon: "agencies" as const },
+  { label: "DTC Brands", sub: "Fashion, Wellness, Premium", color: "#F5F4F0", glowColor: "red" as const, icon: "dtc" as const },
+  { label: "Enterprise", sub: "Sales & Ops Automation at Scale", color: "#F5F4F0", glowColor: "red" as const, icon: "enterprise" as const },
+  { label: "SaaS & Products", sub: "B2B Tools, Platforms & Apps", color: "#F5F4F0", glowColor: "red" as const, icon: "saas" as const },
 ]
 
 // Tools we actually use and integrate with
@@ -618,7 +619,7 @@ export default function Home() {
                 className="w-[calc(50%-8px)] sm:w-[200px] md:w-[210px]">
                 <GlowCard glowColor={w.glowColor} customSize className="w-full h-full min-h-[220px] sm:min-h-[280px]">
                   <div className="flex flex-col justify-between h-full py-3">
-                    <span className="text-5xl" style={{ color: w.color }}>{w.icon}</span>
+                    <span style={{ color: w.color }}>{SERVE_ICONS[w.icon]()}</span>
                     <div>
                       <Disp className="text-white text-3xl block mb-2 leading-tight">{w.label}</Disp>
                       <p className="text-white/45 text-sm font-medium uppercase tracking-wider leading-tight">{w.sub}</p>
