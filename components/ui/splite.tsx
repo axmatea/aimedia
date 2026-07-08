@@ -42,6 +42,9 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
   const [motionOk, setMotionOk] = useState<boolean | null>(null)
   // Lazy init: only mount the Spline runtime once the hero is near the viewport.
   const [inView, setInView] = useState(false)
+  // Heavy Spline runtime is intentionally delayed until after first paint. The
+  // animated poster carries the hero immediately, then live 3D takes over.
+  const [canMountScene, setCanMountScene] = useState(false)
   // Head mouse-follow lerp only runs on fine-pointer (cursor) devices. On touch the
   // scene still plays its own idle animation, we just skip the wasted pointer work.
   const interactiveRef = useRef(true)
@@ -105,6 +108,31 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (motionOk !== true || !inView || canMountScene) return
+
+    let idleId: number | null = null
+    const timeoutId = window.setTimeout(() => {
+      const win = window as typeof window & {
+        requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number
+        cancelIdleCallback?: (id: number) => void
+      }
+      if (win.requestIdleCallback) {
+        idleId = win.requestIdleCallback(() => setCanMountScene(true), { timeout: 1200 })
+      } else {
+        setCanMountScene(true)
+      }
+    }, 1100)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+      if (idleId !== null) {
+        const win = window as typeof window & { cancelIdleCallback?: (id: number) => void }
+        win.cancelIdleCallback?.(idleId)
+      }
+    }
+  }, [motionOk, inView, canMountScene])
 
   const appRef = useRef<SplineApp | null>(null)
   const visibleRef = useRef(true)
@@ -263,7 +291,7 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
 
   // Render the live scene on every viewport once motion is allowed and the hero is
   // near view. Reduced-motion keeps the poster only.
-  const showScene = motionOk === true && inView
+  const showScene = motionOk === true && inView && canMountScene
   // Poster covers the brief pre-measure window, the boot period before the scene is
   // ready, and stays permanently when reduced motion is requested.
   const showPoster = Boolean(mobileFallback) && (!showScene || !sceneReady)

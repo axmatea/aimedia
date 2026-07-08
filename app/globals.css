@@ -1234,6 +1234,16 @@ canvas {
   isolation: isolate;
   background: transparent;
 }
+.hero-shell-poster {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  object-fit: contain;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  animation: robotBootFloat 2.2s ease-in-out infinite alternate;
+}
 .hero-spline-poster {
   z-index: 1;
   opacity: 1;
@@ -1254,7 +1264,8 @@ canvas {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-spline-poster { animation: none; }
+  .hero-spline-poster,
+  .hero-shell-poster { animation: none; }
 }
 .hero-spline-live {
   position: absolute;

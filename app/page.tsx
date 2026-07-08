@@ -223,6 +223,16 @@ const HeroSection = memo(function HeroSection() {
         className="hero-robot-shell robot-mobile absolute right-0 top-0 w-[100%] h-[55svh] lg:bottom-0 lg:w-[65%] lg:h-auto pointer-events-none block z-[2]"
         style={{ transform: "scale(1.35) translate3d(0, -8%, 0)", transformOrigin: "top center", willChange: "transform" }}
       >
+        {/* SSR-first robot poster: visible before the Spline component bundle hydrates. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/robot-poster.webp"
+          alt=""
+          decoding="sync"
+          loading="eager"
+          fetchPriority="high"
+          className="hero-shell-poster w-full h-full dark:opacity-100 opacity-90 dark:mix-blend-normal mix-blend-screen lg:mix-blend-luminosity"
+        />
         <SplineScene scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode" mobileFallback="/robot-poster.webp" className="w-full h-full dark:opacity-100 opacity-90 dark:mix-blend-normal mix-blend-screen lg:mix-blend-luminosity" />
         <div className="ai-hero-fade-x absolute inset-y-0 left-0 w-[50%]" />
         <div className="ai-hero-fade-y absolute bottom-0 left-0 right-0 h-56" />
@@ -231,7 +241,7 @@ const HeroSection = memo(function HeroSection() {
 
       {/* Content */}
       <div className="relative z-10 max-w-[1440px] mx-auto w-full">
-        <m.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex items-center gap-2 mb-10">
+        <m.div initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex items-center gap-2 mb-10">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF2D55] opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF2D55]" />
@@ -239,7 +249,7 @@ const HeroSection = memo(function HeroSection() {
           <span className="ai-muted text-xs font-medium tracking-wider">12 active projects · 2 slots remaining</span>
         </m.div>
 
-        <m.div initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}>
+        <m.div initial={false} animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}>
           <div className="overflow-hidden py-[0.04em] -my-[0.04em]">
             <m.div variants={riseLine}>
               <Disp className="block ai-text" style={{ fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>WE BUILD</Disp>
@@ -251,10 +261,10 @@ const HeroSection = memo(function HeroSection() {
             </m.div>
           </div>
           <div className="overflow-hidden" style={{ height: "var(--fs-mega)" }}>
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" initial={false}>
               <m.div
                 key={audienceIdx}
-                initial={{ y: "100%", opacity: 0 }}
+                initial={false}
                 animate={{ y: "0%", opacity: 1 }}
                 exit={{ y: "-100%", opacity: 0 }}
                 transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
@@ -268,7 +278,7 @@ const HeroSection = memo(function HeroSection() {
         </m.div>
 
         <m.div
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+          initial={false} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.25 }}
           className="mt-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 lg:max-w-[55%]"
         >
