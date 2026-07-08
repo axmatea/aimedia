@@ -259,7 +259,7 @@ const HeroSection = memo(function HeroSection() {
           </p>
           <div className="flex gap-3 flex-shrink-0">
             <LiquidMetalButton label="Start a Project" onClick={openBooking} />
-            <button onClick={() => scrollTo("services")} className="px-8 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-sm font-semibold rounded-full hover:border-[#FF2D55] hover:text-[#FF2D55] transition-all">
+            <button onClick={() => scrollTo("services")} className="px-8 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-sm font-semibold rounded-full hover:border-[#FF2D55] hover:text-[#FF2D55] transition-[border-color,color]">
               See Services →
             </button>
           </div>
@@ -349,7 +349,7 @@ function BookingFlow() {
 
           <AnimatePresence mode="wait">
             {step === 0 && (
-              <m.div key="step0" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }} className="max-w-2xl mx-auto space-y-6 md:space-y-8 rounded-3xl border border-white/10 bg-white/[0.035] p-5 md:p-8 shadow-[0_30px_90px_-45px_rgba(255,45,85,0.65)]">
+              <m.div key="step0" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25, ease: EASE_SWIFT }} className="max-w-2xl mx-auto space-y-6 md:space-y-8 rounded-3xl border border-white/10 bg-white/[0.035] p-5 md:p-8 shadow-[0_30px_90px_-45px_rgba(255,45,85,0.65)]">
 
                 {/* Project type */}
                 <div>
@@ -357,7 +357,7 @@ function BookingFlow() {
                   <div className="flex flex-wrap gap-2">
                     {["Web3 / NFT", "SaaS / Product", "Agency", "Brand", "Startup", "Enterprise"].map(opt => (
                       <button key={opt} onClick={() => setQuiz(p => ({ ...p, projectType: opt }))}
-                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-all duration-200 ${
+                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 ${
                           quiz.projectType === opt
                             ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
                             : "bg-white/10 border-white/30 text-white/80 hover:border-[#FF2D55]/60 hover:text-white"
@@ -374,7 +374,7 @@ function BookingFlow() {
                   <div className="flex flex-wrap gap-2">
                     {["Lead Generation", "Content Automation", "Community Growth", "Sales Pipeline", "Ops Efficiency", "Other"].map(opt => (
                       <button key={opt} onClick={() => setQuiz(p => ({ ...p, goal: opt }))}
-                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-all duration-200 ${
+                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 ${
                           quiz.goal === opt
                             ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
                             : "bg-white/10 border-white/30 text-white/80 hover:border-[#FF2D55]/60 hover:text-white"
@@ -391,7 +391,7 @@ function BookingFlow() {
                   <div className="flex flex-wrap gap-2">
                     {["$3–10k / mo", "$10–20k / mo", "$20k+ / mo"].map(opt => (
                       <button key={opt} onClick={() => setQuiz(p => ({ ...p, budget: opt }))}
-                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-all duration-200 ${
+                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 ${
                           quiz.budget === opt
                             ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
                             : "bg-white/10 border-white/30 text-white/80 hover:border-[#FF2D55]/60 hover:text-white"
@@ -408,7 +408,7 @@ function BookingFlow() {
             )}
 
             {step === 1 && (
-              <m.div key="step1" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }} className="max-w-md mx-auto space-y-4 rounded-3xl border border-white/10 bg-white/[0.035] p-5 md:p-7 shadow-[0_30px_90px_-45px_rgba(255,45,85,0.65)]">
+              <m.div key="step1" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25, ease: EASE_SWIFT }} className="max-w-md mx-auto space-y-4 rounded-3xl border border-white/10 bg-white/[0.035] p-5 md:p-7 shadow-[0_30px_90px_-45px_rgba(255,45,85,0.65)]">
                 {[
                   { field: "name" as const, label: "Your name", type: "text", ph: "First name" },
                   { field: "email" as const, label: "Email address", type: "email", ph: "you@company.com" },
@@ -431,7 +431,7 @@ function BookingFlow() {
             )}
 
             {step === 2 && (
-              <m.div key="step2" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35 }} className="max-w-md mx-auto text-center space-y-4">
+              <m.div key="step2" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35, ease: EASE_SWIFT }} className="max-w-md mx-auto text-center space-y-4">
                 <div className="w-16 h-16 rounded-full bg-[#FF2D55]/15 border border-[#FF2D55]/30 flex items-center justify-center mx-auto text-3xl">✓</div>
                 <Disp className="text-white text-4xl">ONE LAST STEP.</Disp>
                 <p className="text-white/65 text-base">You are one click away. Pick a time on Cal.com and the call is locked.</p>
@@ -543,7 +543,7 @@ export default function Home() {
           {NAV_LINKS.map((item) => (
             <a key={item.label} href={item.href}
               onClick={(e) => { e.preventDefault(); if (item.href === "#booking") openBooking(); else scrollTo(item.href.slice(1)) }}
-              className="px-5 py-2.5 ai-muted text-base font-bold hover:!text-black dark:hover:!text-white hover:bg-black/10 dark:hover:bg-white/12 hover:scale-105 rounded-full transition-all duration-200">
+              className="px-5 py-2.5 ai-muted text-base font-bold hover:!text-black dark:hover:!text-white hover:bg-black/10 dark:hover:bg-white/12 hover:scale-105 rounded-full transition-[color,background-color,transform] duration-200">
               {item.label}
             </a>
           ))}
