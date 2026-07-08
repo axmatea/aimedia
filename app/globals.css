@@ -1315,9 +1315,8 @@ html:not(.dark) .ai-switch-track[data-state=checked]   { background-color: rgba(
 html:not(.dark) .ai-switch-track[data-state=unchecked] { background-color: rgba(0,0,0,0.12) !important; }
 html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
 
-/* Mobile robot positioning: never expose the Spline canvas boot crop on phones.
-   The static poster is intentionally smaller, behind copy, and offset right so
-   first paint looks designed instead of like a frozen half-loaded 3D frame. */
+/* Mobile robot positioning: keep the live animated Spline centered and bounded.
+   It sits behind the hero copy, not as a giant right-side crop. */
 @media (max-width: 1023px) {
   .hero-section {
     isolation: isolate;
@@ -1325,18 +1324,19 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
 
   .hero-robot-shell {
     contain: layout paint;
-    transform: none !important;
+    transform: translate3d(-50%, 0, 0) !important;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
   }
 
   .robot-mobile {
-    top: 13svh !important;
-    right: -22vw !important;
+    top: 12svh !important;
+    left: 50% !important;
+    right: auto !important;
     bottom: auto !important;
-    width: 86vw !important;
-    height: 54svh !important;
-    opacity: .58;
+    width: min(92vw, 520px) !important;
+    height: 56svh !important;
+    opacity: .62;
     z-index: 2 !important;
     will-change: auto;
   }
@@ -1367,10 +1367,11 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
 
 @media (max-width: 420px) {
   .robot-mobile {
-    top: 14svh !important;
-    right: -26vw !important;
-    width: 92vw !important;
-    height: 52svh !important;
-    opacity: .52;
+    top: 13svh !important;
+    left: 50% !important;
+    right: auto !important;
+    width: 94vw !important;
+    height: 54svh !important;
+    opacity: .58;
   }
 }
