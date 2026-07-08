@@ -39,8 +39,10 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
   const [sceneReady, setSceneReady] = useState(false)
   // Motion gate: null until measured on the client. false only when the OS asks for
   // reduced motion, in which case the static poster stays as the whole hero (a11y).
-  // The scene now renders on every viewport size, phones included.
   const [motionOk, setMotionOk] = useState<boolean | null>(null)
+  // Phones use the poster permanently. The live Spline canvas boots too large on
+  // iOS Safari before it settles, causing the frozen half-loaded robot NAŸL saw.
+  const [staticMobile, setStaticMobile] = useState(false)
   // Lazy init: only mount the Spline runtime once the hero is near the viewport.
   const [inView, setInView] = useState(false)
   // Head mouse-follow lerp only runs on fine-pointer (cursor) devices. On touch the
@@ -50,13 +52,16 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
   useEffect(() => {
     const finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const staticMobileQuery = window.matchMedia('(max-width: 767px)')
 
     const syncMotion = () => setMotionOk(!reducedMotionQuery.matches)
+    const syncMobile = () => setStaticMobile(Boolean(mobileFallback) && staticMobileQuery.matches)
     const syncInteractive = () => {
       interactiveRef.current = finePointerQuery.matches && !reducedMotionQuery.matches
     }
 
     syncMotion()
+    syncMobile()
     syncInteractive()
 
     const onReduced = () => {
@@ -64,15 +69,18 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
       syncInteractive()
     }
     const onPointer = () => syncInteractive()
+    const onMobile = () => syncMobile()
 
     reducedMotionQuery.addEventListener?.('change', onReduced)
     finePointerQuery.addEventListener?.('change', onPointer)
+    staticMobileQuery.addEventListener?.('change', onMobile)
 
     return () => {
       reducedMotionQuery.removeEventListener?.('change', onReduced)
       finePointerQuery.removeEventListener?.('change', onPointer)
+      staticMobileQuery.removeEventListener?.('change', onMobile)
     }
-  }, [])
+  }, [mobileFallback])
 
   // Cap devicePixelRatio on coarse-pointer (touch) devices. Desktop keeps full
   // crispness. The runtime reads window.devicePixelRatio live (init + per frame),
@@ -258,10 +266,11 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
 
   // Render the live scene on every viewport once motion is allowed and the hero is
   // near view. Reduced-motion keeps the poster only.
-  const showScene = motionOk === true && inView
+  const showScene = motionOk === true && inView && !staticMobile
   // Poster covers the brief pre-measure window, the boot period before the scene is
-  // ready, and stays permanently when reduced motion is requested.
-  const showPoster = Boolean(mobileFallback) && (!showScene || !sceneReady)
+  // ready, stays permanently when reduced motion is requested, and is the only
+  // mobile rendering path to avoid iOS Safari exposing Spline's oversized boot frame.
+  const showPoster = Boolean(mobileFallback) && (staticMobile || !showScene || !sceneReady)
 
   return (
     <div ref={containerRef} className="w-full h-full relative overflow-hidden hero-spline-stage">

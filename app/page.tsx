@@ -164,9 +164,9 @@ const TRACE_CONFIDENCE_TAGS = [
 ] as const
 
 const NAV_LINKS = [
-  { label: "Services", href: "#built-for" },
+  { label: "Services", href: "#services" },
   { label: "Work", href: "#ai-team" },
-  { label: "Solutions", href: "#services" },
+  { label: "Solutions", href: "#built-for" },
   { label: "Contact", href: "#booking" },
 ]
 
@@ -742,7 +742,7 @@ export default function Home() {
       <TraceableSystemMap />
 
       {/* 04 SOLUTION — Services */}
-      <div id="services">
+      <div id="services" className="scroll-mt-24">
         {SERVICES.map((svc, i) => (
           <section key={svc.id} className="py-24 px-6 border-b ai-border relative overflow-hidden" style={{ backgroundColor: svc.bg, contain: "layout paint" }}>
             <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center relative z-10">
