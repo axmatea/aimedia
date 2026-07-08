@@ -1353,7 +1353,7 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
   }
 
   .robot-mobile .hero-spline-live {
-    display: none !important;
+    display: block !important;
   }
 
   .robot-mobile .ai-hero-fade-x {
