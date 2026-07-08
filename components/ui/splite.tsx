@@ -205,8 +205,12 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
     }
     splineApp._splineCleanup = cleanup
 
-    setSceneReady(true)
-    onLoad?.(app)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setSceneReady(true)
+        onLoad?.(app)
+      })
+    })
   }, [onLoad])
 
   // Lazy-init when near the viewport, then pause the render loop when off-screen.
