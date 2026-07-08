@@ -826,7 +826,7 @@ export default function Home() {
       <ProofSection items={CASE_STUDIES} />
 
       {/* 07 SCALE — World Map */}
-      <section className="ai-page py-20 px-6 overflow-hidden" style={{ contain: "layout paint" }}>
+      <section id="global-reach" className="ai-page py-20 px-6 overflow-hidden scroll-mt-20" style={{ contain: "layout paint" }}>
         <div className="max-w-6xl mx-auto">
           <m.div {...fadeUp} className="text-center mb-10">
             <Tag>Global reach</Tag>

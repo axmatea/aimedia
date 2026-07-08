@@ -1389,3 +1389,32 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
     opacity: .68;
   }
 }
+
+/* Global reach: make the mobile world map read as a full hero visual, not a
+   tiny strip floating in empty space. */
+.global-world-map {
+  margin-inline: auto;
+}
+
+@media (max-width: 767px) {
+  .global-world-map {
+    width: 132vw !important;
+    max-width: none;
+    height: clamp(330px, 58svh, 520px) !important;
+    aspect-ratio: auto !important;
+    margin-left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    border-radius: 0;
+  }
+
+  .global-world-map > img,
+  .global-world-map > svg {
+    transform: scale(1.16);
+    transform-origin: center center;
+  }
+
+  .global-world-map foreignObject span {
+    font-size: 11px !important;
+    padding: 2px 7px !important;
+  }
+}

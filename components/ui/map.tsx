@@ -56,7 +56,7 @@ export function WorldMap({
   const fullCycleDuration = totalAnimationTime + pauseTime;
 
   return (
-    <div className="w-full aspect-[2/1] rounded-2xl relative overflow-hidden">
+    <div className="global-world-map w-full aspect-[2/1] rounded-2xl relative overflow-hidden">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
