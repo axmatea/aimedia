@@ -2,7 +2,7 @@ import Link from "next/link"
 
 export default function Legal() {
   return (
-    <main className="min-h-screen bg-[#050507] px-6 py-24">
+    <main className="min-h-screen bg-[#050507] px-6 py-24 select-text">
       <div className="max-w-3xl mx-auto">
         <p className="text-white/20 text-[10px] uppercase tracking-[0.3em] font-bold mb-4">Legal</p>
         <h1 className="text-white text-4xl md:text-5xl font-black uppercase mb-2" style={{ fontFamily: "var(--font-bebas)" }}>Terms of Service</h1>

@@ -632,6 +632,15 @@ body {
   /* Smooth momentum scrolling on iOS */
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: none;
+  /* Editorial surface, not a document: text selection off site-wide.
+     Form fields below and legal pages (select-text on their roots) re-enable it. */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea, [contenteditable="true"], [contenteditable=""] {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* GPU-accelerate sections for smooth scroll repaint */
