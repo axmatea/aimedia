@@ -376,6 +376,235 @@ html:not(.dark) {
 html:not(.dark) [data-lime-stroke] { stroke: #4a7a00 !important; }
 html:not(.dark) .agent-rx[data-lime-glow] { --agent-glow: rgba(74, 122, 0, 0.35) !important; }
 
+/* ── Traceable graph map: Graphify-inspired source → decision → output view ── */
+.trace-map-section {
+  position: relative;
+  overflow: hidden;
+  padding-block: var(--section-y);
+  padding-inline: var(--gutter);
+  background:
+    radial-gradient(780px 420px at 16% 22%, rgba(255,45,85,0.09), transparent 62%),
+    radial-gradient(720px 460px at 84% 80%, rgba(255,255,255,0.045), transparent 58%),
+    var(--ai-bg);
+}
+.trace-map-layout {
+  width: min(100%, var(--content-wide));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.38fr) minmax(0, 0.62fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: center;
+}
+.trace-map-copy {
+  position: relative;
+  z-index: 2;
+}
+.trace-confidence-stack {
+  display: grid;
+  gap: 10px;
+  margin-top: clamp(24px, 3vw, 36px);
+}
+.trace-confidence-row {
+  display: grid;
+  gap: 4px;
+  padding: 12px 0 12px 14px;
+  border-left: 2px solid var(--red-line);
+}
+.trace-confidence-row span {
+  color: var(--red);
+  font-family: var(--font-geist-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+.trace-confidence-row p {
+  max-width: 360px;
+  color: color-mix(in oklch, var(--ink-050) 58%, transparent);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+}
+.trace-map-canvas {
+  position: relative;
+  min-height: clamp(520px, 54vw, 660px);
+  overflow: hidden;
+  border: 1px solid var(--line-1);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(255,45,85,0.18), transparent 18%),
+    radial-gradient(circle at 76% 56%, rgba(255,255,255,0.08), transparent 14%),
+    linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)),
+    #07070a;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 34px 90px -64px rgba(255,45,85,0.9);
+  contain: layout paint;
+}
+.trace-map-canvas::before,
+.trace-map-canvas::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.trace-map-canvas::before {
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px) 0 0 / 72px 72px,
+    linear-gradient(0deg, rgba(255,255,255,0.045) 1px, transparent 1px) 0 0 / 72px 72px;
+  mask-image: radial-gradient(circle at 50% 44%, black 0 58%, transparent 84%);
+  -webkit-mask-image: radial-gradient(circle at 50% 44%, black 0 58%, transparent 84%);
+  opacity: 0.38;
+}
+.trace-map-canvas::after {
+  background: linear-gradient(135deg, transparent 0 42%, rgba(255,45,85,0.16) 50%, transparent 58% 100%);
+  opacity: 0.42;
+}
+.trace-map-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+.trace-edge {
+  fill: none;
+  stroke: rgba(255,255,255,0.24);
+  stroke-width: 1.35;
+  stroke-linecap: round;
+  stroke-dasharray: 24 820;
+  stroke-dashoffset: 0;
+  filter: url(#traceGlow);
+  animation: trace-edge-flow 7.2s var(--ease-out) infinite;
+  animation-delay: var(--edge-delay);
+}
+.trace-edge-extracted { stroke: rgba(255,45,85,0.82); }
+.trace-edge-inferred { stroke: rgba(255,255,255,0.38); }
+.trace-edge-ambiguous { stroke: rgba(255,45,85,0.46); stroke-dasharray: 8 14; }
+.trace-map-grid {
+  position: absolute;
+  inset: 12%;
+  z-index: 0;
+  border: 1px solid rgba(255,255,255,0.055);
+  border-radius: 999px;
+  transform: rotate(-11deg);
+}
+.trace-node {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 3;
+  width: min(210px, 32vw);
+  min-height: 112px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  background: rgba(10,10,15,0.82);
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 18px 44px -34px rgba(0,0,0,1);
+  transform: translate(-50%, -50%);
+}
+.trace-node::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--red);
+  box-shadow: 0 0 0 5px rgba(255,45,85,0.12), 0 0 24px rgba(255,45,85,0.52);
+  animation: trace-node-pulse 3.8s ease-in-out infinite;
+  animation-delay: calc(var(--node-index) * -0.42s);
+}
+.trace-node span {
+  color: var(--ink-050);
+  font-size: var(--fs-sm);
+  font-weight: 800;
+  line-height: 1.08;
+}
+.trace-node p {
+  color: rgba(255,255,255,0.56);
+  font-size: var(--fs-xs);
+  line-height: 1.42;
+}
+.trace-node-core {
+  width: min(244px, 34vw);
+  min-height: 132px;
+  border-color: var(--red-line);
+  background: linear-gradient(180deg, rgba(255,45,85,0.18), rgba(10,10,15,0.9));
+  box-shadow:
+    0 0 0 1px rgba(255,45,85,0.1),
+    0 0 44px -18px rgba(255,45,85,0.9),
+    inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.trace-node-source,
+.trace-node-review { background: rgba(255,255,255,0.055); }
+.trace-node-output { border-color: rgba(255,45,85,0.22); }
+
+@keyframes trace-edge-flow {
+  0% { stroke-dashoffset: 180; opacity: 0.1; }
+  16% { opacity: 0.95; }
+  62% { opacity: 0.55; }
+  100% { stroke-dashoffset: -820; opacity: 0.14; }
+}
+@keyframes trace-node-pulse {
+  0%, 100% { transform: scale(0.92); opacity: 0.72; }
+  48% { transform: scale(1.08); opacity: 1; }
+}
+
+html:not(.dark) .trace-map-section {
+  background:
+    radial-gradient(780px 420px at 16% 22%, rgba(255,45,85,0.09), transparent 62%),
+    linear-gradient(180deg, #F5F4F0, #ECEAE5);
+}
+html:not(.dark) .trace-confidence-row p {
+  color: rgba(5,5,7,0.58);
+}
+html:not(.dark) .trace-map-canvas {
+  background:
+    radial-gradient(circle at 50% 38%, rgba(255,45,85,0.12), transparent 18%),
+    linear-gradient(180deg, rgba(255,255,255,0.88), rgba(245,244,240,0.78));
+  border-color: rgba(0,0,0,0.08);
+}
+html:not(.dark) .trace-node {
+  background: rgba(255,255,255,0.88);
+  border-color: rgba(0,0,0,0.08);
+  color: #050507;
+  box-shadow: 0 18px 44px -34px rgba(5,5,7,0.64);
+}
+html:not(.dark) .trace-node span { color: #050507; }
+html:not(.dark) .trace-node p { color: rgba(5,5,7,0.58); }
+html:not(.dark) .trace-edge-inferred { stroke: rgba(5,5,7,0.26); }
+
+@media (max-width: 980px) {
+  .trace-map-layout { grid-template-columns: 1fr; }
+  .trace-map-canvas { min-height: 560px; }
+  .trace-node { width: min(190px, 40vw); }
+}
+@media (max-width: 620px) {
+  .trace-map-section { padding-inline: 16px; }
+  .trace-map-canvas {
+    min-height: 760px;
+  }
+  .trace-map-svg { display: none; }
+  .trace-map-grid { display: none; }
+  .trace-node {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    min-height: 0;
+    transform: none;
+  }
+  .trace-map-canvas {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    padding: 14px;
+  }
+  .trace-map-canvas::before,
+  .trace-map-canvas::after { opacity: 0.18; }
+}
+
 /* ── Serve icons: idle micro-motion loops ─────────────────────────────────────
    CSS loops (not whileInView) because the section sits under content-visibility.
    Negative animation-delays stagger the grid so nothing pulses in unison.

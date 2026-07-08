@@ -139,6 +139,30 @@ const CASE_STUDIES = [
   { project: "XWECAN", tag: "Web3", result: "2,200 qualified leads contacted before launch day.", color: "#050507", accent: "#FF2D55" },
 ]
 
+const TRACE_SYSTEM_NODES = [
+  { id: "signals", label: "Buyer signals", detail: "Inbound, CRM, social, and intent data normalized into one source map.", x: "13%", y: "22%", tone: "source" },
+  { id: "context", label: "Context graph", detail: "Accounts, offers, objections, and channel history linked before action.", x: "31%", y: "55%", tone: "inferred" },
+  { id: "core", label: "AX operator core", detail: "Routes work to lead gen, content, and ops automations with review gates.", x: "50%", y: "34%", tone: "core" },
+  { id: "content", label: "Content engine", detail: "Turns approved positioning into scheduled posts, scripts, and assets.", x: "70%", y: "20%", tone: "output" },
+  { id: "pipeline", label: "Pipeline engine", detail: "Scores accounts, drafts follow-ups, and keeps CRM state current.", x: "78%", y: "54%", tone: "output" },
+  { id: "proof", label: "Proof loop", detail: "Every result routes back into reporting, decisions, and next experiments.", x: "52%", y: "78%", tone: "review" },
+] as const
+
+const TRACE_SYSTEM_EDGES = [
+  { id: "signals-context", d: "M 106 116 C 164 146 198 206 250 234", tone: "extracted", delay: "0s" },
+  { id: "context-core", d: "M 250 234 C 308 212 342 164 392 150", tone: "inferred", delay: "-1.4s" },
+  { id: "core-content", d: "M 392 150 C 452 108 500 92 548 96", tone: "extracted", delay: "-2.6s" },
+  { id: "core-pipeline", d: "M 406 166 C 478 194 536 222 610 250", tone: "extracted", delay: "-3.8s" },
+  { id: "pipeline-proof", d: "M 610 250 C 574 312 502 350 410 346", tone: "inferred", delay: "-5s" },
+  { id: "proof-context", d: "M 410 346 C 326 346 270 306 250 234", tone: "ambiguous", delay: "-6.2s" },
+] as const
+
+const TRACE_CONFIDENCE_TAGS = [
+  { label: "EXTRACTED", detail: "Direct source events, CRM facts, and logged actions." },
+  { label: "INFERRED", detail: "Model-assisted fit, priority, and next-step suggestions." },
+  { label: "AMBIGUOUS", detail: "Human review before client-facing output or spend." },
+] as const
+
 const NAV_LINKS = [
   { label: "Services", href: "#built-for" },
   { label: "Work", href: "#ai-team" },
@@ -259,6 +283,66 @@ const HeroSection = memo(function HeroSection() {
           </div>
         </m.div>
 
+      </div>
+    </section>
+  )
+})
+
+const TraceableSystemMap = memo(function TraceableSystemMap() {
+  return (
+    <section id="trace-map" className="trace-map-section border-b ai-border">
+      <div className="trace-map-layout">
+        <m.div {...fadeUp} className="trace-map-copy">
+          <Tag>Traceable systems</Tag>
+          <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
+            MAP THE WORK.<br />SHIP THE<br /><span style={{ color: "var(--red)" }}>SYSTEM.</span>
+          </Disp>
+          <p className="ai-muted text-sm md:text-base leading-relaxed mt-6 max-w-md">
+            We build AI operations as visible maps: sources, decisions, owners, and review gates connected before anything touches a customer.
+          </p>
+          <div className="trace-confidence-stack" aria-label="Confidence labels">
+            {TRACE_CONFIDENCE_TAGS.map((tag) => (
+              <div key={tag.label} className="trace-confidence-row">
+                <span>{tag.label}</span>
+                <p>{tag.detail}</p>
+              </div>
+            ))}
+          </div>
+        </m.div>
+
+        <m.div {...fadeUp} transition={{ duration: 0.9, delay: 0.1, ease: EASE_SWIFT }} className="trace-map-canvas" aria-label="AX Media traceable AI system map">
+          <svg className="trace-map-svg" viewBox="0 0 720 420" preserveAspectRatio="none" aria-hidden>
+            <defs>
+              <filter id="traceGlow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="3.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            {TRACE_SYSTEM_EDGES.map((edge) => (
+              <path
+                key={edge.id}
+                className={`trace-edge trace-edge-${edge.tone}`}
+                d={edge.d}
+                style={{ "--edge-delay": edge.delay } as React.CSSProperties}
+              />
+            ))}
+          </svg>
+
+          <div className="trace-map-grid" aria-hidden />
+          {TRACE_SYSTEM_NODES.map((node, index) => (
+            <article
+              key={node.id}
+              className={`trace-node trace-node-${node.tone}`}
+              style={{ "--x": node.x, "--y": node.y, "--node-index": index } as React.CSSProperties}
+            >
+              <span>{node.label}</span>
+              <p>{node.detail}</p>
+            </article>
+          ))}
+        </m.div>
       </div>
     </section>
   )
@@ -653,6 +737,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Traceable Graph System */}
+      <TraceableSystemMap />
 
       {/* 04 SOLUTION — Services */}
       <div id="services">
