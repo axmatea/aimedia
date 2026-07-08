@@ -260,23 +260,26 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
   const showPoster = Boolean(mobileFallback) && (!showScene || !sceneReady)
 
   return (
-    <div ref={containerRef} className="w-full h-full relative">
-      {/* Instant poster placeholder while the 3D runtime + scene load; live animated robot replaces it */}
+    <div ref={containerRef} className="w-full h-full relative overflow-hidden hero-spline-stage">
+      {/* Instant poster placeholder while the 3D runtime + scene loads. It stays on top until the live canvas is fully ready, so users never see a half-booted frozen Spline frame. */}
       {showPoster && (
         /* eslint-disable-next-line @next/next/no-img-element */
         <img
           src={mobileFallback}
           alt=""
-          decoding="async"
+          decoding="sync"
+          loading="eager"
           fetchPriority="high"
-          className={className}
+          className={`${className ?? ''} hero-spline-poster`}
           style={{ objectFit: 'contain', width: '100%', height: '100%', position: 'absolute', inset: 0 }}
         />
       )}
       {showScene && (
-        <Suspense fallback={null}>
-          <Spline scene={scene} className={className} onLoad={handleLoad} />
-        </Suspense>
+        <div className={`hero-spline-live ${sceneReady ? 'is-ready' : ''}`} aria-hidden={!sceneReady}>
+          <Suspense fallback={null}>
+            <Spline scene={scene} className={className} onLoad={handleLoad} />
+          </Suspense>
+        </div>
       )}
     </div>
   )
