@@ -204,10 +204,16 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
     }
     splineApp._splineCleanup = cleanup
 
+    // Let the real Spline animation play hidden for a short pre-roll before reveal.
+    // This avoids exposing the broken first boot pose while keeping the first visible
+    // hero moment animated, not static.
+    splineApp.play?.()
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        setSceneReady(true)
-        onLoad?.(app)
+        window.setTimeout(() => {
+          setSceneReady(true)
+          onLoad?.(app)
+        }, 720)
       })
     })
   }, [onLoad])

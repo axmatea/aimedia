@@ -1241,6 +1241,20 @@ canvas {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   filter: contrast(1.04) saturate(1.02);
+  animation: robotBootFloat 2.2s ease-in-out infinite alternate;
+}
+@keyframes robotBootFloat {
+  0% {
+    transform: translate3d(0, 1.8%, 0) scale(1.02);
+    filter: contrast(1.02) saturate(.98) brightness(.86);
+  }
+  100% {
+    transform: translate3d(0, -1.8%, 0) scale(1.065);
+    filter: contrast(1.08) saturate(1.08) brightness(.98);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-spline-poster { animation: none; }
 }
 .hero-spline-live {
   position: absolute;
@@ -1330,13 +1344,13 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
   }
 
   .robot-mobile {
-    top: 12svh !important;
+    top: 7svh !important;
     left: 50% !important;
     right: auto !important;
     bottom: auto !important;
-    width: min(92vw, 520px) !important;
-    height: 56svh !important;
-    opacity: .62;
+    width: min(108vw, 640px) !important;
+    height: 66svh !important;
+    opacity: .72;
     z-index: 2 !important;
     will-change: auto;
   }
@@ -1367,11 +1381,11 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
 
 @media (max-width: 420px) {
   .robot-mobile {
-    top: 13svh !important;
+    top: 8svh !important;
     left: 50% !important;
     right: auto !important;
-    width: 94vw !important;
-    height: 54svh !important;
-    opacity: .58;
+    width: 110vw !important;
+    height: 64svh !important;
+    opacity: .68;
   }
 }
