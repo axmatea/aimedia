@@ -165,7 +165,10 @@
   [data-glow]:hover {
     --bg-spot-opacity: 0.15;
     background-image: var(--glow-spot);
-    box-shadow: 0 0 40px -12px hsl(var(--hue, 210) 100% 60% / 0.35), 0 1rem 2rem -1rem black;
+    box-shadow:
+      0 0 0 1px hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) 60% / 0.55),
+      0 0 28px -6px hsl(var(--hue, 210) 100% 60% / 0.35),
+      0 1rem 2rem -1rem black;
   }
 }
 [data-glow]:focus-visible {
