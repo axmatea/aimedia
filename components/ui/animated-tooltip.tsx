@@ -54,11 +54,11 @@ const TooltipItem = ({ item, index }: { item: AICreator; index: number }) => {
 export function AIUGCCreators() {
   // 256px source for crisp rendering at 56px on 2-3x retina displays
   const creators: AICreator[] = [
-    { id: 1, name: "Zara.AI", niche: "Lifestyle & Wellness", image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=256&q=85&auto=format&fit=crop", followers: "284K" },
-    { id: 2, name: "Marcus.AI", niche: "Tech & Startups", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=256&q=85&auto=format&fit=crop", followers: "512K" },
-    { id: 3, name: "Aria.AI", niche: "Fashion & Beauty", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=256&q=85&auto=format&fit=crop", followers: "1.2M" },
-    { id: 4, name: "Dev.AI", niche: "Finance & Crypto", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=256&q=85&auto=format&fit=crop", followers: "389K" },
-    { id: 5, name: "Luna.AI", niche: "Travel & Food", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=256&q=85&auto=format&fit=crop", followers: "741K" },
+    { id: 1, name: "Zara.AI", niche: "Lifestyle & Wellness", image: "/creators/zara.jpg", followers: "284K" },
+    { id: 2, name: "Marcus.AI", niche: "Tech & Startups", image: "/creators/marcus.jpg", followers: "512K" },
+    { id: 3, name: "Aria.AI", niche: "Fashion & Beauty", image: "/creators/aria.jpg", followers: "1.2M" },
+    { id: 4, name: "Dev.AI", niche: "Finance & Crypto", image: "/creators/dev.jpg", followers: "389K" },
+    { id: 5, name: "Luna.AI", niche: "Travel & Food", image: "/creators/luna.jpg", followers: "741K" },
   ]
 
   return (

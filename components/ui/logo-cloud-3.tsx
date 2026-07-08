@@ -23,6 +23,7 @@ export function LogoCloud({ className, logos, ...props }: LogoCloudProps) {
     >
       <InfiniteSlider gap={64} reverse speed={10} speedOnHover={4}>
         {logos.map((logo) => (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             alt={logo.alt}
             className="pointer-events-none h-7 select-none brightness-0 dark:invert opacity-60 hover:opacity-90 transition-opacity md:h-9"

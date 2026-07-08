@@ -23,7 +23,7 @@ export function WorldMap({
   loop = true,
 }: MapProps) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [hoveredLocation, setHoveredLocation] = useState<string | null>(null);
+  const [hoveredLocation] = useState<string | null>(null);
   const { resolvedTheme } = useTheme();
 
   const map = useMemo(() => new DottedMap({ height: 100, grid: "diagonal" }), []);

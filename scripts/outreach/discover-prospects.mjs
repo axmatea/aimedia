@@ -19,7 +19,7 @@
 
 import { loadEnv, requireEnv, optionalEnv } from "./lib/env.mjs"
 import { getBucket } from "./lib/icp-buckets.mjs"
-import { upsertByEmail, readStore, writeStore } from "./lib/state.mjs"
+import { upsertByEmail } from "./lib/state.mjs"
 
 loadEnv()
 
@@ -141,7 +141,7 @@ Return ONLY a JSON array, no preamble.`
   const cleaned = content.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "").trim()
   try {
     return JSON.parse(cleaned)
-  } catch (err) {
+  } catch {
     throw new Error(`Claude returned non-JSON: ${cleaned.slice(0, 200)}`)
   }
 }

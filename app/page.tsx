@@ -76,23 +76,23 @@ const WHO_WE_SERVE = [
 
 // Tools we actually use and integrate with
 const TRUSTED_LOGOS = [
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/openai.svg", alt: "OpenAI" },
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/notion.svg", alt: "Notion" },
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/slack.svg", alt: "Slack" },
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/hubspot.svg", alt: "HubSpot" },
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/zapier.svg", alt: "Zapier" },
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/stripe.svg", alt: "Stripe" },
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/airtable.svg", alt: "Airtable" },
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/n8n.svg", alt: "n8n" },
+  { src: "/logos/openai.svg", alt: "OpenAI" },
+  { src: "/logos/notion.svg", alt: "Notion" },
+  { src: "/logos/slack.svg", alt: "Slack" },
+  { src: "/logos/hubspot.svg", alt: "HubSpot" },
+  { src: "/logos/zapier.svg", alt: "Zapier" },
+  { src: "/logos/stripe.svg", alt: "Stripe" },
+  { src: "/logos/airtable.svg", alt: "Airtable" },
+  { src: "/logos/n8n.svg", alt: "n8n" },
 ]
 
 const FEATURED_LOGOS = [
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/instagram.svg", alt: "Instagram" },
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/linkedin.svg", alt: "LinkedIn" },
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/tiktok.svg", alt: "TikTok" },
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/youtube.svg", alt: "YouTube" },
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/figma.svg", alt: "Figma" },
-  { src: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/google.svg", alt: "Google" },
+  { src: "/logos/instagram.svg", alt: "Instagram" },
+  { src: "/logos/linkedin.svg", alt: "LinkedIn" },
+  { src: "/logos/tiktok.svg", alt: "TikTok" },
+  { src: "/logos/youtube.svg", alt: "YouTube" },
+  { src: "/logos/figma.svg", alt: "Figma" },
+  { src: "/logos/google.svg", alt: "Google" },
 ]
 
 const MAP_DOTS = [
@@ -137,12 +137,6 @@ const CASE_STUDIES = [
   { project: "AfterCall", tag: "SaaS", result: "$180k ARR in the first 90 days from automated pipeline.", color: "#0A0A0F", accent: "#FF2D55" },
   { project: "Dad's Printing", tag: "Local Business", result: "CAC dropped 67%. AI handles the full pipeline.", color: "#050507", accent: "#FF2D55" },
   { project: "XWECAN", tag: "Web3", result: "2,200 qualified leads contacted before launch day.", color: "#050507", accent: "#FF2D55" },
-]
-
-const PROCESS = [
-  { num: "01", title: "AUDIT", body: "We map your stack, audience health, and content gaps against where the top projects in your niche operate." },
-  { num: "02", title: "BUILD", body: "Our team deploys AI pipelines against real data before handoff. No demo environments. Production-grade only." },
-  { num: "03", title: "LAUNCH", body: "Systems go live. You own everything. We monitor and optimize. Most clients see 3–5× growth inside 60 days." },
 ]
 
 const NAV_LINKS = [

@@ -32,7 +32,6 @@ import {
   recordSent,
   wasSentTo,
   isUnsubscribed,
-  findByEmail,
 } from "./lib/state.mjs"
 
 loadEnv()
@@ -127,7 +126,6 @@ async function sendStage1({ prospect, bucket }) {
 }
 
 async function runTestMode() {
-  const to = requireEnv.bind(null, "--to flag required in --test mode")
   if (!args.to) throw new Error("--test mode requires --to=<email>")
   if (!args["company-url"]) throw new Error("--test mode requires --company-url=<url>")
 

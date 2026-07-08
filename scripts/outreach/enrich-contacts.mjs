@@ -17,7 +17,7 @@
  */
 
 import { loadEnv, requireEnv } from "./lib/env.mjs"
-import { readStore, writeStore, upsertByEmail, findByEmail } from "./lib/state.mjs"
+import { readStore, writeStore } from "./lib/state.mjs"
 import { ROLE_PRIORITY, isRoleEmail } from "./lib/icp-buckets.mjs"
 
 loadEnv()

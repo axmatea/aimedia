@@ -7,7 +7,7 @@
  * pulled from (so we can audit / debug bad hooks).
  */
 
-import { requireEnv, optionalEnv } from "./env.mjs"
+import { optionalEnv } from "./env.mjs"
 
 const FETCH_TIMEOUT_MS = 15_000
 const MAX_HOMEPAGE_CHARS = 6000
