@@ -191,6 +191,9 @@ const Tag = ({ children }: { children: React.ReactNode }) => (
 // ── HeroSection: isolated so its interval doesn't re-render the whole page ──
 const HeroSection = memo(function HeroSection() {
   const [audienceIdx, setAudienceIdx] = useState(0)
+  // The Lightning WebGL layer is display:none below lg anyway (hidden dark:lg:block),
+  // so on phones we skip mounting it entirely: no chunk download, no WebGL context.
+  const [desktop, setDesktop] = useState(false)
   const reduceMotion = useReducedMotion()
   const riseLine = {
     hidden: { y: reduceMotion ? "0%" : "105%" },
@@ -200,6 +203,14 @@ const HeroSection = memo(function HeroSection() {
   useEffect(() => {
     const t = setInterval(() => setAudienceIdx((i) => (i + 1) % HERO_AUDIENCES.length), 2600)
     return () => clearInterval(t)
+  }, [])
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)")
+    const sync = () => setDesktop(mq.matches)
+    sync()
+    mq.addEventListener?.("change", sync)
+    return () => mq.removeEventListener?.("change", sync)
   }, [])
 
   return (
@@ -213,9 +224,10 @@ const HeroSection = memo(function HeroSection() {
         <div className="absolute inset-0 opacity-35 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:88px_88px]" />
       </div>
 
-      {/* Lightning behind robot: subtle ambient in the brand-red family, hidden in light mode */}
+      {/* Lightning behind robot: subtle ambient in the brand-red family, hidden in light mode.
+          Mounted only on lg+ viewports (it is display:none below that anyway). */}
       <div className="absolute right-0 top-0 w-[75%] h-full pointer-events-none hidden dark:lg:block z-[1] opacity-30 mix-blend-screen">
-        <Lightning hue={350} xOffset={0.3} speed={1.0} intensity={0.35} size={2.2} />
+        {desktop && <Lightning hue={350} xOffset={0.3} speed={1.0} intensity={0.35} size={2.2} />}
       </div>
 
       {/* Robot */}

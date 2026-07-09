@@ -1,7 +1,7 @@
 'use client';
 import { cn } from '@/lib/utils';
 import { useMotionValue, animate, motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import useMeasure from 'react-use-measure';
 
 type InfiniteSliderProps = {
@@ -37,7 +37,25 @@ export function InfiniteSlider({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [key, setKey] = useState(0);
 
+  // Only run the per-frame translation loop while the slider is actually on
+  // screen. The loop writes a transform every animation frame forever, which
+  // burns main-thread time (and battery) for a strip the user cannot see.
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
   useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { rootMargin: '80px' }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!inView) return;
     let controls: ReturnType<typeof animate> | undefined;
     const size = direction === 'horizontal' ? width : height;
     const contentSize = size + gap;
@@ -65,7 +83,7 @@ export function InfiniteSlider({
     }
 
     return controls?.stop;
-  }, [key, translation, currentDuration, width, height, gap, isTransitioning, direction, reverse]);
+  }, [key, translation, currentDuration, width, height, gap, isTransitioning, direction, reverse, inView]);
 
   const hoverProps = effectiveDurationOnHover
     ? {
@@ -81,7 +99,7 @@ export function InfiniteSlider({
     : {};
 
   return (
-    <div className={cn('overflow-hidden', className)}>
+    <div ref={containerRef} className={cn('overflow-hidden', className)}>
       <motion.div
         className="flex w-max"
         style={{

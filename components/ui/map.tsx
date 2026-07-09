@@ -1,8 +1,28 @@
 "use client";
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DottedMap from "dotted-map";
 import { useTheme } from "next-themes";
+
+// new DottedMap() + getSVG() walk the entire world grid: profiling showed this
+// single synchronous call was the ~700ms main-thread long task that dominated
+// the home page TBT (it ran at mount, five viewports below the fold). The SVG
+// only depends on the theme color, so compute it once per theme, lazily, and
+// only when the map is actually approaching the viewport.
+const svgCache = new Map<string, string>();
+function buildMapSVG(dark: boolean): string {
+  const key = dark ? "dark" : "light";
+  const hit = svgCache.get(key);
+  if (hit) return hit;
+  const svg = new DottedMap({ height: 100, grid: "diagonal" }).getSVG({
+    radius: 0.22,
+    color: dark ? "#FFFFFF20" : "#00000040",
+    shape: "circle",
+    backgroundColor: "transparent",
+  });
+  svgCache.set(key, svg);
+  return svg;
+}
 
 interface MapProps {
   dots?: Array<{
@@ -23,20 +43,46 @@ export function WorldMap({
   loop = true,
 }: MapProps) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
   const [hoveredLocation] = useState<string | null>(null);
   const { resolvedTheme } = useTheme();
 
-  const map = useMemo(() => new DottedMap({ height: 100, grid: "diagonal" }), []);
+  // Defer the expensive grid computation until the section is near view, then
+  // run it in an idle callback so it never lands mid-scroll-frame. The outer
+  // container keeps its aspect ratio the whole time, so there is no layout
+  // shift, just dots fading in slightly before the section scrolls in.
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || ready) return;
+    let idleId: number | null = null;
+    const win = window as typeof window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        obs.disconnect();
+        if (win.requestIdleCallback) {
+          idleId = win.requestIdleCallback(() => setReady(true), { timeout: 600 });
+        } else {
+          setReady(true);
+        }
+      },
+      // generous margin: compute well before the map is visible
+      { rootMargin: "900px" }
+    );
+    obs.observe(el);
+    return () => {
+      obs.disconnect();
+      if (idleId !== null) win.cancelIdleCallback?.(idleId);
+    };
+  }, [ready]);
 
   const svgMap = useMemo(
-    () =>
-      map.getSVG({
-        radius: 0.22,
-        color: resolvedTheme === "dark" ? "#FFFFFF20" : "#00000040",
-        shape: "circle",
-        backgroundColor: "transparent",
-      }),
-    [map, resolvedTheme]
+    () => (ready ? buildMapSVG(resolvedTheme === "dark") : null),
+    [ready, resolvedTheme]
   );
 
   const projectPoint = (lat: number, lng: number) => ({
@@ -56,15 +102,18 @@ export function WorldMap({
   const fullCycleDuration = totalAnimationTime + pauseTime;
 
   return (
-    <div className="global-world-map w-full aspect-[2/1] rounded-2xl relative overflow-hidden">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
-        className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] pointer-events-none select-none object-cover opacity-80"
-        alt="world map"
-        draggable={false}
-        suppressHydrationWarning
-      />
+    <div ref={wrapRef} className="global-world-map w-full aspect-[2/1] rounded-2xl relative overflow-hidden">
+      {svgMap && (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
+          className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] pointer-events-none select-none object-cover opacity-80"
+          alt="world map"
+          draggable={false}
+          suppressHydrationWarning
+        />
+      )}
+      {ready && (
       <svg
         ref={svgRef}
         viewBox="0 0 800 400"
@@ -147,6 +196,7 @@ export function WorldMap({
           );
         })}
       </svg>
+      )}
 
       <AnimatePresence>
         {hoveredLocation && (

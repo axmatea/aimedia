@@ -1234,33 +1234,38 @@ canvas {
   isolation: isolate;
   background: transparent;
 }
+/* Poster float is transform-only so it runs entirely on the compositor.
+   The old keyframes also animated filter (contrast/saturate/brightness),
+   which forced a main-thread repaint of the large hero image every frame.
+   The filter now sits at a static midpoint on each poster class instead.
+   The float also STARTS at the largest scale and breathes down: the first
+   painted frame is the biggest the element ever gets, so the browser locks
+   the LCP candidate at first paint instead of re-reporting a growing image
+   for another 2.2s (this alone was pushing lab LCP from ~1.4s to ~3.6s). */
 .hero-shell-poster {
   position: absolute;
   inset: 0;
   z-index: 0;
   object-fit: contain;
-  transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  filter: contrast(1.05) saturate(1.03) brightness(.92);
   animation: robotBootFloat 2.2s ease-in-out infinite alternate;
 }
 .hero-spline-poster {
   z-index: 1;
   opacity: 1;
-  transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  filter: contrast(1.04) saturate(1.02);
+  filter: contrast(1.05) saturate(1.03);
   animation: robotBootFloat 2.2s ease-in-out infinite alternate;
 }
 @keyframes robotBootFloat {
   0% {
-    transform: translate3d(0, 1.8%, 0) scale(1.02);
-    filter: contrast(1.02) saturate(.98) brightness(.86);
+    transform: translate3d(0, -1.8%, 0) scale(1.065);
   }
   100% {
-    transform: translate3d(0, -1.8%, 0) scale(1.065);
-    filter: contrast(1.08) saturate(1.08) brightness(.98);
+    transform: translate3d(0, 1.8%, 0) scale(1.02);
   }
 }
 @media (prefers-reduced-motion: reduce) {
