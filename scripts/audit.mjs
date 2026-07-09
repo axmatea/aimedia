@@ -47,6 +47,29 @@ function run(cmd, args, opts = {}) {
   }
 }
 
+/**
+ * fetch with retry. `next start` (plain Node http server) closes idle
+ * keep-alive sockets after ~5s. The html-validate + axe steps between page
+ * fetches take longer than that, so undici's pooled socket is dead by the
+ * next fetch and the request fails with ECONNRESET ("fetch failed"). This is
+ * why the /privacy-policy snapshot failed intermittently: it was simply the
+ * second page fetched after a long gap. A short retry makes the snapshot
+ * step deterministic.
+ */
+async function fetchWithRetry(url, attempts = 3) {
+  let lastErr
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fetch(url)
+    } catch (err) {
+      lastErr = err
+      await new Promise(r => setTimeout(r, 750))
+    }
+  }
+  const cause = lastErr?.cause?.code || lastErr?.cause?.message || ""
+  throw new Error(`${lastErr?.message}${cause ? ` (${cause})` : ""}`)
+}
+
 async function waitForServer(timeoutMs = 60000) {
   const start = Date.now()
   while (Date.now() - start < timeoutMs) {
@@ -102,10 +125,10 @@ async function main() {
     const row = { page: page.route, snapshot: "-", htmlValidate: "-", axe: "-" }
     const url = `${BASE}${page.route}`
 
-    // HTML snapshot
+    // HTML snapshot (retried: next start drops idle keep-alive sockets, see fetchWithRetry)
     const htmlFile = path.join(OUT_DIR, `${page.slug}.html`)
     try {
-      const res = await fetch(url)
+      const res = await fetchWithRetry(url)
       const html = await res.text()
       writeFileSync(htmlFile, html)
       row.snapshot = `${(html.length / 1024).toFixed(0)} KB`
@@ -113,14 +136,17 @@ async function main() {
       row.snapshot = `FAIL (${err.message})`
     }
 
-    // html-validate on the snapshot
+    // html-validate on the snapshot. Ruleset lives in .htmlvalidate.mjs,
+    // tuned for React/Next SSR output (rationale documented there). Passed
+    // explicitly so validation never depends on config discovery.
     if (existsSync(htmlFile)) {
-      const hv = run("npx", ["html-validate", "--formatter", "text", htmlFile])
+      const hv = run("npx", ["html-validate", "--config", ".htmlvalidate.mjs", "--formatter", "text", htmlFile])
       writeFileSync(path.join(OUT_DIR, `${page.slug}.html-validate.txt`), hv.stdout + hv.stderr)
       if (hv.ok) {
         row.htmlValidate = "0 errors"
       } else {
-        const matches = (hv.stdout.match(/error/gi) || []).length
+        // count "error [rule-name]" markers only, not every occurrence of the word
+        const matches = (hv.stdout.match(/error \[/g) || []).length
         row.htmlValidate = hv.status === 1 ? `${matches || "some"} error(s)` : `tool failed (${hv.status})`
       }
     }
