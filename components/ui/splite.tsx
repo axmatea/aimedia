@@ -109,28 +109,69 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
     }
   }, [])
 
+  // Mount scheduling. The Spline runtime is ~1.3 MB of scene data plus several
+  // seconds of (throttled) main-thread scripting, so it must never overlap the
+  // initial load: it was the whole reason the home page scored perf 47 while
+  // the legal pages scored 95. Two paths bring the live robot in:
+  //   a) FAST: the first real user gesture (pointer, wheel, touch, key). An
+  //      engaged user gets the robot right away, routed through
+  //      requestIdleCallback so the boot lands in a main-thread gap and never
+  //      mid-gesture.
+  //   b) FALLBACK: no gesture at all. Wait for the window load event plus a
+  //      quiet beat, then mount on idle. The animated poster carries the hero
+  //      until then, and the runtime never competes with hydration or the
+  //      initial chunk work.
   useEffect(() => {
     if (motionOk !== true || !inView || canMountScene) return
 
+    let cancelled = false
     let idleId: number | null = null
-    const timeoutId = window.setTimeout(() => {
-      const win = window as typeof window & {
-        requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number
-        cancelIdleCallback?: (id: number) => void
-      }
+    const timeouts: number[] = []
+
+    const win = window as typeof window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number
+      cancelIdleCallback?: (id: number) => void
+    }
+
+    const mount = () => {
+      if (!cancelled) setCanMountScene(true)
+    }
+
+    // Every mount goes through requestIdleCallback with a hard ceiling so the
+    // boot waits for a gap but can never stall forever.
+    const scheduleIdle = () => {
+      if (cancelled || idleId !== null) return
       if (win.requestIdleCallback) {
-        idleId = win.requestIdleCallback(() => setCanMountScene(true), { timeout: 1200 })
+        idleId = win.requestIdleCallback(mount, { timeout: 1200 })
       } else {
-        setCanMountScene(true)
+        timeouts.push(window.setTimeout(mount, 1200))
       }
-    }, 1100)
+    }
+
+    const INPUT_EVENTS: (keyof WindowEventMap)[] = ['pointerdown', 'mousemove', 'wheel', 'touchstart', 'keydown']
+    const onFirstInput = () => {
+      detachInput()
+      scheduleIdle()
+    }
+    const detachInput = () => {
+      for (const ev of INPUT_EVENTS) window.removeEventListener(ev, onFirstInput)
+    }
+    for (const ev of INPUT_EVENTS) {
+      window.addEventListener(ev, onFirstInput, { passive: true })
+    }
+
+    const afterLoad = () => {
+      timeouts.push(window.setTimeout(scheduleIdle, 2800))
+    }
+    if (document.readyState === 'complete') afterLoad()
+    else window.addEventListener('load', afterLoad, { once: true })
 
     return () => {
-      window.clearTimeout(timeoutId)
-      if (idleId !== null) {
-        const win = window as typeof window & { cancelIdleCallback?: (id: number) => void }
-        win.cancelIdleCallback?.(idleId)
-      }
+      cancelled = true
+      detachInput()
+      window.removeEventListener('load', afterLoad)
+      for (const t of timeouts) window.clearTimeout(t)
+      if (idleId !== null) win.cancelIdleCallback?.(idleId)
     }
   }, [motionOk, inView, canMountScene])
 
