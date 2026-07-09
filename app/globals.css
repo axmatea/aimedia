@@ -1279,6 +1279,14 @@ canvas {
 .hero-spline-live.is-ready {
   opacity: 1;
 }
+/* Once the live 3D canvas is ready, retire the SSR shell poster so the static
+   robot never ghosts behind the animated one. Under reduced motion the scene
+   never becomes ready, so the poster stays as the whole hero. */
+.hero-robot-shell:has(.hero-spline-live.is-ready) .hero-shell-poster {
+  opacity: 0;
+  transition: opacity 420ms var(--ease-swift);
+  pointer-events: none;
+}
 .hero-spline-live canvas {
   width: 100% !important;
   height: 100% !important;
