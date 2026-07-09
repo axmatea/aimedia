@@ -31,7 +31,9 @@ export function LogoCloud({ className, logos, ...props }: LogoCloudProps) {
             key={`logo-${logo.alt}`}
             loading="lazy"
             src={logo.src}
-            width={logo.width || "auto"}
+            /* width omitted when unknown: the HTML width attribute only accepts
+               integers ("auto" is invalid markup); CSS h-7/md:h-9 controls size */
+            width={logo.width}
           />
         ))}
       </InfiniteSlider>

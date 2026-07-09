@@ -287,7 +287,7 @@ const HeroSection = memo(function HeroSection() {
           </p>
           <div className="flex gap-3 flex-shrink-0">
             <LiquidMetalButton label="Start a Project" onClick={openBooking} />
-            <button onClick={() => scrollTo("services")} className="px-8 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-sm font-semibold rounded-full hover:border-[#FF2D55] hover:text-[#FF2D55] transition-[border-color,color]">
+            <button type="button" onClick={() => scrollTo("services")} className="px-8 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-sm font-semibold rounded-full hover:border-[#FF2D55] hover:text-[#FF2D55] transition-[border-color,color]">
               See Services →
             </button>
           </div>
@@ -310,7 +310,7 @@ const TraceableSystemMap = memo(function TraceableSystemMap() {
           <p className="ai-muted text-sm md:text-base leading-relaxed mt-6 max-w-md">
             We build AI operations as visible maps: sources, decisions, owners, and review gates connected before anything touches a customer.
           </p>
-          <div className="trace-confidence-stack" aria-label="Confidence labels">
+          <div className="trace-confidence-stack" role="group" aria-label="Confidence labels">
             {TRACE_CONFIDENCE_TAGS.map((tag) => (
               <div key={tag.label} className="trace-confidence-row">
                 <span>{tag.label}</span>
@@ -320,7 +320,7 @@ const TraceableSystemMap = memo(function TraceableSystemMap() {
           </div>
         </m.div>
 
-        <m.div {...fadeUp} transition={{ duration: 0.9, delay: 0.1, ease: EASE_SWIFT }} className="trace-map-canvas" aria-label="AX Media traceable AI system map">
+        <m.div {...fadeUp} transition={{ duration: 0.9, delay: 0.1, ease: EASE_SWIFT }} className="trace-map-canvas" role="img" aria-label="AX Media traceable AI system map">
           <svg className="trace-map-svg" viewBox="0 0 720 420" preserveAspectRatio="none" aria-hidden>
             <defs>
               <filter id="traceGlow" x="-30%" y="-30%" width="160%" height="160%">
@@ -444,7 +444,7 @@ function BookingFlow() {
                   <label className="text-white/90 text-base md:text-xl font-black block mb-3">What best describes your project?</label>
                   <div className="flex flex-wrap gap-2">
                     {["Web3 / NFT", "SaaS / Product", "Agency", "Brand", "Startup", "Enterprise"].map(opt => (
-                      <button key={opt} onClick={() => setQuiz(p => ({ ...p, projectType: opt }))}
+                      <button key={opt} type="button" onClick={() => setQuiz(p => ({ ...p, projectType: opt }))}
                         className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 ${
                           quiz.projectType === opt
                             ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
@@ -461,7 +461,7 @@ function BookingFlow() {
                   <label className="text-white/90 text-base md:text-xl font-black block mb-3">Primary goal?</label>
                   <div className="flex flex-wrap gap-2">
                     {["Lead Generation", "Content Automation", "Community Growth", "Sales Pipeline", "Ops Efficiency", "Other"].map(opt => (
-                      <button key={opt} onClick={() => setQuiz(p => ({ ...p, goal: opt }))}
+                      <button key={opt} type="button" onClick={() => setQuiz(p => ({ ...p, goal: opt }))}
                         className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 ${
                           quiz.goal === opt
                             ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
@@ -478,7 +478,7 @@ function BookingFlow() {
                   <label className="text-white/90 text-base md:text-xl font-black block mb-3">Monthly budget?</label>
                   <div className="flex flex-wrap gap-2">
                     {["$3–10k / mo", "$10–20k / mo", "$20k+ / mo"].map(opt => (
-                      <button key={opt} onClick={() => setQuiz(p => ({ ...p, budget: opt }))}
+                      <button key={opt} type="button" onClick={() => setQuiz(p => ({ ...p, budget: opt }))}
                         className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 ${
                           quiz.budget === opt
                             ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
@@ -511,7 +511,7 @@ function BookingFlow() {
                   </div>
                 ))}
                 <div className="flex gap-3 pt-2">
-                  <button onClick={() => setStep(0)} className="px-5 py-3 rounded-xl border border-white/30 text-white/75 text-sm hover:border-white/50 hover:text-white transition-colors">← Back</button>
+                  <button type="button" onClick={() => setStep(0)} className="px-5 py-3 rounded-xl border border-white/30 text-white/75 text-sm hover:border-white/50 hover:text-white transition-colors">← Back</button>
                   <Magnetic className="flex-1"><LiquidMetalButton label={submitting ? "Sending..." : "Continue to Schedule →"} onClick={handleContactContinue} className="w-full justify-center" /></Magnetic>
                 </div>
                 {!(contact.name && contact.email && contact.phone) && <p className="text-white/35 text-xs text-center">All fields required</p>}
@@ -536,7 +536,7 @@ function BookingFlow() {
                 </Magnetic>
                 <p className="text-white/45 text-sm pt-2">Confirmation will be sent to <span className="text-white/80 font-semibold">{contact.email}</span></p>
                 <p className="text-white/30 text-xs">We&apos;ll review your answers and come fully prepared.</p>
-                <button onClick={() => { setStep(0); setQuiz({ projectType: "", goal: "", budget: "" }); setContact({ name: "", email: "", phone: "" }); setCalBookingUrl("") }}
+                <button type="button" onClick={() => { setStep(0); setQuiz({ projectType: "", goal: "", budget: "" }); setContact({ name: "", email: "", phone: "" }); setCalBookingUrl("") }}
                   className="text-[#FF2D55]/60 text-sm hover:text-[#FF2D55] transition-colors mt-4 block mx-auto">Start over</button>
               </m.div>
             )}
@@ -649,6 +649,7 @@ export default function Home() {
           </a>
           <ThemeToggle />
           <button
+            type="button"
             onClick={openBooking}
             className="group relative px-4 md:px-6 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-bold tracking-wider uppercase overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-95 border-2 border-[#FF2D55] dark:border-[#FF2D55]/60 hover:border-[#FF2D55] text-[#FF2D55] dark:text-white"
           >
@@ -824,7 +825,7 @@ export default function Home() {
 
               {svc.id !== "01" && (
                 <div className="absolute right-0 bottom-0 pointer-events-none select-none overflow-hidden" aria-hidden>
-                  <Disp className="text-[300px] leading-none" style={{ color: "rgba(255,255,255,0.03)" }}>{svc.id}</Disp>
+                  <Disp className="text-[300px]" style={{ color: "rgba(255,255,255,0.03)" }}>{svc.id}</Disp>
                 </div>
               )}
             </div>
