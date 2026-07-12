@@ -764,7 +764,7 @@ export default function Home() {
       {/* Traceable Graph System */}
       <TraceableSystemMap />
 
-      {/* 04 SOLUTION — Services */}
+      {/* 04 SOLUTION: Services */}
       <div id="services" className="scroll-mt-24">
         {SERVICES.map((svc, i) => (
           <section key={svc.id} className="py-24 px-6 border-b ai-border relative overflow-hidden" style={{ backgroundColor: svc.bg, contain: "layout paint" }}>
@@ -845,10 +845,10 @@ export default function Home() {
         ))}
       </div>
 
-      {/* 06 PROOF — Outcomes we engineer (anonymized until real case studies confirmed) */}
+      {/* 06 PROOF: Outcomes we engineer (anonymized until real case studies confirmed) */}
       <ProofSection items={CASE_STUDIES} />
 
-      {/* 07 SCALE — World Map */}
+      {/* 07 SCALE: World Map */}
       <section id="global-reach" className="ai-page py-20 px-6 overflow-hidden scroll-mt-20" style={{ contain: "layout paint" }}>
         <div className="max-w-6xl mx-auto">
           <m.div {...fadeUp} className="text-center mb-10">
@@ -872,7 +872,7 @@ export default function Home() {
       {/* Smooth bridge into booking (no hard line) */}
       <div aria-hidden className="ai-booking-bridge h-24 md:h-36 -mb-px" />
 
-      {/* 08 CTA — Booking (inline finale) */}
+      {/* 08 CTA: Booking (inline finale) */}
       <BookingSection />
 
       {/* Native <dialog> booking modal, opened by the sticky nav CTA + Contact link */}
@@ -887,7 +887,7 @@ export default function Home() {
             <img src="/ax-logo-light.svg" alt="AX Media Company" className="ax-wordmark h-8 w-auto block dark:hidden" loading="lazy" decoding="async" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/ax-logo-dark.svg" alt="AX Media Company" className="ax-wordmark h-8 w-auto hidden dark:block" loading="lazy" decoding="async" />
-            <span className="ai-muted text-xs">© 2026 AI Media · aimedia.global</span>
+            <span className="ai-muted text-xs">© 2026 AX Media · aimedia.global</span>
           </div>
           <div className="flex gap-6 flex-wrap justify-center">
             <a href="mailto:info@aimedia.global" className="ai-muted text-xs hover:text-[#FF2D55] transition-colors">info@aimedia.global</a>

@@ -11,8 +11,8 @@ const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"], display: 
 
 export const metadata: Metadata = {
   title: {
-    default: "AI Media · AI Growth Agency | Web3, Founders & Brands",
-    template: "%s | AI Media",
+    default: "AX Media · AI Growth Agency | Web3, Founders & Brands",
+    template: "%s | AX Media",
   },
   description:
     "AI growth agency for Web3, Founders & Brands. We build lead gen systems, content automation & AI ops pipelines that compound: leads on autopilot, a content engine that runs while you sleep, and sales ops that never stop.",
@@ -30,15 +30,15 @@ export const metadata: Metadata = {
     "AI agency",
     "aimedia",
   ],
-  authors: [{ name: "AI Media", url: "https://aimedia.global" }],
-  creator: "AI Media",
-  publisher: "AI Media",
+  authors: [{ name: "AX Media", url: "https://aimedia.global" }],
+  creator: "AX Media",
+  publisher: "AX Media",
   openGraph: {
-    title: "AI Media · AI Growth Agency | Web3, Founders & Brands",
+    title: "AX Media · AI Growth Agency | Web3, Founders & Brands",
     description:
       "AI growth agency for Web3, Founders & Brands. Lead gen systems, content automation, AI ops pipelines that compound: leads on autopilot and a content engine that runs while you sleep.",
     url: "https://aimedia.global",
-    siteName: "AI Media",
+    siteName: "AX Media",
     type: "website",
     locale: "en_US",
     images: [
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@ai.mediaco",
     creator: "@ai.mediaco",
-    title: "AI Media · AI Growth Agency",
+    title: "AX Media · AI Growth Agency",
     description:
       "We build AI systems: lead gen · content · ops automation that compound. Leads on autopilot, content that runs while you sleep. For Web3, Founders & Brands.",
     images: ["/og-ax-media.png"],
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "AI Media",
+  name: "AX Media",
   url: "https://aimedia.global",
   logo: "https://aimedia.global/og-ax-media.png",
   description:

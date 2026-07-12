@@ -27,7 +27,7 @@ function htmlPage(title: string, body: string, accent: string = "#FF2D55"): stri
   return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>${title}</title></head>
 <body style="margin:0;padding:0;background:#050507;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#fff;">
 <div style="max-width:520px;margin:80px auto;padding:48px 32px;background:#0d0d18;border:1px solid #1c1c2e;border-radius:14px;text-align:center;">
-<p style="color:${accent};font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 14px;">AI Media · Internal</p>
+<p style="color:${accent};font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 14px;">AX Media · Internal</p>
 <h1 style="color:#fff;font-size:24px;font-weight:900;margin:0 0 16px;">${title}</h1>
 <div style="color:#aaa;font-size:15px;line-height:1.6;">${body}</div>
 </div></body></html>`

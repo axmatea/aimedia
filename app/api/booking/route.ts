@@ -171,7 +171,7 @@ export async function POST(req: NextRequest) {
       from: FROM_EMAIL,
       to: OWNER_EMAIL.trim(),
       replyTo: email,
-      subject: `🔥 New Lead: ${name} — ${budget}`,
+      subject: `🔥 New Lead: ${name} (${budget})`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0a0a0f;color:#fff;padding:32px;border-radius:12px;">
           <h2 style="color:#FF2D55;margin:0 0 24px;">New Booking Request</h2>
@@ -190,7 +190,7 @@ export async function POST(req: NextRequest) {
             contactedLink
               ? `<div style="margin-top:20px;text-align:center;">
                    <a href="${contactedLink}" style="display:inline-block;background:#C8FF60;color:#050507;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:800;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;">✓ Mark as contacted &amp; cancel follow-ups</a>
-                   <p style="margin:10px 0 0;color:#444;font-size:11px;">One click — stops the sequence + sets Status=Contacted in Notion.</p>
+                   <p style="margin:10px 0 0;color:#444;font-size:11px;">One click: stops the sequence + sets Status=Contacted in Notion.</p>
                  </div>`
               : ""
           }
@@ -213,7 +213,7 @@ export async function POST(req: NextRequest) {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Media</title>
+  <title>AX Media</title>
 </head>
 <body style="margin:0;padding:0;background-color:#050507;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#050507;min-height:100vh;">
@@ -227,7 +227,7 @@ export async function POST(req: NextRequest) {
         <table cellpadding="0" cellspacing="0" border="0">
           <tr>
             <td style="border-radius:10px;background:#0f0f1a;border:1px solid #1a1a2e;padding:10px 16px;">
-              <span style="color:#ffffff;font-size:13px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;">AI MEDIA</span>
+              <span style="color:#ffffff;font-size:13px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;">AX MEDIA</span>
               <span style="color:#FF2D55;font-size:13px;font-weight:800;letter-spacing:0.18em;"> ·</span>
               <span style="color:#555;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;"> AI Growth Agency</span>
             </td>
@@ -242,7 +242,7 @@ export async function POST(req: NextRequest) {
         <p style="color:#FF2D55;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 14px;">Request confirmed</p>
         <h1 style="color:#ffffff;font-size:32px;font-weight:900;line-height:1.15;letter-spacing:-0.03em;margin:0 0 16px;">You're in, ${firstName}.<br/>We're already on it.</h1>
         <p style="color:#666;font-size:16px;line-height:1.7;margin:0;max-width:460px;">
-          Your brief landed with us. Expect a message within <strong style="color:#ccc;">24 hours</strong> — we'll come prepared with a custom AI audit for your business.
+          Your brief landed with us. Expect a message within <strong style="color:#ccc;">24 hours</strong>. We'll come prepared with a custom AI audit for your business.
         </p>
       </td>
     </tr>
@@ -253,7 +253,7 @@ export async function POST(req: NextRequest) {
         <p style="color:#333;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;margin:0 0 16px;">What happens next</p>
         <table width="100%" cellpadding="0" cellspacing="0" border="0">
 
-          <!-- Step 1 — done -->
+          <!-- Step 1: done -->
           <tr>
             <td style="padding-bottom:4px;">
               <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a1a0f;border:1px solid #1a3a22;border-radius:12px;">
@@ -342,15 +342,15 @@ export async function POST(req: NextRequest) {
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="padding:14px 0;border-bottom:1px solid #111122;width:100px;color:#333;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;vertical-align:top;padding-top:16px;">Project</td>
-                  <td style="padding:14px 0;border-bottom:1px solid #111122;color:#ddd;font-size:14px;font-weight:600;padding-top:16px;">${projectType || "—"}</td>
+                  <td style="padding:14px 0;border-bottom:1px solid #111122;color:#ddd;font-size:14px;font-weight:600;padding-top:16px;">${projectType || "-"}</td>
                 </tr>
                 <tr>
                   <td style="padding:14px 0;border-bottom:1px solid #111122;color:#333;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;vertical-align:top;">Goal</td>
-                  <td style="padding:14px 0;border-bottom:1px solid #111122;color:#ddd;font-size:14px;font-weight:600;">${goal || "—"}</td>
+                  <td style="padding:14px 0;border-bottom:1px solid #111122;color:#ddd;font-size:14px;font-weight:600;">${goal || "-"}</td>
                 </tr>
                 <tr>
                   <td style="padding:14px 0 16px;color:#333;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;vertical-align:top;">Budget</td>
-                  <td style="padding:14px 0 16px;color:#FF2D55;font-size:15px;font-weight:800;">${budget || "—"}</td>
+                  <td style="padding:14px 0 16px;color:#FF2D55;font-size:15px;font-weight:800;">${budget || "-"}</td>
                 </tr>
               </table>
             </td>
@@ -366,7 +366,7 @@ export async function POST(req: NextRequest) {
           <tr>
             <td style="padding:28px 32px;">
               <p style="color:#ccc;font-size:15px;font-weight:600;margin:0 0 6px;">Haven't booked your call yet?</p>
-              <p style="color:#555;font-size:13px;margin:0 0 20px;line-height:1.5;">Lock in your slot now — slots fill fast and we only take a limited number of new clients each month.</p>
+              <p style="color:#555;font-size:13px;margin:0 0 20px;line-height:1.5;">Lock in your slot now. Slots fill fast and we only take a limited number of new clients each month.</p>
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="border-radius:8px;background:#FF2D55;">
@@ -387,7 +387,7 @@ export async function POST(req: NextRequest) {
           <tr>
             <td>
               <p style="color:#2a2a3a;font-size:12px;margin:0 0 6px;">
-                <strong style="color:#333;">AI Media</strong> &nbsp;&middot;&nbsp;
+                <strong style="color:#333;">AX Media</strong> &nbsp;&middot;&nbsp;
                 <a href="https://aimedia.global" style="color:#FF2D55;text-decoration:none;">aimedia.global</a> &nbsp;&middot;&nbsp;
                 <a href="https://instagram.com/ai.mediaco" style="color:#444;text-decoration:none;">@ai.mediaco</a>
               </p>
