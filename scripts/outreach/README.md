@@ -15,7 +15,7 @@ Add these to `.env.production.local` (or `.env`):
 
 ```
 RESEND_API_KEY=re_…
-FROM_EMAIL=AI Media <info@aimedia.global>
+FROM_EMAIL=AX Media <info@aimedia.global>
 REPLY_TO_EMAIL=info@aimedia.global
 ANTHROPIC_API_KEY=sk-ant-…
 BRAVE_SEARCH_API_KEY=BSA-…

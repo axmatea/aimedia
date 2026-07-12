@@ -10,7 +10,7 @@ function getResend() {
 }
 
 const OWNER_EMAIL = process.env.OWNER_EMAIL || "info@aimedia.global"
-const FROM_EMAIL = process.env.FROM_EMAIL || "AI Media <info@aimedia.global>"
+const FROM_EMAIL = process.env.FROM_EMAIL || "AX Media <info@aimedia.global>"
 const REPLY_TO_EMAIL = process.env.REPLY_TO_EMAIL || "info@aimedia.global"
 const PUBLIC_BASE_URL = (process.env.PUBLIC_BASE_URL || "https://aimedia.global").replace(/\/$/, "")
 const NOTION_DB_ID = "316e953489014e0ebd499995e418d211"

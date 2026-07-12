@@ -36,7 +36,7 @@ const args = Object.fromEntries(
 
 const LIMIT = Number(args.limit || 20)
 
-const FROM = optionalEnv("FROM_EMAIL", "AI Media <info@aimedia.global>")
+const FROM = optionalEnv("FROM_EMAIL", "AX Media <info@aimedia.global>")
 const REPLY_TO = optionalEnv("REPLY_TO_EMAIL", "info@aimedia.global")
 const FOOTER_ADDRESS = optionalEnv(
   "FOOTER_ADDRESS",
