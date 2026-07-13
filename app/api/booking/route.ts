@@ -39,8 +39,15 @@ async function addNotionLead(data: LeadPayload): Promise<string | null> {
   const token = process.env.NOTION_TOKEN
   if (!token) return null
 
-  // Keys must EXACTLY match the budget chip strings in app/page.tsx (BookingSection)
+  // Keys must EXACTLY match the budget chip strings in app/page.tsx (BookingFlow).
+  // Chip labels use plain hyphens (brand rule: no dashes in user-visible copy),
+  // but the VALUES here stay byte-identical to the pre-existing Notion select
+  // option names (en dash, U+2013) so the CRM select never grows new or orphaned
+  // options. Do not "fix" the values. Legacy en dash keys are kept so requests
+  // from pages loaded before the label change still map correctly.
   const budgetMap: Record<string, string> = {
+    "$3-10k / mo": "$3–10k / mo",
+    "$10-20k / mo": "$10–20k / mo",
     "$3–10k / mo": "$3–10k / mo",
     "$10–20k / mo": "$10–20k / mo",
     "$20k+ / mo": "$20k+ / mo",

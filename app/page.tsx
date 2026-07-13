@@ -489,7 +489,11 @@ function BookingFlow() {
                 <div>
                   <label className="text-white/90 text-base md:text-xl font-black block mb-3">Monthly budget?</label>
                   <div className="flex flex-wrap gap-2">
-                    {["$3–10k / mo", "$10–20k / mo", "$20k+ / mo"].map(opt => (
+                    {/* Hyphen labels by brand rule (no dashes in copy). The API route
+                        (app/api/booking/route.ts budgetMap) translates these back to the
+                        original en dash Notion select option names, so the CRM select
+                        never grows new options. Change both together or leads break. */}
+                    {["$3-10k / mo", "$10-20k / mo", "$20k+ / mo"].map(opt => (
                       <button key={opt} type="button" onClick={() => setQuiz(p => ({ ...p, budget: opt }))}
                         className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 ${
                           quiz.budget === opt
