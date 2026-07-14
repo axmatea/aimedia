@@ -2,6 +2,9 @@
   "framework": "nextjs",
   "buildCommand": "npx next build",
   "regions": ["cdg1", "iad1"],
+  "crons": [
+    { "path": "/api/instagram/cron", "schedule": "0 8 * * *" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
