@@ -11,7 +11,7 @@ export default function PrivacyPolicy() {
         <div className="space-y-10 text-white/55 text-sm leading-relaxed">
           <section>
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">1. Who We Are</h2>
-            <p>AX Media (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is the AI automation brand of AXMATEA MEDIA CORP, a Florida corporation. Our business contact is <a href="mailto:info@aimedia.global" className="text-white/70 hover:text-[#FF2D55] transition-colors underline-offset-4 hover:underline">info@aimedia.global</a>. This Privacy Policy explains how we collect, use, and protect your personal information when you visit our website or engage with our services.</p>
+            <p>AX Media (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is the AI automation brand of AXMATEA MEDIA CORP, a Florida corporation. Our business contact is <a href="mailto:info@aimedia.global" className="text-white/70 hover:text-[#FF2D55] transition-colors underline underline-offset-4">info@aimedia.global</a>. This Privacy Policy explains how we collect, use, and protect your personal information when you visit our website or engage with our services.</p>
           </section>
 
           <section>
@@ -52,7 +52,7 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">6. Your Rights</h2>
-            <p>Under applicable law (GDPR, CCPA), you have the right to access, correct, delete, or port your personal data. To exercise these rights, email us at <a href="mailto:info@aimedia.global" className="text-white/70 hover:text-[#FF2D55] transition-colors underline-offset-4 hover:underline">info@aimedia.global</a>.</p>
+            <p>Under applicable law (GDPR, CCPA), you have the right to access, correct, delete, or port your personal data. To exercise these rights, email us at <a href="mailto:info@aimedia.global" className="text-white/70 hover:text-[#FF2D55] transition-colors underline underline-offset-4">info@aimedia.global</a>.</p>
           </section>
 
           <section>
@@ -62,7 +62,7 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">8. Contact</h2>
-            <p>Questions about this policy? Contact us: <a href="mailto:info@aimedia.global" className="text-white/70 hover:text-[#FF2D55] transition-colors underline-offset-4 hover:underline">info@aimedia.global</a></p>
+            <p>Questions about this policy? Contact us: <a href="mailto:info@aimedia.global" className="text-white/70 hover:text-[#FF2D55] transition-colors underline underline-offset-4">info@aimedia.global</a></p>
           </section>
         </div>
 

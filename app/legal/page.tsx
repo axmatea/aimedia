@@ -56,7 +56,7 @@ export default function Legal() {
 
           <section>
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">9. Contact</h2>
-            <p>Legal inquiries: <a href="mailto:info@aimedia.global" className="text-white/70 hover:text-[#FF2D55] transition-colors underline-offset-4 hover:underline">info@aimedia.global</a></p>
+            <p>Legal inquiries: <a href="mailto:info@aimedia.global" className="text-white/70 hover:text-[#FF2D55] transition-colors underline underline-offset-4">info@aimedia.global</a></p>
           </section>
         </div>
 
