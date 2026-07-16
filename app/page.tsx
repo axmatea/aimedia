@@ -875,7 +875,10 @@ export default function Home() {
                 ) : (
                   <div className="rounded-3xl overflow-hidden border border-white/8 bg-[#0C0C0F] p-8 space-y-6">
                     <div>
-                      <p className="text-white/55 text-[10px] font-mono uppercase tracking-widest mb-2">AI UGC Creators</p>
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-white/55 text-[10px] font-mono uppercase tracking-widest">AI UGC Creators</p>
+                        <p className="text-white/55 text-[9px] font-mono uppercase tracking-widest">Tap a creator</p>
+                      </div>
                       <p className="text-white/70 font-bold text-sm mb-1">Your AI content team</p>
                       <p className="text-white/70 text-xs leading-relaxed">AI-generated personas that post, engage, and grow your audience automatically, 24/7.</p>
                     </div>
