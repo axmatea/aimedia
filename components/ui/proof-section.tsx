@@ -87,7 +87,7 @@ export function ProofSection({
   return (
     // overflow-clip (not hidden): clip does not create a scroll container, so
     // the sticky ambient viewport inside can still stick to the real viewport.
-    <section ref={sectionRef} id="proof" className="proof-section ai-page border-b ai-border overflow-clip">
+    <section ref={sectionRef} id="proof" className="proof-section ai-page overflow-clip">
       {ambientImages.length > 0 && <ProofAmbient images={ambientImages} progress={scrollYProgress} />}
       <div className="proof-shell">
         <div className="proof-header">

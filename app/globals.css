@@ -987,10 +987,12 @@ html:not(.dark) .trace-edge-inferred { stroke: rgba(5,5,7,0.26); }
   .outcome-grid { grid-template-columns: 1fr; }
   .outcome-card { min-height: 300px; }
 }
+/* Light theme: melt profile (paper edges, deeper paper center) so the section
+   flows into the out-of-dark bridge above and the global-reach paper below. */
 html:not(.dark) .proof-section {
   background:
     radial-gradient(700px 380px at 18% 6%, rgba(255,45,85,0.08), transparent 60%),
-    linear-gradient(180deg, #F5F4F0, #ECEAE5);
+    linear-gradient(180deg, #F5F4F0 0%, #ECEAE5 14%, #ECEAE5 86%, #F5F4F0 100%);
 }
 html:not(.dark) .outcome-picture {
   background:
@@ -1241,6 +1243,37 @@ html:not(.dark) .ambient-image { display: none; }
 /* ── Map → booking transition bridge ── */
 .ai-booking-bridge { background: linear-gradient(to bottom, transparent, #050507); }
 html:not(.dark) .ai-booking-bridge { background: linear-gradient(to bottom, #F5F4F0, #050507); }
+
+/* ── Flow bridges: seamless section-to-section transitions (v6.2) ─────────────
+   Plain divs (NOT <section>), so the content-visibility rules for sections do
+   not clip the ambient bleed inside them. Dark theme: page is one continuous
+   #050507 canvas, so the bridge is transparent and only carries the optional
+   ambient render bleed. Light theme: gradient melts the paper surface into and
+   out of the dark services block instead of a hard edge. */
+.ax-flow-bridge { pointer-events: none; }
+html:not(.dark) .ax-bridge-into-dark {
+  background: linear-gradient(to bottom, #ECEAE5, #050507);
+}
+html:not(.dark) .ax-bridge-out-of-dark {
+  background: linear-gradient(to bottom, #050507, #F5F4F0);
+}
+/* Light theme: the AI-team panel melts from paper into its deeper paper tone
+   and back, so it flows with the neighbors instead of switching flat colors. */
+html:not(.dark) .ai-panel.ax-panel-melt {
+  background: linear-gradient(180deg, #F5F4F0 0%, #ECEAE5 14%, #ECEAE5 86%, #F5F4F0 100%) !important;
+}
+/* Ambient render bleed inside a bridge: spills a dimmed fragment of the
+   outcome imagery beyond the bridge box, vertically masked so it dissolves
+   into the neighboring sections. Dark theme only (.ambient-image handles it). */
+.ax-ambient-bleed {
+  left: 0;
+  right: 0;
+  top: -18vh;
+  bottom: -18vh;
+  opacity: 0.22;
+  mask-image: linear-gradient(to bottom, transparent, black 28%, black 72%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 28%, black 72%, transparent);
+}
 
 /* ── Glitch ── */
 @keyframes glitch {

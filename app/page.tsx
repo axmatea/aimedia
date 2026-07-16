@@ -119,7 +119,7 @@ const SERVICES = [
   },
   {
     id: "02", name: "CONTENT\nSYSTEM", tag: "CONTENT",
-    bg: "#0A0A0F",
+    bg: "linear-gradient(180deg,#050507 0%,#0A0A0F 16%,#0A0A0F 84%,#050507 100%)",
     tagline: "500+ content pieces a month. Zero manual work.",
     body: "AI posts to Instagram, LinkedIn, X, TikTok. On-brand, at scale. Scripts, thumbnails, emails, generated automatically.",
     metrics: [{ label: "Content pieces / month", value: "500+" }, { label: "Time saved vs in-house", value: "80 hrs" }],
@@ -356,7 +356,7 @@ const HeroSection = memo(function HeroSection() {
 
 const TraceableSystemMap = memo(function TraceableSystemMap() {
   return (
-    <section id="trace-map" className="trace-map-section border-b ai-border">
+    <section id="trace-map" className="trace-map-section">
       <div className="trace-map-layout">
         <m.div {...fadeUp} className="trace-map-copy">
           <Tag>Traceable systems</Tag>
@@ -738,7 +738,7 @@ export default function Home() {
       <HeroSection />
 
       {/* ── Pink marquee ─────────────────────────────────────────────────── */}
-      <div className="marquee-shell marquee-mask py-5 border-y ai-border overflow-hidden bg-[#FF2D55]" aria-hidden>
+      <div className="marquee-shell marquee-mask py-5 overflow-hidden bg-[#FF2D55]" aria-hidden>
         <div>
         <div className="flex animate-marquee whitespace-nowrap">
           {[...TICKER, ...TICKER].map((item, i) => (
@@ -751,7 +751,7 @@ export default function Home() {
       </div>
 
       {/* 02 CREDIBILITY */}
-      <div className="ai-page border-b ai-border py-12 px-6">
+      <div className="ai-page py-12 px-6">
         <div className="max-w-6xl mx-auto">
           <p className="text-center ai-muted text-xs uppercase tracking-[0.3em] font-bold mb-10">
             Trusted by fast-moving teams worldwide
@@ -761,7 +761,7 @@ export default function Home() {
       </div>
 
       {/* 03 FOR WHO */}
-      <section id="built-for" className="ai-page py-20 px-6 border-b ai-border overflow-hidden" style={{ contain: "layout paint" }}>
+      <section id="built-for" className="ai-page py-20 px-6 overflow-hidden" style={{ contain: "layout paint" }}>
         <div className="max-w-6xl mx-auto">
           <div className="flex items-end justify-between mb-12 gap-4 flex-wrap">
             <div>
@@ -794,7 +794,7 @@ export default function Home() {
       </section>
 
       {/* AI Team Never Sleeps */}
-      <section id="ai-team" className="ai-panel py-20 px-6 border-b ai-border relative overflow-hidden" style={{ contain: "layout paint" }}>
+      <section id="ai-team" className="ai-panel ax-panel-melt py-20 px-6 relative overflow-hidden" style={{ contain: "layout paint" }}>
         {/* Ambient atmosphere: community-sphere render, dimmed + radially masked behind the agent radial */}
         <AmbientImage src="/generated/outcomes/outcome-web3.webp" className="ambient-ai-team" />
         <div className="relative z-[1] max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
@@ -826,10 +826,16 @@ export default function Home() {
       {/* Traceable Graph System */}
       <TraceableSystemMap />
 
+      {/* Flow bridge: light theme melts paper into the dark services block;
+          dark theme gets a faint ambient render bleed instead of a hard seam. */}
+      <div aria-hidden className="ax-flow-bridge ax-bridge-into-dark relative h-24 md:h-36 -mb-px">
+        <AmbientImage src="/generated/outcomes/outcome-web3.webp" className="ax-ambient-bleed" />
+      </div>
+
       {/* 04 SOLUTION: Services */}
       <div id="services" className="scroll-mt-24">
         {SERVICES.map((svc, i) => (
-          <section key={svc.id} className="py-24 px-6 border-b ai-border relative overflow-hidden" style={{ backgroundColor: svc.bg, contain: "layout paint" }}>
+          <section key={svc.id} className="py-24 px-6 relative overflow-hidden" style={{ background: svc.bg, contain: "layout paint" }}>
             <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center relative z-10">
               <div className={i % 2 === 1 ? "md:order-last" : ""}>
                 <div className="flex items-center gap-3 mb-6">
@@ -908,6 +914,10 @@ export default function Home() {
         ))}
       </div>
 
+      {/* Flow bridge out of the dark services block. No ambient bleed here:
+          the proof section already runs its own scroll-linked ambient imagery. */}
+      <div aria-hidden className="ax-flow-bridge ax-bridge-out-of-dark relative h-24 md:h-36 -mb-px" />
+
       {/* 06 PROOF: Outcomes we engineer (anonymized until real case studies confirmed) */}
       <ProofSection items={CASE_STUDIES} />
 
@@ -944,7 +954,7 @@ export default function Home() {
       <BookingDialog />
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
-      <footer className="ai-page py-10 px-6 border-t ai-border">
+      <footer className="ai-page py-10 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             {/* Inline wordmark in the real document fonts, themed via currentColor.
