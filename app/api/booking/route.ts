@@ -57,7 +57,7 @@ async function addNotionLead(data: LeadPayload): Promise<string | null> {
   const properties: Record<string, unknown> = {
     Name:           { title: [{ text: { content: data.name } }] },
     Email:          { email: data.email },
-    Phone:          { phone_number: data.phone },
+    Phone:          { phone_number: data.phone || null },
     "Project Type": { rich_text: [{ text: { content: data.projectType || "" } }] },
     Goal:           { rich_text: [{ text: { content: data.goal || "" } }] },
     Status:         { select: { name: "New" } },
@@ -150,7 +150,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { name, email, phone, projectType, goal, budget } = body
 
-    if (!name || !email || !phone) {
+    // Phone is optional (v7 booking polish): name + email are the only gate.
+    if (!name || !email) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
@@ -185,7 +186,7 @@ export async function POST(req: NextRequest) {
           <table style="width:100%;border-collapse:collapse;">
             <tr><td style="padding:10px 0;color:#aaa;width:140px;">Name</td><td style="padding:10px 0;font-weight:bold;">${name}</td></tr>
             <tr><td style="padding:10px 0;color:#aaa;">Email</td><td style="padding:10px 0;"><a href="mailto:${email}" style="color:#FF2D55;">${email}</a></td></tr>
-            <tr><td style="padding:10px 0;color:#aaa;">Phone</td><td style="padding:10px 0;">${phone}</td></tr>
+            <tr><td style="padding:10px 0;color:#aaa;">Phone</td><td style="padding:10px 0;">${phone || "not provided"}</td></tr>
             <tr><td style="padding:10px 0;color:#aaa;border-top:1px solid #222;">Project Type</td><td style="padding:10px 0;border-top:1px solid #222;">${projectType}</td></tr>
             <tr><td style="padding:10px 0;color:#aaa;">Primary Goal</td><td style="padding:10px 0;">${goal}</td></tr>
             <tr><td style="padding:10px 0;color:#aaa;">Monthly Budget</td><td style="padding:10px 0;color:#FF2D55;font-weight:bold;">${budget}</td></tr>

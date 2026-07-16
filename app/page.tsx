@@ -209,6 +209,27 @@ const TRACE_CONFIDENCE_TAGS = [
   { label: "AMBIGUOUS", detail: "Human review before client-facing output or spend." },
 ] as const
 
+// FAQ (v7): four honest answers in front of the booking ask. No guarantees,
+// no invented numbers; pricing and timelines stated the way they are sold.
+const FAQS = [
+  {
+    q: "What happens on the call?",
+    a: "A 30 minute systems audit. We walk through your funnel, content, and ops, and you leave with a concrete map of what to automate first, whether we work together or not.",
+  },
+  {
+    q: "Who owns the system?",
+    a: "You do. Everything is built in your accounts and on your infrastructure. No vendor lock-in: if we part ways, the system stays with you.",
+  },
+  {
+    q: "How fast is the first system live?",
+    a: "Typically weeks, not months. Exact scope and timeline are confirmed in writing before any build starts.",
+  },
+  {
+    q: "What does it cost?",
+    a: "Engagements start at $3k per month. Exact scope is priced after the call, in writing, so you only pay for what your business actually needs.",
+  },
+]
+
 const NAV_LINKS = [
   { label: "Services", href: "#services" },
   { label: "System", href: "#ai-team" },
@@ -347,7 +368,7 @@ const HeroSection = memo(function HeroSection() {
           className="mt-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 lg:max-w-[55%]"
         >
           <p className="ai-muted text-sm md:text-base max-w-sm leading-relaxed">
-            Systems for go-to-market, content, and ops. Built for Web3 projects, founders, agencies, and ambitious brands.
+            You imagine it. We make it real. Systems for go-to-market, content, and ops, shipped.
           </p>
           <div className="flex gap-3 flex-shrink-0">
             <LiquidMetalButton label="Start a Project" onClick={openBooking} />
@@ -449,7 +470,8 @@ function BookingFlow() {
   const validateEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)
 
   const handleContactContinue = async () => {
-    if (!contact.name || !contact.email || !contact.phone) return
+    // Phone is optional (v7): name + email are the only gate.
+    if (!contact.name || !contact.email) return
     if (!validateEmail(contact.email)) { setEmailError("Please enter a valid email address"); return }
     setEmailError("")
 
@@ -494,7 +516,7 @@ function BookingFlow() {
             <p className="text-white/75 text-sm md:text-lg mt-4 max-w-lg mx-auto leading-relaxed">
               Answer three quick filters, then pick a time. We come prepared with the highest-leverage AI systems for your business.
             </p>
-            <p className="text-white/55 text-xs md:text-sm mt-2 italic tracking-wide">The fabric of digital reality.</p>
+            <p className="text-white/55 text-xs md:text-sm mt-2 tracking-wide">30 minutes. A concrete map of what to automate first. No obligation.</p>
           </div>
 
           {/* Step indicator */}
@@ -524,7 +546,7 @@ function BookingFlow() {
                   <div className="flex flex-wrap gap-2">
                     {["Web3 / NFT", "SaaS / Product", "Agency", "Brand", "Startup", "Enterprise"].map(opt => (
                       <button key={opt} type="button" onClick={() => setQuiz(p => ({ ...p, projectType: opt }))}
-                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 ${
+                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 active:scale-[0.98] ${
                           quiz.projectType === opt
                             ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
                             : "bg-white/10 border-white/30 text-white/80 hover:border-[#FF2D55]/60 hover:text-white"
@@ -541,7 +563,7 @@ function BookingFlow() {
                   <div className="flex flex-wrap gap-2">
                     {["Lead Generation", "Content Automation", "Community Growth", "Sales Pipeline", "Ops Efficiency", "Other"].map(opt => (
                       <button key={opt} type="button" onClick={() => setQuiz(p => ({ ...p, goal: opt }))}
-                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 ${
+                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 active:scale-[0.98] ${
                           quiz.goal === opt
                             ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
                             : "bg-white/10 border-white/30 text-white/80 hover:border-[#FF2D55]/60 hover:text-white"
@@ -562,7 +584,7 @@ function BookingFlow() {
                         never grows new options. Change both together or leads break. */}
                     {["$3-10k / mo", "$10-20k / mo", "$20k+ / mo"].map(opt => (
                       <button key={opt} type="button" onClick={() => setQuiz(p => ({ ...p, budget: opt }))}
-                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 ${
+                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 active:scale-[0.98] ${
                           quiz.budget === opt
                             ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
                             : "bg-white/10 border-white/30 text-white/80 hover:border-[#FF2D55]/60 hover:text-white"
@@ -581,13 +603,16 @@ function BookingFlow() {
             {step === 1 && (
               <m.div key="step1" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25, ease: EASE_SWIFT }} className="max-w-md mx-auto space-y-4 rounded-3xl border border-white/10 bg-white/[0.035] p-5 md:p-7 shadow-[0_30px_90px_-45px_rgba(255,45,85,0.65)]">
                 {[
-                  { field: "name" as const, label: "Your name", type: "text", ph: "First name" },
-                  { field: "email" as const, label: "Email address", type: "email", ph: "you@company.com" },
-                  { field: "phone" as const, label: "Phone number", type: "tel", ph: "+1 (555) 000-0000" },
-                ].map(({ field, label, type, ph }) => (
+                  { field: "name" as const, label: "Your name", type: "text", ph: "First name", autoComplete: "name", inputMode: "text" as const, hint: "" },
+                  { field: "email" as const, label: "Email address", type: "email", ph: "you@company.com", autoComplete: "email", inputMode: "email" as const, hint: "" },
+                  { field: "phone" as const, label: "Phone number", type: "tel", ph: "+1 (555) 000-0000", autoComplete: "tel", inputMode: "tel" as const, hint: "optional, for WhatsApp follow-up" },
+                ].map(({ field, label, type, ph, autoComplete, inputMode, hint }) => (
                   <div key={field}>
-                    <label className="text-white/75 text-xs uppercase tracking-widest block mb-2 font-bold">{label}</label>
-                    <input type={type} placeholder={ph} value={contact[field]}
+                    <label className="text-white/75 text-xs uppercase tracking-widest block mb-2 font-bold">
+                      {label}
+                      {hint && <span className="normal-case tracking-normal font-normal text-white/60"> · {hint}</span>}
+                    </label>
+                    <input type={type} placeholder={ph} value={contact[field]} autoComplete={autoComplete} inputMode={inputMode}
                       onChange={e => { setContact(c => ({ ...c, [field]: e.target.value })); if (field === "email") setEmailError("") }}
                       className="w-full bg-white/5 border border-white/25 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/50 focus:outline-none focus:border-[#FF2D55]/70 focus:bg-white/[0.07] focus:shadow-[0_0_0_3px_rgba(255,45,85,0.12)] transition-[border-color,box-shadow,background-color] duration-200" />
                     {field === "email" && emailError && <p className="text-[#FF2D55] text-xs mt-1">{emailError}</p>}
@@ -597,7 +622,7 @@ function BookingFlow() {
                   <button type="button" onClick={() => setStep(0)} className="px-5 py-3 rounded-xl border border-white/30 text-white/75 text-sm hover:border-white/50 hover:text-white transition-colors">← Back</button>
                   <Magnetic className="flex-1"><LiquidMetalButton label={submitting ? "Sending..." : "Continue to Schedule →"} onClick={handleContactContinue} className="w-full justify-center" /></Magnetic>
                 </div>
-                {!(contact.name && contact.email && contact.phone) && <p className="text-white/60 text-xs text-center">All fields required</p>}
+                {!(contact.name && contact.email) && <p className="text-white/60 text-xs text-center">Name and email required</p>}
               </m.div>
             )}
 
@@ -925,6 +950,20 @@ export default function Home() {
         ))}
       </div>
 
+      {/* Mid-page CTA band (v7): one sentence + the primary CTA while the three
+          engines are still fresh, before the canvas leaves the dark block. */}
+      {/* containIntrinsicSize inline: this band is far shorter than the 800px
+          section default, keep the placeholder honest for smooth glides. */}
+      <section className="py-16 md:py-20 px-6 bg-[#050507] relative overflow-hidden" style={{ contain: "layout paint", containIntrinsicSize: "0 280px" }}>
+        <div className="max-w-3xl mx-auto flex flex-col items-center text-center gap-6 relative z-10">
+          <p className="text-white/85 text-base md:text-xl font-semibold leading-snug max-w-xl">
+            Want one of these running in your business? Book the call.
+          </p>
+          <LiquidMetalButton label="Book the Call" onClick={openBooking} />
+        </div>
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[280px] bg-[#FF2D55]/8 rounded-full blur-[110px] pointer-events-none" aria-hidden />
+      </section>
+
       {/* Flow bridge out of the dark services block. No ambient bleed here:
           the proof section already runs its own scroll-linked ambient imagery. */}
       <div aria-hidden className="ax-flow-bridge ax-bridge-out-of-dark relative h-24 md:h-36 -mb-px" />
@@ -952,6 +991,35 @@ export default function Home() {
             </div>
           </m.div>
           <WorldMap dots={MAP_DOTS} lineColor="#FF2D55" showLabels />
+        </div>
+      </section>
+
+      {/* FAQ: honest objections handled before the booking ask. Native
+          <details> accordion, no new dependencies. */}
+      <section id="faq" className="ai-page py-20 px-6" style={{ contain: "layout paint", containIntrinsicSize: "0 620px" }}>
+        <div className="max-w-3xl mx-auto">
+          <m.div {...fadeUp} className="text-center mb-10">
+            <Tag>FAQ</Tag>
+            <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
+              STRAIGHT<br /><span style={{ color: "var(--red)" }}>ANSWERS.</span>
+            </Disp>
+          </m.div>
+          <div className="border-t ai-border">
+            {FAQS.map((item) => (
+              <details key={item.q} className="group border-b ai-border">
+                <summary className="flex items-center justify-between gap-4 py-5 cursor-pointer list-none [&::-webkit-details-marker]:hidden select-none">
+                  <span className="ai-text text-sm md:text-base font-bold">{item.q}</span>
+                  <span
+                    aria-hidden
+                    className="flex-shrink-0 w-7 h-7 rounded-full border ai-border flex items-center justify-center text-[#FF2D55] text-lg leading-none transition-transform duration-300 group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="ai-muted text-sm leading-relaxed pb-6 max-w-xl">{item.a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </section>
 
