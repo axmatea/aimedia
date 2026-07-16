@@ -9,8 +9,6 @@ interface SplineSceneProps {
   scene: string
   className?: string
   onLoad?: (app: Application) => void
-  /** Static poster shown as the loading placeholder until the live scene is interactive */
-  mobileFallback?: string
 }
 
 type SplineObject = {
@@ -46,16 +44,18 @@ const MOBILE_DPR_CAP = 1.5
 // Possible head object names across common Spline robot scenes
 const HEAD_NAMES = ['Head', 'head', 'Robot_Head', 'robot_head', 'HEAD', 'Helmet', 'helmet', 'Skull', 'skull']
 
-export function SplineScene({ scene, className, onLoad, mobileFallback }: SplineSceneProps) {
-  // Poster shows instantly while the 3D scene boots, then the live scene takes over
+export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
+  // Nothing renders until the live scene is ready: the dark ambient hero
+  // background carries the space, then the 3D scene fades and settles in.
   const [sceneReady, setSceneReady] = useState(false)
-  // Motion gate: null until measured on the client. false only when the OS asks for
-  // reduced motion, in which case the static poster stays as the whole hero (a11y).
+  // Motion gate: null until measured on the client. false only when the OS asks
+  // for reduced motion, in which case the scene never mounts and the hero stays
+  // as the clean dark background plus text (the robot is decorative).
   const [motionOk, setMotionOk] = useState<boolean | null>(null)
   // Lazy init: only mount the Spline runtime once the hero is near the viewport.
   const [inView, setInView] = useState(false)
-  // Heavy Spline runtime is intentionally delayed until after first paint. The
-  // animated poster carries the hero immediately, then live 3D takes over.
+  // Heavy Spline runtime is intentionally delayed until after first paint so it
+  // never competes with hydration or the initial chunk work.
   const [canMountScene, setCanMountScene] = useState(false)
   // Head mouse-follow lerp only runs on fine-pointer (cursor) devices. On touch the
   // scene still plays its own idle animation, we just skip the wasted pointer work.
@@ -144,9 +144,9 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
   //      requestIdleCallback so the boot lands in a main-thread gap and never
   //      mid-gesture.
   //   b) FALLBACK: no gesture at all. Wait for the window load event plus a
-  //      quiet beat, then mount on idle. The animated poster carries the hero
-  //      until then, and the runtime never competes with hydration or the
-  //      initial chunk work.
+  //      quiet beat, then mount on idle. The dark ambient hero background
+  //      carries the space until then, and the runtime never competes with
+  //      hydration or the initial chunk work.
   useEffect(() => {
     if (motionOk !== true || !inView || canMountScene) return
 
@@ -360,29 +360,11 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
   }, [])
 
   // Render the live scene on every viewport once motion is allowed and the hero is
-  // near view. Reduced-motion keeps the poster only.
+  // near view. Reduced-motion never mounts the scene: the dark hero stands alone.
   const showScene = motionOk === true && inView && canMountScene
-  // Poster covers the brief pre-measure window, the boot period before the scene is
-  // ready, and stays permanently when reduced motion is requested.
-  const showPoster = Boolean(mobileFallback) && (!showScene || !sceneReady)
 
   return (
     <div ref={containerRef} className="w-full h-full relative overflow-hidden hero-spline-stage">
-      {/* Instant poster placeholder while the 3D runtime + scene loads. It stays on top until the live canvas is fully ready, so users never see a half-booted frozen Spline frame. */}
-      {showPoster && (
-        /* eslint-disable-next-line @next/next/no-img-element */
-        <img
-          src={mobileFallback}
-          alt=""
-          width={597}
-          height={900}
-          decoding="sync"
-          loading="eager"
-          fetchPriority="high"
-          className={`${className ?? ''} hero-spline-poster`}
-          style={{ objectFit: 'contain', width: '100%', height: '100%', position: 'absolute', inset: 0 }}
-        />
-      )}
       {showScene && (
         <div className={`hero-spline-live ${sceneReady ? 'is-ready' : ''}`} aria-hidden={!sceneReady}>
           <Suspense fallback={null}>

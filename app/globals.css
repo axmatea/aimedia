@@ -1318,62 +1318,11 @@ canvas {
   isolation: isolate;
   background: transparent;
 }
-/* Robot intro: one-shot arrival that plays at first paint, long before the
-   Spline runtime loads. Animates opacity plus the individual translate property
-   so it composes with the shell's inline transform (desktop scale/offset framing)
-   and with the mobile !important transform override, never fighting either.
-   From-only keyframe: it eases into each breakpoint's own computed opacity
-   (.robot-mobile targets included) instead of pinning a hardcoded end value.
-   LCP: the settle direction is DOWNWARD (starts 2% high) and there is no scale
-   growth on this chain, so the first painted frame is the largest the LCP
-   poster ever gets and the candidate locks at first paint. */
-.hero-robot-shell {
-  animation: robotIntro 560ms var(--ease-swift) both;
-}
-@keyframes robotIntro {
-  from {
-    opacity: 0;
-    translate: 0 -2%;
-  }
-}
-/* Poster float is transform-only so it runs entirely on the compositor.
-   The old keyframes also animated filter (contrast/saturate/brightness),
-   which forced a main-thread repaint of the large hero image every frame.
-   The filter now sits at a static midpoint on each poster class instead.
-   The float also STARTS at the largest scale and breathes down: the first
-   painted frame is the biggest the element ever gets, so the browser locks
-   the LCP candidate at first paint instead of re-reporting a growing image
-   later (this alone was pushing lab LCP from ~1.4s to ~3.6s). */
-.hero-shell-poster {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  object-fit: contain;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  filter: contrast(1.05) saturate(1.03) brightness(.92);
-  animation: robotBootFloat 4.5s ease-in-out infinite alternate;
-}
-.hero-spline-poster {
-  z-index: 1;
-  opacity: 1;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  filter: contrast(1.05) saturate(1.03);
-  animation: robotBootFloat 4.5s ease-in-out infinite alternate;
-}
-@keyframes robotBootFloat {
-  0% {
-    transform: translate3d(0, -1.2%, 0) scale(1.05);
-  }
-  100% {
-    transform: translate3d(0, 1.2%, 0) scale(1.02);
-  }
-}
-/* Live handoff: the ready scene settles in (fade + scale 0.965 to 1 + slight
-   rise) instead of a hard swap, then keeps a very low-amplitude float so motion
-   is continuous across the poster-to-live transition. The float starts from the
-   settled pose after the 600ms transition, so there is no jump at takeover. */
+/* No static poster: while the Spline runtime boots, the hero right side is just
+   the dark ambient background (gradient + red bloom + desktop Lightning). The
+   live scene settles in (fade + scale 0.965 to 1 + slight rise) over that dark
+   space, then keeps a very low-amplitude float. The float starts from the
+   settled pose after the 600ms transition, so there is no jump at arrival. */
 .hero-spline-live {
   position: absolute;
   inset: 0;
@@ -1396,22 +1345,12 @@ canvas {
     transform: translate3d(0, 1%, 0) scale(1.008);
   }
 }
-/* Once the live 3D canvas is ready, retire the SSR shell poster so the static
-   robot never ghosts behind the animated one. Under reduced motion the scene
-   never becomes ready, so the poster stays as the whole hero. */
-.hero-robot-shell:has(.hero-spline-live.is-ready) .hero-shell-poster {
-  opacity: 0;
-  transition: opacity 600ms var(--ease-swift);
-  pointer-events: none;
-}
-/* Reduced motion: no intro, no float, no live settle. The scene never mounts
-   under reduced motion, so the static poster stays as the whole hero. This
-   guard sits AFTER every rule it neutralizes (same specificity, source order
-   decides), so it must stay below the .hero-spline-live block. */
+/* Reduced motion: no float, no live settle. The scene never mounts under
+   reduced motion, so the hero stays a clean dark background with the text as
+   the accessible content. This guard sits AFTER every rule it neutralizes
+   (same specificity, source order decides), so it must stay below the
+   .hero-spline-live block. */
 @media (prefers-reduced-motion: reduce) {
-  .hero-robot-shell,
-  .hero-spline-poster,
-  .hero-shell-poster,
   .hero-spline-live,
   .hero-spline-live.is-ready { animation: none; }
   .hero-spline-live { transition: none; }
@@ -1503,19 +1442,8 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
     will-change: auto;
   }
 
-  .robot-mobile .hero-spline-stage,
-  .robot-mobile .hero-spline-poster {
+  .robot-mobile .hero-spline-stage {
     overflow: visible !important;
-  }
-
-  /* Both posters share the same framing and near-full brightness on phones:
-     centered (no bottom crop) and no dimming, so the mobile robot reads as a
-     first-class hero visual instead of a washed-out backdrop. */
-  .robot-mobile .hero-spline-poster,
-  .robot-mobile .hero-shell-poster {
-    object-fit: contain !important;
-    object-position: center center !important;
-    filter: saturate(.92) contrast(1.06) brightness(.98);
   }
 
   .robot-mobile .hero-spline-live {
