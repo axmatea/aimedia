@@ -1,6 +1,8 @@
 "use client"
 
-import { m } from "motion/react"
+import { useRef } from "react"
+import Image from "next/image"
+import { m, useScroll, useTransform, useReducedMotion, type MotionValue } from "motion/react"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import { CountUp } from "@/components/ui/count-up"
 import { ShowcaseMedia } from "@/components/ui/showcase-media"
@@ -73,8 +75,20 @@ export function ProofSection({
   anonymized?: boolean
   verified?: boolean
 }) {
+  const sectionRef = useRef<HTMLElement>(null)
+  // Scroll progress through the whole section: 0 when its top enters the
+  // viewport bottom, 1 when its bottom leaves the viewport top. Drives the
+  // ambient background crossfade. `useScroll` is feature-independent (works
+  // under LazyMotion domAnimation): MotionValues write styles directly, no
+  // React re-renders per scroll frame.
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] })
+  const ambientImages = items.map((c) => c.image).filter((src): src is string => Boolean(src))
+
   return (
-    <section id="proof" className="proof-section ai-page border-b ai-border overflow-hidden">
+    // overflow-clip (not hidden): clip does not create a scroll container, so
+    // the sticky ambient viewport inside can still stick to the real viewport.
+    <section ref={sectionRef} id="proof" className="proof-section ai-page border-b ai-border overflow-clip">
+      {ambientImages.length > 0 && <ProofAmbient images={ambientImages} progress={scrollYProgress} />}
       <div className="proof-shell">
         <div className="proof-header">
           <m.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={VP} transition={{ duration: 0.9, ease: EASE_SWIFT }}>
@@ -140,6 +154,72 @@ export function ProofSection({
         </div>
       </div>
     </section>
+  )
+}
+
+/**
+ * ProofAmbient: scroll-linked ambient background behind the outcome cards.
+ * One heavily dimmed, blurred, full-bleed render crossfades into the next as
+ * the visitor scrolls through the section (content -> saas -> local -> web3).
+ *
+ * Implementation notes:
+ * - The layer is absolute inset-0 with a sticky 100svh viewport inside, so on
+ *   tall (mobile, single-column) layouts the image stays pinned while cards
+ *   scroll over it; on short desktop layouts it simply fills the section.
+ * - Opacity is the ONLY animated property (GPU-composited, cheap on mobile).
+ *   Blur/dim are static CSS, rasterized once, never animated per frame.
+ * - prefers-reduced-motion: single static dimmed image, no crossfade.
+ * - Degrades gracefully: with JS or sticky unavailable it is just a static
+ *   dimmed first image; never broken.
+ * - Dark theme only (globals.css hides it on light): the renders are dark
+ *   scenes and would gray out the light canvas.
+ * - aria-hidden + empty alt: pure decoration, invisible to AT and to LCP
+ *   (below the fold, lazy, and the halved `sizes` keeps variants small since
+ *   the layer is blurred anyway).
+ */
+function ProofAmbient({ images, progress }: { images: string[]; progress: MotionValue<number> }) {
+  const reducedMotion = useReducedMotion()
+  const slides = reducedMotion ? images.slice(0, 1) : images
+  return (
+    <div className="proof-ambient" aria-hidden>
+      <div className="proof-ambient-viewport">
+        {slides.map((src, i) => (
+          <AmbientSlide key={src} src={src} progress={progress} index={i} count={slides.length} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function AmbientSlide({
+  src,
+  progress,
+  index,
+  count,
+}: {
+  src: string
+  progress: MotionValue<number>
+  index: number
+  count: number
+}) {
+  // Slide "centers" spread across the on-screen band of section travel
+  // (roughly 0.18..0.82 of the enter-to-exit progress), with a 0.2-wide
+  // crossfade ramp on each side. First and last slides clamp to the edges so
+  // there is never an empty background.
+  const center = 0.18 + (0.64 * index) / Math.max(count - 1, 1)
+  const ramp = 0.2
+  const input =
+    index === 0
+      ? [0, center, Math.min(center + ramp, 1)]
+      : index === count - 1
+        ? [Math.max(center - ramp, 0), center, 1]
+        : [center - ramp, center, center + ramp]
+  const output = index === 0 ? [1, 1, 0] : index === count - 1 ? [0, 1, 1] : [0, 1, 0]
+  const opacity = useTransform(progress, input, output)
+  return (
+    <m.div className="proof-ambient-slide" style={{ opacity: count === 1 ? 1 : opacity }}>
+      <Image src={src} alt="" fill sizes="50vw" loading="lazy" className="proof-ambient-img" />
+    </m.div>
   )
 }
 

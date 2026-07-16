@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, memo } from "react"
 import { m, AnimatePresence, useReducedMotion } from "motion/react"
 import dynamic from "next/dynamic"
+import Image from "next/image"
 import { Spotlight } from "@/components/ui/spotlight"
 import { LiquidMetalButton } from "@/components/ui/liquid-metal-button"
 import { Magnetic } from "@/components/ui/magnetic"
@@ -215,6 +216,19 @@ const Disp = ({ children, className = "", style }: { children: React.ReactNode; 
   <span className={`font-display leading-none tracking-wide uppercase ${className}`} style={{ fontFamily: "var(--font-bebas)", ...style }}>
     {children}
   </span>
+)
+
+/**
+ * AmbientImage: decorative, heavily dimmed and edge-masked fragment of the
+ * generated outcome imagery, used as background atmosphere behind sections.
+ * Dark theme only (the renders are dark scenes; on the light theme they read
+ * as gray smudges, so CSS hides them there). Lazy, below the fold, aria-hidden:
+ * never part of LCP and never in the accessibility tree.
+ */
+const AmbientImage = ({ src, className = "" }: { src: string; className?: string }) => (
+  <div className={`ambient-image ${className}`.trim()} aria-hidden>
+    <Image src={src} alt="" fill sizes="50vw" loading="lazy" className="ambient-image-img" />
+  </div>
 )
 
 // Eyebrow pill: plain section label, no per-section slash (the wordmark carries the motif)
@@ -780,7 +794,9 @@ export default function Home() {
 
       {/* AI Team Never Sleeps */}
       <section id="ai-team" className="ai-panel py-20 px-6 border-b ai-border relative overflow-hidden" style={{ contain: "layout paint" }}>
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+        {/* Ambient atmosphere: community-sphere render, dimmed + radially masked behind the agent radial */}
+        <AmbientImage src="/generated/outcomes/outcome-web3.webp" className="ambient-ai-team" />
+        <div className="relative z-[1] max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div className="relative z-10">
             <Tag>The Intelligence</Tag>
             <m.div {...fadeUp} transition={{ duration: 0.6 }} className="mt-6">
@@ -894,8 +910,10 @@ export default function Home() {
       <ProofSection items={CASE_STUDIES} />
 
       {/* 07 SCALE: World Map */}
-      <section id="global-reach" className="ai-page py-20 px-6 overflow-hidden scroll-mt-20" style={{ contain: "layout paint" }}>
-        <div className="max-w-6xl mx-auto">
+      <section id="global-reach" className="ai-page py-20 px-6 relative overflow-hidden scroll-mt-20" style={{ contain: "layout paint" }}>
+        {/* Ambient atmosphere: demand-rings render behind the heading, fully faded out before the map */}
+        <AmbientImage src="/generated/outcomes/outcome-local.webp" className="ambient-global" />
+        <div className="relative z-[1] max-w-6xl mx-auto">
           <m.div {...fadeUp} className="text-center mb-10">
             <Tag>Global reach</Tag>
             <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>

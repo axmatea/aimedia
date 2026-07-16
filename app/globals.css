@@ -1005,6 +1005,78 @@ html:not(.dark) .outcome-caption { color: rgba(5,5,7,0.38); }
 html:not(.dark) .content-card,
 html:not(.dark) .pipeline-node { background: rgba(255,255,255,0.72); border-color: rgba(5,5,7,0.1); }
 
+/* ── Proof ambient: scroll-linked crossfade backdrop behind the outcome cards ──
+   One dimmed, blurred outcome render flows into the next as the visitor scrolls
+   through the section. Only opacity animates (compositor-cheap, fine on mobile);
+   blur and dim are static. The sticky inner viewport pins the image on tall
+   single-column layouts. The section uses overflow-clip so sticky still works.
+   Dark theme only: the renders are dark scenes and would gray the light canvas.
+*/
+.proof-ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.2;
+  mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent);
+}
+.proof-ambient-viewport {
+  position: sticky;
+  top: 0;
+  height: min(100svh, 100%);
+  overflow: hidden;
+}
+.proof-ambient-slide {
+  position: absolute;
+  inset: 0;
+  will-change: opacity;
+}
+.proof-ambient-img {
+  object-fit: cover;
+  transform: scale(1.06); /* hides blur edge bleed */
+  filter: blur(9px) brightness(0.9);
+}
+/* Scanline texture paints above the ambient image, cards (z-1 shell) above both */
+.proof-section::before { z-index: 1; }
+html:not(.dark) .proof-ambient { display: none; }
+
+/* ── Ambient imagery: dim, edge-masked render fragments behind select sections ──
+   Pure decoration (aria-hidden, lazy, below the fold). Max two placements on the
+   page by design: atmosphere, never competing with content. Dark theme only.
+*/
+.ambient-image {
+  position: absolute;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+.ambient-image-img { object-fit: cover; }
+/* Behind the AI-team agent radial: community-sphere render, right side */
+.ambient-ai-team {
+  right: -12%;
+  top: 50%;
+  width: min(760px, 80%);
+  aspect-ratio: 3 / 2;
+  transform: translateY(-50%);
+  opacity: 0.14;
+  mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, black 22%, transparent 74%);
+  -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, black 22%, transparent 74%);
+}
+/* Behind the global-reach heading: demand-rings render, fully faded before the map */
+.ambient-global {
+  left: 50%;
+  top: -4%;
+  width: min(980px, 110%);
+  aspect-ratio: 3 / 2;
+  transform: translateX(-50%);
+  opacity: 0.11;
+  mask-image: radial-gradient(ellipse 58% 52% at 50% 40%, black 18%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 58% 52% at 50% 40%, black 18%, transparent 70%);
+}
+html:not(.dark) .ambient-image { display: none; }
+
 /* ── Showcase media: framed editorial imagery (Higgsfield renders) ────────────
    Real renders replace the abstract outcome visuals. All below the fold and
    lazy via next/image. Hover reveal is gated to precise hover devices; coarse
