@@ -235,17 +235,21 @@ const HeroSection = memo(function HeroSection() {
         className="hero-robot-shell robot-mobile absolute right-0 top-0 w-[100%] h-[55svh] lg:bottom-0 lg:w-[65%] lg:h-auto pointer-events-none block z-[2]"
         style={{ transform: "scale(1.35) translate3d(0, -8%, 0)", transformOrigin: "top center", willChange: "transform" }}
       >
-        {/* SSR-first robot poster: visible before the Spline component bundle hydrates. */}
+        {/* SSR-first robot poster: visible before the Spline component bundle hydrates.
+            Sub-lg stays mix-blend-normal so the phone robot is not washed out; the
+            luminosity treatment is a desktop-only (lg) light-theme effect. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/robot-poster.webp"
           alt=""
+          width={597}
+          height={900}
           decoding="sync"
           loading="eager"
           fetchPriority="high"
-          className="hero-shell-poster w-full h-full dark:opacity-100 opacity-90 dark:mix-blend-normal mix-blend-screen lg:mix-blend-luminosity"
+          className="hero-shell-poster w-full h-full dark:opacity-100 opacity-90 dark:mix-blend-normal mix-blend-normal lg:mix-blend-luminosity"
         />
-        <SplineScene scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode" mobileFallback="/robot-poster.webp" className="w-full h-full dark:opacity-100 opacity-90 dark:mix-blend-normal mix-blend-screen lg:mix-blend-luminosity" />
+        <SplineScene scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode" mobileFallback="/robot-poster.webp" className="w-full h-full dark:opacity-100 opacity-90 dark:mix-blend-normal mix-blend-normal lg:mix-blend-luminosity" />
         <div className="ai-hero-fade-x absolute inset-y-0 left-0 w-[50%]" />
         <div className="ai-hero-fade-y absolute bottom-0 left-0 right-0 h-56" />
         <div className="ai-hero-fade-x absolute inset-y-0 right-0 w-[15%] rotate-180 block dark:hidden" />

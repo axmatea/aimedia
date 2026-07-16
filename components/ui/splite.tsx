@@ -29,6 +29,18 @@ type SplineApp = Application & {
 
 // Cap the canvas backing store on phones so retina (dpr 2-3) does not melt the GPU.
 // Only CSS-transparent backing resolution changes here, layout is untouched.
+//
+// Why a devicePixelRatio shadow and not app.setSize(): verified against
+// @splinetool/runtime 1.x source. Application.setSize(w, h) takes CSS pixels and
+// multiplies by the renderer pixel ratio internally, and that ratio is captured
+// ONCE at boot from window.devicePixelRatio (_getPixelRatio case 0). There is no
+// public per-app pixel ratio API, and the runtime installs its own ResizeObserver
+// on the canvas parent ~300ms after start that rewrites the viewport from
+// canvas.clientWidth/Height, wiping any manual size on the first resize. So
+// passing a pre-multiplied size would INFLATE the backing store (css * cap * dpr)
+// and then get reverted. Capping the live window.devicePixelRatio getter before
+// the runtime boots caps every read consistently (renderer ratio, UI canvases,
+// transition uniforms) and survives the runtime's own resize path.
 const MOBILE_DPR_CAP = 1.5
 
 // Possible head object names across common Spline robot scenes
@@ -77,8 +89,11 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
   }, [])
 
   // Cap devicePixelRatio on coarse-pointer (touch) devices. Desktop keeps full
-  // crispness. The runtime reads window.devicePixelRatio live (init + per frame),
-  // so we shadow the getter for the lifetime of the mounted hero and restore on unmount.
+  // crispness. The runtime reads window.devicePixelRatio live (boot + resize +
+  // transition uniforms), so we shadow the getter for the lifetime of the mounted
+  // hero. The exact original own-property descriptor (usually none: the real
+  // accessor lives on the Window prototype) is saved up front and restored on
+  // unmount, instead of a blind delete that could clobber a pre-existing shadow.
   useEffect(() => {
     if (typeof window === 'undefined') return
     const coarse =
@@ -86,8 +101,12 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
       !window.matchMedia('(pointer: fine)').matches
     if (!coarse || window.devicePixelRatio <= MOBILE_DPR_CAP) return
 
-    const proto = Object.getPrototypeOf(window)
-    const realGet = Object.getOwnPropertyDescriptor(proto, 'devicePixelRatio')?.get
+    const ownDescriptor = Object.getOwnPropertyDescriptor(window, 'devicePixelRatio')
+    const protoGet = Object.getOwnPropertyDescriptor(
+      Object.getPrototypeOf(window),
+      'devicePixelRatio'
+    )?.get
+    const realGet = protoGet ?? ownDescriptor?.get
     try {
       Object.defineProperty(window, 'devicePixelRatio', {
         configurable: true,
@@ -102,9 +121,16 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
 
     return () => {
       try {
-        delete (window as unknown as { devicePixelRatio?: number }).devicePixelRatio
+        if (ownDescriptor) {
+          // Restore the exact descriptor that was on window before the cap.
+          Object.defineProperty(window, 'devicePixelRatio', ownDescriptor)
+        } else {
+          // No own property existed: removing the shadow IS the exact restore,
+          // lookup falls through to the prototype accessor again.
+          delete (window as unknown as { devicePixelRatio?: number }).devicePixelRatio
+        }
       } catch {
-        // leave the cap in place if the environment blocks deletion
+        // leave the cap in place if the environment blocks restoration
       }
     }
   }, [])
@@ -142,9 +168,9 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
     const scheduleIdle = () => {
       if (cancelled || idleId !== null) return
       if (win.requestIdleCallback) {
-        idleId = win.requestIdleCallback(mount, { timeout: 1200 })
+        idleId = win.requestIdleCallback(mount, { timeout: 600 })
       } else {
-        timeouts.push(window.setTimeout(mount, 1200))
+        timeouts.push(window.setTimeout(mount, 600))
       }
     }
 
@@ -160,8 +186,11 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
       window.addEventListener(ev, onFirstInput, { passive: true })
     }
 
+    // Short post-load beat: long enough to stay clear of hydration and the
+    // initial chunk work (mount is still gated on the load event + an idle gap),
+    // short enough that phones with no gesture see the live robot in ~1-1.5s.
     const afterLoad = () => {
-      timeouts.push(window.setTimeout(scheduleIdle, 2800))
+      timeouts.push(window.setTimeout(scheduleIdle, 800))
     }
     if (document.readyState === 'complete') afterLoad()
     else window.addEventListener('load', afterLoad, { once: true })
@@ -282,7 +311,7 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
         window.setTimeout(() => {
           setSceneReady(true)
           onLoad?.(app)
-        }, 720)
+        }, 420)
       })
     })
   }, [onLoad])
@@ -345,6 +374,8 @@ export function SplineScene({ scene, className, onLoad, mobileFallback }: Spline
         <img
           src={mobileFallback}
           alt=""
+          width={597}
+          height={900}
           decoding="sync"
           loading="eager"
           fetchPriority="high"
