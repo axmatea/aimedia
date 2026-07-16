@@ -3,6 +3,7 @@
 import { m } from "motion/react"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import { CountUp } from "@/components/ui/count-up"
+import { ShowcaseMedia } from "@/components/ui/showcase-media"
 
 export type CaseStudy = {
   project: string
@@ -10,6 +11,11 @@ export type CaseStudy = {
   result: string
   color: string
   accent: string
+  /** Editorial render for the card frame. Absent = OutcomeVisual fallback. */
+  image?: string
+  imageAlt?: string
+  imageCaption?: string
+  imageSpec?: string[]
 }
 
 const glowFor = (accent: string): "purple" | "red" | "green" | "blue" => {
@@ -100,8 +106,19 @@ export function ProofSection({
               >
                 <GlowCard glowColor={glowFor(c.accent)} customSize className="w-full h-full min-h-[320px]">
                   <article className={`outcome-card outcome-card-${kind}`} style={{ "--outcome-accent": c.accent, "--outcome-index": i } as React.CSSProperties}>
-                    <div className="outcome-picture" aria-hidden>
-                      <OutcomeVisual kind={kind} index={i} />
+                    <div className={`outcome-picture${c.image ? " has-media" : ""}`} aria-hidden={c.image ? undefined : true}>
+                      {c.image ? (
+                        <ShowcaseMedia
+                          src={c.image}
+                          alt={c.imageAlt ?? `${c.tag} outcome render`}
+                          caption={c.imageCaption}
+                          spec={c.imageSpec}
+                          aspect="auto"
+                          className="outcome-media"
+                        />
+                      ) : (
+                        <OutcomeVisual kind={kind} index={i} />
+                      )}
                       <span className="outcome-caption">{OUTCOME_CAPTIONS[kind]}</span>
                     </div>
 

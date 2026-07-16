@@ -942,6 +942,90 @@ html:not(.dark) .outcome-caption { color: rgba(5,5,7,0.38); }
 html:not(.dark) .content-card,
 html:not(.dark) .pipeline-node { background: rgba(255,255,255,0.72); border-color: rgba(5,5,7,0.1); }
 
+/* ── Showcase media: framed editorial imagery (Higgsfield renders) ────────────
+   Real renders replace the abstract outcome visuals. All below the fold and
+   lazy via next/image. Hover reveal is gated to precise hover devices; coarse
+   pointers get the caption/chips statically so touch has no sticky states.
+*/
+.showcase-media {
+  position: relative;
+  display: block;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.showcase-media-img {
+  object-fit: cover;
+  transition: transform 0.9s var(--ease-out);
+}
+.showcase-media-overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 3;
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  background: linear-gradient(180deg, transparent, rgba(5, 5, 7, 0.86));
+}
+.showcase-media-caption {
+  color: rgba(255, 255, 255, 0.82);
+  font-family: var(--font-geist-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.showcase-media-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.showcase-media-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border: 1px solid color-mix(in oklch, var(--red, #FF2D55) 42%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--red, #FF2D55) 16%, rgba(5, 5, 7, 0.72));
+  color: rgba(255, 255, 255, 0.88);
+  font-family: var(--font-geist-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+/* In the outcome frame the media fills the existing picture box. */
+.outcome-picture .outcome-media {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+/* The photo hides the drifting grid; stop painting and animating it below. */
+.outcome-picture.has-media::before { content: none; }
+/* Keep the scanline sweep and caption readable above the photo. */
+.outcome-picture.has-media::after { z-index: 2; }
+@media (hover: hover) and (pointer: fine) {
+  .showcase-media-overlay {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+  }
+  .showcase-media:hover .showcase-media-overlay,
+  .outcome-card:hover .showcase-media-overlay {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .showcase-media:hover .showcase-media-img,
+  .outcome-card:hover .showcase-media-img {
+    transform: scale(1.04);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .showcase-media:hover .showcase-media-img,
+  .outcome-card:hover .showcase-media-img { transform: none; }
+  .showcase-media-overlay { opacity: 1; transform: none; }
+}
+
 /* ── Serve icons: idle micro-motion loops ─────────────────────────────────────
    CSS loops (not whileInView) because the section sits under content-visibility.
    Negative animation-delays stagger the grid so nothing pulses in unison.

@@ -133,11 +133,38 @@ const SERVICES = [
   },
 ]
 
+// Outcome renders: brand imagery generated with Higgsfield (2000x1343 webp,
+// optimized, lazy, below the fold). Cards without `image` fall back to the
+// abstract OutcomeVisual, so removing a file is safe and reversible.
 const CASE_STUDIES = [
-  { project: "1SecondCopy", tag: "Content Agency", result: "3× more booked calls per week without adding headcount.", color: "#0A0A0F", accent: "#FF2D55" },
-  { project: "AfterCall", tag: "SaaS", result: "$180k ARR in the first 90 days from automated pipeline.", color: "#0A0A0F", accent: "#FF2D55" },
-  { project: "Dad's Printing", tag: "Local Business", result: "CAC dropped 67%. AI handles the full pipeline.", color: "#050507", accent: "#FF2D55" },
-  { project: "XWECAN", tag: "Web3", result: "2,200 qualified leads contacted before launch day.", color: "#050507", accent: "#FF2D55" },
+  {
+    project: "1SecondCopy", tag: "Content Agency", result: "3× more booked calls per week without adding headcount.", color: "#0A0A0F", accent: "#FF2D55",
+    image: "/generated/outcomes/outcome-content.webp",
+    imageAlt: "Content pieces fanning out from a single engine along glowing red distribution lines",
+    imageCaption: "One engine, every channel",
+    imageSpec: ["Higgsfield", "2K", "3:2"],
+  },
+  {
+    project: "AfterCall", tag: "SaaS", result: "$180k ARR in the first 90 days from automated pipeline.", color: "#0A0A0F", accent: "#FF2D55",
+    image: "/generated/outcomes/outcome-saas.webp",
+    imageAlt: "Glass pipeline chambers moving a stream of red signal through each revenue stage",
+    imageCaption: "Pipeline running end to end",
+    imageSpec: ["Higgsfield", "2K", "3:2"],
+  },
+  {
+    project: "Dad's Printing", tag: "Local Business", result: "CAC dropped 67%. AI handles the full pipeline.", color: "#050507", accent: "#FF2D55",
+    image: "/generated/outcomes/outcome-local.webp",
+    imageAlt: "Neon rings of demand radiating from a location pin over a dark city map",
+    imageCaption: "Demand radiating from one point",
+    imageSpec: ["Higgsfield", "2K", "3:2"],
+  },
+  {
+    project: "XWECAN", tag: "Web3", result: "2,200 qualified leads contacted before launch day.", color: "#050507", accent: "#FF2D55",
+    image: "/generated/outcomes/outcome-web3.webp",
+    imageAlt: "A luminous sphere of connected community nodes orbiting one bright core",
+    imageCaption: "Community mapped before launch",
+    imageSpec: ["Higgsfield", "2K", "3:2"],
+  },
 ]
 
 const TRACE_SYSTEM_NODES = [
