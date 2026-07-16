@@ -1,0 +1,29 @@
+# Deploy payload allow-list by exclusion: only build-relevant files go up.
+# Without this file the CLI was shipping ~45MB of local junk (audit reports,
+# outreach state) on every deploy, and prospect data must never leave the box.
+
+# local state + reports (gitignored locally, but the CLI uploads them anyway)
+docs/audit
+.lighthouseci
+data
+_assets-archive
+tsconfig.tsbuildinfo
+
+# outreach + email ops: local-only, contain prospect contact details
+scripts/outreach
+scripts/send-*.mjs
+scripts/schedule-*.mjs
+scripts/cancel-*.mjs
+docs/email-auth
+docs/email-send-safety.md
+infra
+
+# workspace notes, not site source
+00_INBOX
+POSITIONING.md
+LAUNCH_HANDOFF.md
+BRIEF.md
+AGENTS.md
+CLAUDE.md
+.claude
+.hermes
