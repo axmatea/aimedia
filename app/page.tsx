@@ -133,47 +133,55 @@ const SERVICES = [
   },
 ]
 
-// Outcome renders: brand imagery generated with Higgsfield (2000x1343 webp,
-// optimized, lazy, below the fold). Cards without `image` fall back to the
-// abstract OutcomeVisual, so removing a file is safe and reversible.
+// Outcome renders: brand imagery (2000x1343 webp, optimized, lazy, below the
+// fold). Cards without `image` fall back to the abstract OutcomeVisual, so
+// removing a file is safe and reversible. No generation-tool attribution is
+// rendered on the page (owner decision, v6.1): keep `imageSpec` unset here even
+// though ShowcaseMedia still supports a spec chip row for future use.
 const CASE_STUDIES = [
   {
     project: "1SecondCopy", tag: "Content Agency", result: "3× more booked calls per week without adding headcount.", color: "#0A0A0F", accent: "#FF2D55",
     image: "/generated/outcomes/outcome-content.webp",
     imageAlt: "Content pieces fanning out from a single engine along glowing red distribution lines",
     imageCaption: "One engine, every channel",
-    imageSpec: ["Higgsfield", "2K", "3:2"],
   },
   {
     project: "AfterCall", tag: "SaaS", result: "$180k ARR in the first 90 days from automated pipeline.", color: "#0A0A0F", accent: "#FF2D55",
     image: "/generated/outcomes/outcome-saas.webp",
     imageAlt: "Glass pipeline chambers moving a stream of red signal through each revenue stage",
     imageCaption: "Pipeline running end to end",
-    imageSpec: ["Higgsfield", "2K", "3:2"],
   },
   {
     project: "Dad's Printing", tag: "Local Business", result: "CAC dropped 67%. AI handles the full pipeline.", color: "#050507", accent: "#FF2D55",
     image: "/generated/outcomes/outcome-local.webp",
     imageAlt: "Neon rings of demand radiating from a location pin over a dark city map",
     imageCaption: "Demand radiating from one point",
-    imageSpec: ["Higgsfield", "2K", "3:2"],
   },
   {
     project: "XWECAN", tag: "Web3", result: "2,200 qualified leads contacted before launch day.", color: "#050507", accent: "#FF2D55",
     image: "/generated/outcomes/outcome-web3.webp",
     imageAlt: "A luminous sphere of connected community nodes orbiting one bright core",
     imageCaption: "Community mapped before launch",
-    imageSpec: ["Higgsfield", "2K", "3:2"],
   },
 ]
 
+// Each node names the deliverables that ship at that step (`ships`), so the map
+// reads as a scope-of-work, not just a diagram. Deliverables mirror the three
+// SERVICES engines. No client metrics, no guarantees.
 const TRACE_SYSTEM_NODES = [
-  { id: "signals", label: "Buyer signals", detail: "Inbound, CRM, social, and intent data normalized into one source map.", x: "13%", y: "22%", tone: "source" },
-  { id: "context", label: "Context graph", detail: "Accounts, offers, objections, and channel history linked before action.", x: "31%", y: "55%", tone: "inferred" },
-  { id: "core", label: "AX operator core", detail: "Routes work to lead gen, content, and ops automations with review gates.", x: "50%", y: "34%", tone: "core" },
-  { id: "content", label: "Content engine", detail: "Turns approved positioning into scheduled posts, scripts, and assets.", x: "70%", y: "20%", tone: "output" },
-  { id: "pipeline", label: "Pipeline engine", detail: "Scores accounts, drafts follow-ups, and keeps CRM state current.", x: "78%", y: "54%", tone: "output" },
-  { id: "proof", label: "Proof loop", detail: "Every result routes back into reporting, decisions, and next experiments.", x: "52%", y: "78%", tone: "review" },
+  { id: "signals", label: "Buyer signals", detail: "Inbound, CRM, social, and intent data normalized into one source map.", ships: ["Ideal buyer lists", "Intent signals"], x: "13%", y: "22%", tone: "source" },
+  { id: "context", label: "Context graph", detail: "Accounts, offers, objections, and channel history linked before action.", ships: ["Account research", "Offer map"], x: "31%", y: "55%", tone: "inferred" },
+  { id: "core", label: "AX operator core", detail: "Routes work to lead gen, content, and ops automations with review gates.", ships: ["Review gates", "Owner routing"], x: "50%", y: "34%", tone: "core" },
+  { id: "content", label: "Content engine", detail: "Turns approved positioning into scheduled posts, scripts, and assets.", ships: ["Daily posting", "Creative dept"], x: "70%", y: "20%", tone: "output" },
+  { id: "pipeline", label: "Pipeline engine", detail: "Runs outreach, drafts follow-ups, books meetings, and keeps CRM state current.", ships: ["Booked meetings", "CRM sync"], x: "78%", y: "54%", tone: "output" },
+  { id: "proof", label: "Proof loop", detail: "Every result routes back into reporting, decisions, and next experiments.", ships: ["24/7 follow-up", "Live reporting"], x: "52%", y: "78%", tone: "review" },
+] as const
+
+// Copy-column scope stack: what each engine actually delivers when the map ships.
+const TRACE_DELIVERABLES = [
+  { label: "GO-TO-MARKET ENGINE", detail: "Ideal buyer lists, outreach automation, booked meetings, and a CRM that stays current on its own." },
+  { label: "CONTENT SYSTEM", detail: "A content engine posting daily across your channels, with a full creative department behind it." },
+  { label: "AI OPS PIPELINE", detail: "Lead pipeline, sales funnel, and 24/7 follow-up wired into one system you own." },
 ] as const
 
 const TRACE_SYSTEM_EDGES = [
@@ -341,8 +349,18 @@ const TraceableSystemMap = memo(function TraceableSystemMap() {
             MAP THE WORK.<br />SHIP THE<br /><span style={{ color: "var(--red)" }}>SYSTEM.</span>
           </Disp>
           <p className="ai-muted text-sm md:text-base leading-relaxed mt-6 max-w-md">
-            We build AI operations as visible maps: sources, decisions, owners, and review gates connected before anything touches a customer.
+            We build AI operations as visible maps: sources, decisions, owners, and review gates connected before anything touches a customer. Every node on this map is work we deliver, not a diagram.
           </p>
+          <p className="trace-stack-heading">What ships</p>
+          <div className="trace-deliverable-stack" role="group" aria-label="What each engine delivers">
+            {TRACE_DELIVERABLES.map((row) => (
+              <div key={row.label} className="trace-deliverable-row">
+                <span>{row.label}</span>
+                <p>{row.detail}</p>
+              </div>
+            ))}
+          </div>
+          <p className="trace-stack-heading">How it stays traceable</p>
           <div className="trace-confidence-stack" role="group" aria-label="Confidence labels">
             {TRACE_CONFIDENCE_TAGS.map((tag) => (
               <div key={tag.label} className="trace-confidence-row">
@@ -383,6 +401,11 @@ const TraceableSystemMap = memo(function TraceableSystemMap() {
             >
               <span>{node.label}</span>
               <p>{node.detail}</p>
+              <span className="trace-node-ships">
+                {node.ships.map((item) => (
+                  <em key={item}>{item}</em>
+                ))}
+              </span>
             </article>
           ))}
         </m.div>
