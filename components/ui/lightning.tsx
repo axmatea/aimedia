@@ -30,7 +30,6 @@ export const Lightning: React.FC<LightningProps> = ({
       canvas.height = canvas.clientHeight
     }
     resizeCanvas()
-    window.addEventListener("resize", resizeCanvas)
 
     const gl = canvas.getContext("webgl")
     if (!gl) return
@@ -165,13 +164,9 @@ export const Lightning: React.FC<LightningProps> = ({
     const uSizeLocation = gl.getUniformLocation(program, "uSize")
 
     const startTime = performance.now()
-    let animId: number
-
-    let isVisible = true
+    let animId: number | null = null
 
     const render = () => {
-      if (!isVisible) { animId = requestAnimationFrame(render); return }
-      resizeCanvas()
       gl.viewport(0, 0, canvas.width, canvas.height)
       gl.uniform2f(iResolutionLocation, canvas.width, canvas.height)
       gl.uniform1f(iTimeLocation, (performance.now() - startTime) / 1000.0)
@@ -183,16 +178,33 @@ export const Lightning: React.FC<LightningProps> = ({
       gl.drawArrays(gl.TRIANGLES, 0, 6)
       animId = requestAnimationFrame(render)
     }
-    animId = requestAnimationFrame(render)
+    const startLoop = () => {
+      if (animId === null) animId = requestAnimationFrame(render)
+    }
+    const stopLoop = () => {
+      if (animId !== null) {
+        cancelAnimationFrame(animId)
+        animId = null
+      }
+    }
+    startLoop()
 
-    // Pause when off-screen
-    const obs = new IntersectionObserver(([e]) => { isVisible = e.isIntersecting }, { threshold: 0.1 })
+    // Resize the backing store only when the box actually changes (never per
+    // frame). ResizeObserver fires once on observe, covering the initial size.
+    const ro = new ResizeObserver(resizeCanvas)
+    ro.observe(canvas)
+
+    // Fully cancel the rAF loop off-screen instead of idle-spinning empty frames.
+    const obs = new IntersectionObserver(
+      ([e]) => (e.isIntersecting ? startLoop() : stopLoop()),
+      { threshold: 0.1 }
+    )
     obs.observe(canvas)
 
     return () => {
       obs.disconnect()
-      window.removeEventListener("resize", resizeCanvas)
-      cancelAnimationFrame(animId)
+      ro.disconnect()
+      stopLoop()
     }
   }, [hue, xOffset, speed, intensity, size])
 

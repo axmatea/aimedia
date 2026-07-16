@@ -10,7 +10,26 @@ let lenisInstance: Lenis | null = null
 export function lenisScrollTo(target: string | HTMLElement, offset = -80) {
   if (lenisInstance) {
     // Long, decelerating glide for anchor jumps: quart-out easing over 1.35s.
-    lenisInstance.scrollTo(target, { offset, duration: 1.35, easing: (t: number) => 1 - Math.pow(1 - t, 4) })
+    // Sections between here and the target render under content-visibility
+    // with estimated placeholder heights, so layout can shift mid-glide and
+    // the landing drifts. After the glide, re-measure the real target position
+    // and close any remaining gap with a short corrective glide.
+    const correct = () => {
+      const lenis = lenisInstance
+      if (!lenis) return
+      const el = typeof target === "string" ? document.querySelector<HTMLElement>(target) : target
+      if (!el) return
+      const drift = el.getBoundingClientRect().top + offset
+      if (Math.abs(drift) > 2) {
+        lenis.scrollTo(el, { offset, duration: 0.3, easing: (t: number) => 1 - Math.pow(1 - t, 3) })
+      }
+    }
+    lenisInstance.scrollTo(target, {
+      offset,
+      duration: 1.35,
+      easing: (t: number) => 1 - Math.pow(1 - t, 4),
+      onComplete: correct,
+    })
   } else if (typeof target === "string") {
     document.querySelector(target)?.scrollIntoView({ behavior: "smooth" })
   } else {

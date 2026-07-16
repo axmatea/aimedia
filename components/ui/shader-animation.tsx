@@ -85,28 +85,35 @@ export function ShaderAnimation({ className = "w-full h-full" }: { className?: s
     window.addEventListener("resize", resize)
 
     const start = performance.now()
-    let animId: number
-    let isVisible = true
+    let animId: number | null = null
 
     const render = () => {
-      if (!isVisible) { animId = requestAnimationFrame(render); return }
       gl.uniform2f(uRes, canvas.width, canvas.height)
       gl.uniform1f(uTime, (performance.now() - start) * 0.001)
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
       animId = requestAnimationFrame(render)
     }
-    animId = requestAnimationFrame(render)
+    const startLoop = () => {
+      if (animId === null) animId = requestAnimationFrame(render)
+    }
+    const stopLoop = () => {
+      if (animId !== null) {
+        cancelAnimationFrame(animId)
+        animId = null
+      }
+    }
+    startLoop()
 
-    // Pause rendering when off-screen
+    // Fully cancel the rAF loop off-screen instead of idle-spinning empty frames.
     const observer = new IntersectionObserver(
-      ([e]) => { isVisible = e.isIntersecting },
+      ([e]) => (e.isIntersecting ? startLoop() : stopLoop()),
       { threshold: 0.1 }
     )
     observer.observe(canvas)
 
     return () => {
-      cancelAnimationFrame(animId)
       observer.disconnect()
+      stopLoop()
       window.removeEventListener("resize", resize)
     }
   }, [])

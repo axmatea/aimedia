@@ -1,6 +1,8 @@
 "use client";
 import { useRef, useState, useMemo, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+// m + AnimatePresence from motion/react: the app provides LazyMotion(domAnimation),
+// so m.* elements animate identically to motion.* without the eager full bundle.
+import { m, AnimatePresence } from "motion/react";
 import DottedMap from "dotted-map";
 import { useTheme } from "next-themes";
 
@@ -52,6 +54,21 @@ export function WorldMap({
   // container keeps its aspect ratio the whole time, so there is no layout
   // shift, just dots fading in slightly before the section scrolls in.
   const [ready, setReady] = useState(false);
+  // Pause the infinite path/beacon animations when the map is off-screen: the
+  // animated overlay unmounts (the static dotted-map image stays), so no rAF
+  // work runs for a section the user cannot see. Re-entry restarts the loop
+  // cycle, which is visually indistinguishable for looping draws.
+  const [active, setActive] = useState(false);
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setActive(entry.isIntersecting),
+      { rootMargin: "160px" }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
   useEffect(() => {
     const el = wrapRef.current;
     if (!el || ready) return;
@@ -113,7 +130,7 @@ export function WorldMap({
           suppressHydrationWarning
         />
       )}
-      {ready && (
+      {ready && active && (
       <svg
         ref={svgRef}
         viewBox="0 0 800 400"
@@ -143,7 +160,7 @@ export function WorldMap({
 
           return (
             <g key={`path-${i}`}>
-              <motion.path
+              <m.path
                 d={path}
                 fill="none"
                 stroke="url(#path-gradient)"
@@ -158,7 +175,7 @@ export function WorldMap({
                 } : { duration: animationDuration, delay: i * staggerDelay }}
               />
               {loop && (
-                <motion.circle r="5" fill={lineColor} filter="url(#glow)"
+                <m.circle r="5" fill={lineColor} filter="url(#glow)"
                   initial={{ offsetDistance: "0%", opacity: 0 }}
                   animate={{ offsetDistance: [null, "0%", "100%", "100%", "100%"], opacity: [0, 0, 1, 0, 0] }}
                   transition={{ duration: fullCycleDuration, times: [0, startTime, endTime, resetTime, 1], ease: "easeInOut", repeat: Infinity }}
@@ -200,12 +217,12 @@ export function WorldMap({
 
       <AnimatePresence>
         {hoveredLocation && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
             className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-2 rounded-lg text-xs font-medium backdrop-blur-sm border border-white/10"
           >
             {hoveredLocation}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

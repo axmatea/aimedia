@@ -1,6 +1,9 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { useMotionValue, animate, motion } from 'framer-motion';
+// m + hooks from motion/react: the app wraps everything in LazyMotion(domAnimation),
+// so m.div behaves identically to motion.div without pulling the eager full bundle.
+// useMotionValue and the standalone animate() are not LazyMotion-dependent.
+import { useMotionValue, animate, m } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
 import useMeasure from 'react-use-measure';
 
@@ -100,7 +103,7 @@ export function InfiniteSlider({
 
   return (
     <div ref={containerRef} className={cn('overflow-hidden', className)}>
-      <motion.div
+      <m.div
         className="flex w-max"
         style={{
           ...(direction === 'horizontal' ? { x: translation } : { y: translation }),
@@ -112,7 +115,7 @@ export function InfiniteSlider({
       >
         {children}
         {children}
-      </motion.div>
+      </m.div>
     </div>
   );
 }

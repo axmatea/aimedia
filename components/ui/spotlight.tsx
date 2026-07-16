@@ -1,7 +1,10 @@
 'use client'
 
 import { useRef, useState, useCallback, useEffect } from 'react'
-import { motion, useSpring, useTransform } from 'framer-motion'
+// m + hooks from motion/react: the page already provides LazyMotion(domAnimation),
+// so m.div renders identically to motion.div without bundling the full feature set.
+// useSpring/useTransform are feature-independent MotionValue hooks.
+import { m, useSpring, useTransform } from 'motion/react'
 import { cn } from '@/lib/utils'
 
 type SpotlightProps = {
@@ -54,7 +57,7 @@ export function Spotlight({ className, size = 400 }: SpotlightProps) {
   }, [parentElement, handleMouseMove])
 
   return (
-    <motion.div
+    <m.div
       ref={containerRef}
       className={cn(
         'pointer-events-none absolute rounded-full blur-3xl transition-opacity duration-300',

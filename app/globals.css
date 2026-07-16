@@ -1432,6 +1432,27 @@ html.lenis, html.lenis body { height: auto; }
   contain-intrinsic-size: 0 800px;
 }
 
+/* Closer per-section intrinsic estimates (v7): anchor glides measure the
+   target position at launch, so the placeholder heights of the sections in
+   between must be near their real rendered heights or the glide lands short
+   or long. Values approximate the desktop render; the mobile overrides below
+   cover the stacked single-column layouts. lenisScrollTo also re-checks the
+   landing position after the glide as a safety net. */
+#built-for { contain-intrinsic-size: 0 1150px; }
+.ai-panel { contain-intrinsic-size: 0 900px; }
+.trace-map-section { contain-intrinsic-size: 0 980px; }
+#services section { contain-intrinsic-size: 0 960px; }
+#proof { contain-intrinsic-size: 0 900px; }
+#global-reach { contain-intrinsic-size: 0 900px; }
+@media (max-width: 767px) {
+  #built-for { contain-intrinsic-size: 0 1450px; }
+  .ai-panel { contain-intrinsic-size: 0 1250px; }
+  .trace-map-section { contain-intrinsic-size: 0 1650px; }
+  #services section { contain-intrinsic-size: 0 1250px; }
+  #proof { contain-intrinsic-size: 0 1900px; }
+  #global-reach { contain-intrinsic-size: 0 950px; }
+}
+
 /* ── Reduced motion: respect user preference ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -1464,12 +1485,14 @@ input, textarea, [contenteditable="true"], [contenteditable=""] {
   user-select: text;
 }
 
-/* GPU-accelerate sections for smooth scroll repaint */
+/* Sections keep layout/style containment for cheap invalidation. The old
+   blanket transform: translateZ(0) layer promotion was removed (v7): a
+   compositor layer per section costs GPU memory and raster work on phones
+   and fought the content-visibility skipping below. Scroll smoothness is
+   carried by Lenis + containment, not forced layers. */
 .ai-page section {
   will-change: auto;
   contain: layout style;
-  /* Promote to own compositor layer during scroll */
-  transform: translateZ(0);
 }
 
 .hero-section {

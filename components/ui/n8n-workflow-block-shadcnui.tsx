@@ -1,5 +1,10 @@
 "use client"
-import { motion, useReducedMotion, type PanInfo } from "framer-motion"
+// Import from motion/react (same library as framer-motion, canonical entry).
+// The draggable workflow nodes keep the full `motion` component: drag gestures
+// live in domMax, NOT in the LazyMotion(domAnimation) bundle the app loads, so
+// m.div would silently drop dragging. The non-drag feed rows use `m` and ride
+// the shared LazyMotion context. This whole block is a lazy below-fold chunk.
+import { motion, m, useReducedMotion, type PanInfo } from "motion/react"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
@@ -215,7 +220,7 @@ export function N8nWorkflowBlock() {
         <p className="text-[9px] uppercase tracking-[0.25em] text-white/55 mb-2">Agent activity</p>
         <div className="space-y-1.5">
           {feed.map((ev) => (
-            <motion.div
+            <m.div
               key={ev.id}
               initial={reduceMotion ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -224,7 +229,7 @@ export function N8nWorkflowBlock() {
             >
               <span className="h-1 w-1 rounded-full shrink-0" style={{ backgroundColor: ev.color }} />
               <span className="text-[10px] font-mono text-white/70 truncate">{ev.text}</span>
-            </motion.div>
+            </m.div>
           ))}
         </div>
       </div>
