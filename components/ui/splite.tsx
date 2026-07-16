@@ -164,20 +164,23 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
     }
 
     // Every mount goes through requestIdleCallback with a hard ceiling so the
-    // boot waits for a gap but can never stall forever.
-    const scheduleIdle = () => {
+    // boot waits for a gap but can never stall forever. The ceiling differs by
+    // path: the gesture fast-path keeps the original tight 600ms (an engaged
+    // user gets the robot right away), the no-gesture fallback allows a longer
+    // 1200ms window so the boot stays clear of the Lighthouse/LCP phase.
+    const scheduleIdle = (timeout: number) => {
       if (cancelled || idleId !== null) return
       if (win.requestIdleCallback) {
-        idleId = win.requestIdleCallback(mount, { timeout: 600 })
+        idleId = win.requestIdleCallback(mount, { timeout })
       } else {
-        timeouts.push(window.setTimeout(mount, 600))
+        timeouts.push(window.setTimeout(mount, timeout))
       }
     }
 
     const INPUT_EVENTS: (keyof WindowEventMap)[] = ['pointerdown', 'mousemove', 'wheel', 'touchstart', 'keydown']
     const onFirstInput = () => {
       detachInput()
-      scheduleIdle()
+      scheduleIdle(600)
     }
     const detachInput = () => {
       for (const ev of INPUT_EVENTS) window.removeEventListener(ev, onFirstInput)
@@ -186,11 +189,13 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
       window.addEventListener(ev, onFirstInput, { passive: true })
     }
 
-    // Short post-load beat: long enough to stay clear of hydration and the
-    // initial chunk work (mount is still gated on the load event + an idle gap),
-    // short enough that phones with no gesture see the live robot in ~1-1.5s.
+    // No-gesture post-load beat (v7: 800 -> 2400ms). Long enough that the
+    // ~1.3 MB runtime + scene boot never overlaps the load/LCP window on
+    // throttled phones, short enough that an idle visitor still sees the live
+    // robot in ~2.5-3.5s. Any real gesture short-circuits this via the fast
+    // path above, so engaged users are unaffected.
     const afterLoad = () => {
-      timeouts.push(window.setTimeout(scheduleIdle, 800))
+      timeouts.push(window.setTimeout(() => scheduleIdle(1200), 2400))
     }
     if (document.readyState === 'complete') afterLoad()
     else window.addEventListener('load', afterLoad, { once: true })
