@@ -106,7 +106,8 @@ const MAP_DOTS = [
 ]
 
 // Monochrome + red: all three services live on the dark canvas, differentiated
-// by the red index slash and the ghost number, not by background color.
+// by the tag chip and index label, not by background color. svc02 carries a
+// subtle vertical gradient so the panel melts into the neighboring sections.
 const SERVICES = [
   {
     id: "01", name: "GO-TO-MARKET\nENGINE", tag: "GROWTH",
@@ -896,12 +897,13 @@ export default function Home() {
                 )}
               </div>
 
-              {svc.id !== "01" && (
-                <div className="absolute right-0 bottom-0 pointer-events-none select-none overflow-hidden" aria-hidden>
-                  <Disp className="text-[300px]" style={{ color: "rgba(255,255,255,0.03)" }}>{svc.id}</Disp>
-                </div>
-              )}
             </div>
+
+            {/* Soft red bloom keeps svc02/03 from reading empty now that the
+                ghost numerals are gone. Decorative, zero layout impact. */}
+            {svc.id !== "01" && (
+              <div className="absolute right-[-10%] bottom-[-20%] w-[520px] h-[420px] bg-[#FF2D55]/6 rounded-full blur-[120px] pointer-events-none" aria-hidden />
+            )}
           </section>
         ))}
       </div>
