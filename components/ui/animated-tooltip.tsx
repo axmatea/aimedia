@@ -29,7 +29,7 @@ const TooltipItem = ({ item, index }: { item: AICreator; index: number }) => {
         className="pointer-events-none absolute -top-20 left-1/2 hidden -translate-x-1/2 flex-col items-center rounded-xl border border-white/10 bg-[#0C0C0F] px-4 py-2.5 shadow-2xl group-hover:flex z-50"
       >
         <p className="whitespace-nowrap text-xs font-bold text-white">{item.name}</p>
-        <p className="whitespace-nowrap text-[10px] text-white/50 mt-0.5">{item.niche}</p>
+        <p className="whitespace-nowrap text-[10px] text-white/65 mt-0.5">{item.niche}</p>
         <p className="whitespace-nowrap text-[10px] text-[#C8FF60] font-mono mt-1">{item.followers} followers</p>
         <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-[#0C0C0F] border-r border-b border-white/10" />
       </motion.div>
@@ -67,7 +67,7 @@ export function AIUGCCreators() {
         <TooltipItem key={item.id} item={item} index={index} />
       ))}
       <div className="relative ml-2 h-14 w-14 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center">
-        <span className="text-white/30 text-lg font-light">+</span>
+        <span className="text-white/50 text-lg font-light">+</span>
       </div>
     </div>
   )

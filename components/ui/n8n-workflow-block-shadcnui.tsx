@@ -152,9 +152,9 @@ export function N8nWorkflowBlock() {
           <Badge variant="outline" className="rounded-full border-[#C8FF60]/40 bg-[#C8FF60]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-[#C8FF60]">
             Live
           </Badge>
-          <span className="text-[10px] uppercase tracking-[0.25em] text-white/40">Sales Pipeline</span>
+          <span className="text-[10px] uppercase tracking-[0.25em] text-white/60">Sales Pipeline</span>
         </div>
-        <span className="text-[11px] text-white/45 font-medium flex items-center gap-1.5 animate-pulse">
+        <span className="text-[11px] text-white/65 font-medium flex items-center gap-1.5">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 9l4-4 4 4" /><path d="M15 15l4 4 4-4" />
           </svg>
@@ -200,7 +200,7 @@ export function N8nWorkflowBlock() {
                     </div>
                     <div className="min-w-0">
                       <p className="text-[11px] font-bold text-white/90 leading-tight truncate">{node.title}</p>
-                      <p className="text-[9px] leading-snug text-white/40 mt-0.5 truncate">{node.description}</p>
+                      <p className="text-[10px] leading-snug text-white/65 mt-0.5 truncate">{node.description}</p>
                     </div>
                   </div>
                 </Card>
@@ -212,7 +212,7 @@ export function N8nWorkflowBlock() {
 
       {/* Live agent feed */}
       <div className="mt-3 rounded-lg border border-white/6 bg-white/[0.02] px-4 py-3">
-        <p className="text-[9px] uppercase tracking-[0.25em] text-white/35 mb-2">Agent activity</p>
+        <p className="text-[9px] uppercase tracking-[0.25em] text-white/55 mb-2">Agent activity</p>
         <div className="space-y-1.5">
           {feed.map((ev) => (
             <motion.div
@@ -223,7 +223,7 @@ export function N8nWorkflowBlock() {
               className="flex items-center gap-2"
             >
               <span className="h-1 w-1 rounded-full shrink-0" style={{ backgroundColor: ev.color }} />
-              <span className="text-[10px] font-mono text-white/55 truncate">{ev.text}</span>
+              <span className="text-[10px] font-mono text-white/70 truncate">{ev.text}</span>
             </motion.div>
           ))}
         </div>
@@ -231,12 +231,12 @@ export function N8nWorkflowBlock() {
 
       {/* Footer */}
       <div className="mt-3 flex items-center justify-between rounded-lg border border-white/6 bg-white/[0.02] px-4 py-2">
-        <div className="flex gap-4 text-[10px] text-white/40">
+        <div className="flex gap-4 text-[10px] text-white/60">
           <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#C8FF60] inline-block" />{nodes.length} Nodes</span>
           <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#FF2D55] inline-block" />{connections.length} Connections</span>
           <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#7B2FFF] inline-block" />Running 24/7</span>
         </div>
-        <span className="text-[9px] uppercase tracking-[0.2em] text-white/35">Works while you sleep</span>
+        <span className="text-[9px] uppercase tracking-[0.2em] text-white/55">Works while you sleep</span>
       </div>
     </div>
   )

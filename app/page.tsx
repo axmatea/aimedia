@@ -479,14 +479,14 @@ function BookingFlow() {
   return (
     <div className="relative z-10 max-w-2xl md:max-w-6xl mx-auto">
           <div className="text-center mb-8 md:mb-14">
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/60">Free strategy call</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/75">Free strategy call</span>
             <Disp className="text-white block mt-4" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
               BOOK A<br /><span style={{ color: "var(--red)" }}>STRATEGY CALL.</span>
             </Disp>
-            <p className="text-white/65 text-sm md:text-lg mt-4 max-w-lg mx-auto leading-relaxed">
+            <p className="text-white/75 text-sm md:text-lg mt-4 max-w-lg mx-auto leading-relaxed">
               Answer three quick filters, then pick a time. We come prepared with the highest-leverage AI systems for your business.
             </p>
-            <p className="text-white/25 text-xs md:text-sm mt-2 italic tracking-wide">The fabric of digital reality.</p>
+            <p className="text-white/55 text-xs md:text-sm mt-2 italic tracking-wide">The fabric of digital reality.</p>
           </div>
 
           {/* Step indicator */}
@@ -497,9 +497,9 @@ function BookingFlow() {
                   <div className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold transition-all" style={{
                     backgroundColor: step > i ? "#FF2D55" : step === i ? "rgba(255,45,85,0.2)" : "rgba(255,255,255,0.06)",
                     border: step === i ? "1px solid #FF2D55" : "1px solid transparent",
-                    color: step >= i ? "#FF2D55" : "rgba(255,255,255,0.25)",
+                    color: step >= i ? "#FF2D55" : "rgba(255,255,255,0.55)",
                   }}>{i + 1}</div>
-                  <span className="hidden sm:inline text-xs font-medium uppercase tracking-wider" style={{ color: step === i ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.3)" }}>{label}</span>
+                  <span className="hidden sm:inline text-xs font-medium uppercase tracking-wider" style={{ color: step === i ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.6)" }}>{label}</span>
                 </div>
                 {i < 2 && <div className="w-10 h-px mx-1" style={{ backgroundColor: step > i ? "#FF2D55" : "rgba(255,255,255,0.12)" }} />}
               </div>
@@ -566,7 +566,7 @@ function BookingFlow() {
                 </div>
 
                 <Magnetic className="w-full"><LiquidMetalButton label="Continue to contact →" onClick={() => { if (quiz.projectType && quiz.goal && quiz.budget) setStep(1) }} className="w-full justify-center" /></Magnetic>
-                {!(quiz.projectType && quiz.goal && quiz.budget) && <p className="text-white/40 text-xs text-center">Select all options to continue</p>}
+                {!(quiz.projectType && quiz.goal && quiz.budget) && <p className="text-white/60 text-xs text-center">Select all options to continue</p>}
               </m.div>
             )}
 
@@ -578,10 +578,10 @@ function BookingFlow() {
                   { field: "phone" as const, label: "Phone number", type: "tel", ph: "+1 (555) 000-0000" },
                 ].map(({ field, label, type, ph }) => (
                   <div key={field}>
-                    <label className="text-white/65 text-xs uppercase tracking-widest block mb-2 font-bold">{label}</label>
+                    <label className="text-white/75 text-xs uppercase tracking-widest block mb-2 font-bold">{label}</label>
                     <input type={type} placeholder={ph} value={contact[field]}
                       onChange={e => { setContact(c => ({ ...c, [field]: e.target.value })); if (field === "email") setEmailError("") }}
-                      className="w-full bg-white/5 border border-white/25 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#FF2D55]/70 focus:bg-white/[0.07] focus:shadow-[0_0_0_3px_rgba(255,45,85,0.12)] transition-[border-color,box-shadow,background-color] duration-200" />
+                      className="w-full bg-white/5 border border-white/25 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/50 focus:outline-none focus:border-[#FF2D55]/70 focus:bg-white/[0.07] focus:shadow-[0_0_0_3px_rgba(255,45,85,0.12)] transition-[border-color,box-shadow,background-color] duration-200" />
                     {field === "email" && emailError && <p className="text-[#FF2D55] text-xs mt-1">{emailError}</p>}
                   </div>
                 ))}
@@ -589,7 +589,7 @@ function BookingFlow() {
                   <button type="button" onClick={() => setStep(0)} className="px-5 py-3 rounded-xl border border-white/30 text-white/75 text-sm hover:border-white/50 hover:text-white transition-colors">← Back</button>
                   <Magnetic className="flex-1"><LiquidMetalButton label={submitting ? "Sending..." : "Continue to Schedule →"} onClick={handleContactContinue} className="w-full justify-center" /></Magnetic>
                 </div>
-                {!(contact.name && contact.email && contact.phone) && <p className="text-white/35 text-xs text-center">All fields required</p>}
+                {!(contact.name && contact.email && contact.phone) && <p className="text-white/60 text-xs text-center">All fields required</p>}
               </m.div>
             )}
 
@@ -609,8 +609,8 @@ function BookingFlow() {
                     Pick a time on Cal.com →
                   </a>
                 </Magnetic>
-                <p className="text-white/45 text-sm pt-2">Confirmation will be sent to <span className="text-white/80 font-semibold">{contact.email}</span></p>
-                <p className="text-white/30 text-xs">We&apos;ll review your answers and come fully prepared.</p>
+                <p className="text-white/70 text-sm pt-2">Confirmation will be sent to <span className="text-white font-semibold">{contact.email}</span></p>
+                <p className="text-white/60 text-xs">We&apos;ll review your answers and come fully prepared.</p>
                 <button type="button" onClick={() => { setStep(0); setQuiz({ projectType: "", goal: "", budget: "" }); setContact({ name: "", email: "", phone: "" }); setCalBookingUrl("") }}
                   className="text-[#FF2D55]/60 text-sm hover:text-[#FF2D55] transition-colors mt-4 block mx-auto">Start over</button>
               </m.div>
@@ -618,7 +618,7 @@ function BookingFlow() {
           </AnimatePresence>
 
           {/* Email escape hatch: always available in both the inline section and the modal */}
-          <p className="text-center text-white/40 text-xs mt-8">
+          <p className="text-center text-white/65 text-xs mt-8">
             Prefer email?{" "}
             <a href="mailto:info@aimedia.global" className="underline underline-offset-2 hover:text-[#FF2D55] transition-colors">
               info@aimedia.global
@@ -783,7 +783,7 @@ export default function Home() {
                     <span style={{ color: w.color }}>{SERVE_ICONS[w.icon]()}</span>
                     <div>
                       <Disp className="text-white text-3xl block mb-2 leading-tight">{w.label}</Disp>
-                      <p className="text-white/45 text-sm font-medium uppercase tracking-wider leading-tight">{w.sub}</p>
+                      <p className="text-white/70 text-sm font-medium uppercase tracking-wider leading-tight">{w.sub}</p>
                     </div>
                   </div>
                 </GlowCard>
@@ -834,10 +834,10 @@ export default function Home() {
               <div className={i % 2 === 1 ? "md:order-last" : ""}>
                 <div className="flex items-center gap-3 mb-6">
                   <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 rounded-full border"
-                    style={{ borderColor: "rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.5)" }}>
+                    style={{ borderColor: "rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.7)" }}>
                     {svc.tag}
                   </span>
-                  <span className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.2)" }}>{svc.id}</span>
+                  <span className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.45)" }}>{svc.id}</span>
                 </div>
                 <Disp className="whitespace-pre-line block mb-4" style={{ color: "#fff", fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>{svc.name}</Disp>
                 <p className="text-base md:text-lg leading-snug mb-3 font-semibold" style={{ color: "var(--red)" }}>{svc.tagline}</p>
@@ -846,14 +846,14 @@ export default function Home() {
                   {svc.metrics.map((met) => (
                     <div key={met.label}>
                       <Disp className="text-2xl" style={{ color: "#fff" }}><CountUp value={met.value} /></Disp>
-                      <p className="text-[10px] font-medium mt-0.5" style={{ color: "rgba(255,255,255,0.55)" }}>{met.label}</p>
+                      <p className="text-[10px] font-medium mt-0.5" style={{ color: "rgba(255,255,255,0.7)" }}>{met.label}</p>
                     </div>
                   ))}
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   {svc.tools.map((tool) => (
                     <span key={tool} className="px-3 py-1 text-xs font-medium rounded-full border"
-                      style={{ borderColor: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.65)" }}>
+                      style={{ borderColor: "rgba(255,255,255,0.28)", color: "rgba(255,255,255,0.8)" }}>
                       {tool}
                     </span>
                   ))}
@@ -869,9 +869,9 @@ export default function Home() {
                 ) : (
                   <div className="rounded-3xl overflow-hidden border border-white/8 bg-[#0C0C0F] p-8 space-y-6">
                     <div>
-                      <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-2">AI UGC Creators</p>
+                      <p className="text-white/55 text-[10px] font-mono uppercase tracking-widest mb-2">AI UGC Creators</p>
                       <p className="text-white/70 font-bold text-sm mb-1">Your AI content team</p>
-                      <p className="text-white/35 text-xs leading-relaxed">AI-generated personas that post, engage, and grow your audience automatically, 24/7.</p>
+                      <p className="text-white/70 text-xs leading-relaxed">AI-generated personas that post, engage, and grow your audience automatically, 24/7.</p>
                     </div>
                     <AIUGCCreators />
                     <div className="space-y-2 pt-2">
@@ -883,7 +883,7 @@ export default function Home() {
                       ].map((p, pi) => (
                         <div key={p.platform} className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.03] border border-white/5">
                           <span className="text-xs font-bold" style={{ color: p.color }}>{p.platform}</span>
-                          <span className="text-[10px] font-mono text-white/45 inline-flex items-center gap-1.5">
+                          <span className="text-[10px] font-mono text-white/65 inline-flex items-center gap-1.5">
                             {p.posts}
                             <span className="relative inline-flex h-1.5 w-1.5" style={{ ["--i" as string]: pi }} aria-hidden>
                               <span className="ugc-ping absolute inline-flex h-full w-full rounded-full bg-white/35" />

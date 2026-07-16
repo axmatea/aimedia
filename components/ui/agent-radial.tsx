@@ -147,13 +147,13 @@ export function AgentRadial() {
                       />
                     </div>
                     {/* Label + task */}
-                    <span className="text-[8px] font-bold text-black/60 dark:text-white/60 whitespace-nowrap mt-0.5">{agent.label} Agent</span>
+                    <span className="text-[9px] font-bold text-black/75 dark:text-white/75 whitespace-nowrap mt-0.5">{agent.label} Agent</span>
                     <m.span
                       key={agent.tasks[(tick + i) % agent.tasks.length]}
                       initial={reduceMotion ? false : { opacity: 0, y: 3 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
-                      className="text-[8px] font-mono text-black/35 dark:text-white/30 whitespace-nowrap"
+                      className="text-[8px] font-mono text-black/55 dark:text-white/55 whitespace-nowrap"
                     >
                       {agent.tasks[(tick + i) % agent.tasks.length]}
                     </m.span>
@@ -183,7 +183,7 @@ export function AgentRadial() {
           </span>
           <span className="text-[#16a34a] dark:text-[#C8FF60] text-[9px] font-bold">All systems online</span>
         </div>
-        <span className="text-black/20 dark:text-white/15 text-[9px] font-mono">5 agents · 0 errors · 99.9% uptime</span>
+        <span className="text-black/45 dark:text-white/50 text-[9px] font-mono">5 agents · monitored 24/7</span>
       </div>
     </div>
   )

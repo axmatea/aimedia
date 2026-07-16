@@ -45,7 +45,7 @@ export function LeadFunnel() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <p className="text-white/60 text-[10px] font-mono uppercase tracking-widest">Lead Pipeline · Live</p>
+          <p className="text-white/70 text-[10px] font-mono uppercase tracking-widest">Lead Pipeline · Live</p>
           <p className="text-white/70 text-xs font-bold mt-1">Last 30 days performance</p>
         </div>
         <span className="relative flex h-2 w-2">
@@ -87,7 +87,7 @@ export function LeadFunnel() {
                 {/* Label & bar */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-white/75 text-[10px] font-bold uppercase tracking-wider">{stage.label}</span>
+                    <span className="text-white/85 text-[10px] font-bold uppercase tracking-wider">{stage.label}</span>
                     <span className="text-white font-mono text-xs font-bold" style={{ color: stage.color }}>
                       {counts[i].toLocaleString()}
                     </span>
@@ -115,14 +115,14 @@ export function LeadFunnel() {
         <div className="flex items-center gap-4">
           <div>
             <p className="text-[#C8FF60] text-sm font-bold font-mono">14.6%</p>
-            <p className="text-white/45 text-[9px] font-mono">Reply rate</p>
+            <p className="text-white/65 text-[9px] font-mono">Reply rate</p>
           </div>
           <div>
             <p className="text-[#7B2FFF] text-sm font-bold font-mono">$2.4M</p>
-            <p className="text-white/45 text-[9px] font-mono">Pipeline value</p>
+            <p className="text-white/65 text-[9px] font-mono">Pipeline value</p>
           </div>
         </div>
-        <p className="text-white/35 text-[9px] font-mono">Updated 3s ago</p>
+        <p className="text-white/55 text-[9px] font-mono">Updated 3s ago</p>
       </div>
     </div>
   )
