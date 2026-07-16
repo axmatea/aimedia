@@ -12,12 +12,15 @@
  * Geometry is calibrated against measured ink bounds of the shipped fonts
  * (fontTools over the .next woff2 files, upm 1000):
  * - AX, Bebas 118px ls 0.02em: ink x 1.4 to 96.3, cap top y 29.4, baseline 112.
- * - Slash ink: x about 111 to 169 (24 deg brand angle, dx 52 dy -24, stroke 6
- *   round). Gap AX-to-slash 14.7, slash-to-MEDIA 13.9: visually even.
  * - MEDIA, Space Grotesk 500 26px ls 0.24em from x 181: ink right 283.
  * - COMPANY, Space Grotesk 400 13px ls 0.2em from x 181: ink right 257.
  * - viewBox trims to the ink with about 3 units of margin per side, so the
  *   lockup renders flush and large at h-8 / h-11 instead of padded and small.
+ *
+ * Signature slash (v6.2): one long 24 deg diagonal that strikes THROUGH the
+ * letters, not a separator between blocks. It enters low under the A, crosses
+ * the X at mid-height (~x96 y83), clears the MEDIA/COMPANY ink, and exits high
+ * at the top right. Painted AFTER the text elements so it sits on top.
  */
 export function AxWordmark({ className }: { className?: string }) {
   return (
@@ -31,8 +34,6 @@ export function AxWordmark({ className }: { className?: string }) {
       className={className}
       style={{ userSelect: "none" }}
     >
-      {/* Signature slash: 24 deg per brand system */}
-      <line x1="114" y1="116" x2="166" y2="92" stroke="#FF2D55" strokeWidth="6" strokeLinecap="round" />
       <text
         x="0"
         y="112"
@@ -58,6 +59,8 @@ export function AxWordmark({ className }: { className?: string }) {
       >
         COMPANY
       </text>
+      {/* Signature strike: 24 deg long diagonal painted over the letters */}
+      <line x1="14" y1="120" x2="214" y2="31" stroke="#FF2D55" strokeWidth="6" strokeLinecap="round" />
     </svg>
   )
 }
