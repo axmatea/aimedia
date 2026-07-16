@@ -7,7 +7,7 @@ export type CancelResult = {
 }
 
 /**
- * Cancel a list of scheduled Resend emails. Each id is independent —
+ * Cancel a list of scheduled Resend emails. Each id is independent,
  * a single failure does not abort the rest. Returns one entry per id.
  */
 export async function cancelScheduled(

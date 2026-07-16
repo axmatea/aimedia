@@ -40,8 +40,8 @@ export default function PrivacyPolicy() {
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">4. Third-Party Services</h2>
             <p>We use the following third-party tools that may process your data:</p>
             <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
-              <li><span className="text-white/65">Cal.com</span> — for call scheduling (governed by the Cal.com Privacy Policy)</li>
-              <li><span className="text-white/65">Vercel</span> — for website hosting and analytics</li>
+              <li><span className="text-white/65">Cal.com</span> for call scheduling (governed by the Cal.com Privacy Policy)</li>
+              <li><span className="text-white/65">Vercel</span> for website hosting and analytics</li>
             </ul>
           </section>
 

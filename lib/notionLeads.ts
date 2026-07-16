@@ -1,4 +1,4 @@
-// Shared helpers for the Inbound Leads — AI Media Notion DB.
+// Shared helpers for the Inbound Leads: AI Media Notion DB.
 // Source of truth: every booking-related route + every Resend webhook routes through here.
 
 const NOTION_DB_ID = "316e953489014e0ebd499995e418d211"

@@ -32,7 +32,7 @@ function verifySvixSignature(
   }
   const signedPayload = `${svixId}.${svixTs}.${rawBody}`
   const expected = crypto.createHmac("sha256", secretBytes).update(signedPayload).digest("base64")
-  // svix-signature header is "v1,<sig> v1,<sig2>" — any version match passes.
+  // svix-signature header is "v1,<sig> v1,<sig2>", any version match passes.
   const sigs = svixSig.split(" ").map((s) => s.split(",")[1]).filter(Boolean)
   for (const sig of sigs) {
     try {
@@ -84,7 +84,7 @@ function recipientFromPayload(p: ResendEventPayload): string | null {
 
 async function locateLead(p: ResendEventPayload): Promise<NotionLead | null> {
   // Prefer matching by email_id (the actual scheduled message), fall back to recipient.
-  // This matters because the FROM address is info@aimedia.global — we never want to
+  // This matters because the FROM address is info@aimedia.global, we never want to
   // accidentally match the agency's own inbox.
   const emailId = p.data?.email_id
   if (emailId) {
@@ -109,7 +109,7 @@ async function locateLead(p: ResendEventPayload): Promise<NotionLead | null> {
 export async function POST(req: NextRequest) {
   const rawBody = await req.text()
 
-  // Signature verification — required if RESEND_WEBHOOK_SECRET is set.
+  // Signature verification: required if RESEND_WEBHOOK_SECRET is set.
   const secret = process.env.RESEND_WEBHOOK_SECRET
   if (secret) {
     const ok = verifySvixSignature(

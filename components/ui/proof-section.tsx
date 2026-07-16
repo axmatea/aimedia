@@ -62,7 +62,7 @@ const VP = { once: true, margin: "0px 0px -80px 0px" } as const
 const EASE_SWIFT: [number, number, number, number] = [0.2, 0.8, 0.2, 1]
 
 /**
- * PROOF / OUTCOMES — credibility beat.
+ * PROOF / OUTCOMES: credibility beat.
  * Halal-safe by default: anonymized industry + qualitative outcome, no invented
  * metrics. Visuals are abstract system snapshots, not client screenshots.
  */
