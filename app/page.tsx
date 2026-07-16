@@ -12,6 +12,7 @@ import { GlowCard } from "@/components/ui/spotlight-card"
 import { CountUp } from "@/components/ui/count-up"
 import { ProofSection } from "@/components/ui/proof-section"
 import { SERVE_ICONS } from "@/components/ui/serve-icons"
+import { AxWordmark } from "@/components/ui/ax-wordmark"
 
 import { lenisScrollTo } from "@/components/providers/SmoothScroll"
 // ── Below-fold heavy components: lazy loaded for faster LCP ──────────────────
@@ -641,11 +642,8 @@ export default function Home() {
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <nav className="ai-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-4 md:py-5 backdrop-blur-md border-b ai-border">
         <a href="#" className="flex items-center flex-shrink-0">
-          {/* Theme-aware wordmark: light variant on light theme, dark variant on dark theme */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/ax-logo-light.svg" alt="AX Media Company" decoding="async" fetchPriority="high" className="ax-wordmark h-8 md:h-11 w-auto block dark:hidden" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/ax-logo-dark.svg" alt="AX Media Company" decoding="async" fetchPriority="high" className="ax-wordmark h-8 md:h-11 w-auto hidden dark:block" />
+          {/* Inline wordmark in the real document fonts, themed via currentColor */}
+          <AxWordmark className="ax-wordmark h-8 md:h-11 w-auto text-[#050507] dark:text-white" />
         </a>
         <div className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((item) => (
@@ -890,11 +888,9 @@ export default function Home() {
       <footer className="ai-page py-10 px-6 border-t ai-border">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            {/* Theme-aware wordmark: light variant on light theme, dark variant on dark theme */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/ax-logo-light.svg" alt="AX Media Company" className="ax-wordmark h-8 w-auto block dark:hidden" loading="lazy" decoding="async" />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/ax-logo-dark.svg" alt="AX Media Company" className="ax-wordmark h-8 w-auto hidden dark:block" loading="lazy" decoding="async" />
+            {/* Inline wordmark in the real document fonts, themed via currentColor.
+                Same component as the nav, so parity is automatic. */}
+            <AxWordmark className="ax-wordmark h-8 w-auto text-[#050507] dark:text-white" />
             <span className="ai-muted text-xs">© 2026 AX Media · aimedia.global</span>
           </div>
           <div className="flex gap-6 flex-wrap justify-center">
