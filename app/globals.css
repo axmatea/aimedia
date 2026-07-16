@@ -1598,13 +1598,17 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
     -webkit-backface-visibility: hidden;
   }
 
+  /* v6.2: robot reads closer/bigger on phones. Width may exceed the viewport
+     (112vw) but the shell is centered with translate3d(-50%) inside the
+     overflow-hidden hero, and html/body overflow-x is clipped, so no
+     horizontal scroll can appear at 390/430px widths. */
   .robot-mobile {
-    top: 7svh !important;
+    top: 5svh !important;
     left: 50% !important;
     right: auto !important;
     bottom: auto !important;
-    width: min(100vw, 560px) !important;
-    height: 66svh !important;
+    width: min(112vw, 640px) !important;
+    height: 70svh !important;
     opacity: .95;
     z-index: 2 !important;
     will-change: auto;
@@ -1629,11 +1633,11 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
 
 @media (max-width: 420px) {
   .robot-mobile {
-    top: 8svh !important;
+    top: 6svh !important;
     left: 50% !important;
     right: auto !important;
-    width: 100vw !important;
-    height: 64svh !important;
+    width: 112vw !important;
+    height: 68svh !important;
     opacity: .92;
   }
 }
