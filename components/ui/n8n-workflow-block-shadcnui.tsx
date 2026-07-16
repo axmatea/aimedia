@@ -154,8 +154,9 @@ export function N8nWorkflowBlock() {
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
+          {/* Honesty rule (v7): simulated widget, badge says Demo, never Live */}
           <Badge variant="outline" className="rounded-full border-[#C8FF60]/40 bg-[#C8FF60]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-[#C8FF60]">
-            Live
+            Demo
           </Badge>
           <span className="text-[10px] uppercase tracking-[0.25em] text-white/60">Sales Pipeline</span>
         </div>

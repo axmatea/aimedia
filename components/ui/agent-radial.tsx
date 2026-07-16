@@ -55,7 +55,8 @@ export function AgentRadial() {
     >
       {/* Title */}
       <div className="text-center mb-4">
-        <p className="text-black/40 dark:text-white/40 text-[10px] font-mono uppercase tracking-[0.25em]">Live AI Infrastructure</p>
+        {/* Honesty rule (v7): simulated diagram, labeled as a demo, never Live */}
+        <p className="text-black/40 dark:text-white/40 text-[10px] font-mono uppercase tracking-[0.25em]">AI Infrastructure · Demo view</p>
       </div>
 
       <div className="relative aspect-square w-full max-w-[340px] flex items-center justify-center">

@@ -76,8 +76,9 @@ const WHO_WE_SERVE = [
   { label: "SaaS & Products", sub: "B2B Tools, Platforms & Apps", color: "#F5F4F0", glowColor: "red" as const, icon: "saas" as const },
 ]
 
-// Tools we actually use and integrate with
-const TRUSTED_LOGOS = [
+// The tool stack our systems actually run on and integrate with. The strip is
+// labeled as a stack ("Our systems run on"), never as a client list.
+const STACK_LOGOS = [
   { src: "/logos/openai.svg", alt: "OpenAI" },
   { src: "/logos/notion.svg", alt: "Notion" },
   { src: "/logos/slack.svg", alt: "Slack" },
@@ -108,21 +109,24 @@ const MAP_DOTS = [
 // Monochrome + red: all three services live on the dark canvas, differentiated
 // by the tag chip and index label, not by background color. svc02 carries a
 // subtle vertical gradient so the panel melts into the neighboring sections.
+// Truth rule (v7): metric slots carry capacity/design statements about what
+// the systems are BUILT to do, never invented client outcomes. A real number
+// goes back in only when it is traceable to a named engagement.
 const SERVICES = [
   {
     id: "01", name: "GO-TO-MARKET\nENGINE", tag: "GROWTH",
     bg: "#050507",
     tagline: "Find and convert your ideal customers, on autopilot.",
     body: "AI maps ideal buyers, enriches CRM, and runs multi-channel outreach at scale. Zero spray-and-pray.",
-    metrics: [{ label: "Leads generated / week", value: "2,400+" }, { label: "Pipeline conversion lift", value: "6.8×" }],
+    metrics: [{ label: "Outreach touches / week, by design", value: "1,000s" }, { label: "Pipeline runtime", value: "24/7" }],
     tools: ["Ideal Buyer Lists", "Outreach on Autopilot", "Booked Meetings", "CRM Always Current"],
   },
   {
     id: "02", name: "CONTENT\nSYSTEM", tag: "CONTENT",
     bg: "linear-gradient(180deg,#050507 0%,#0A0A0F 16%,#0A0A0F 84%,#050507 100%)",
-    tagline: "500+ content pieces a month. Zero manual work.",
+    tagline: "Built to ship hundreds of content pieces a month.",
     body: "AI posts to Instagram, LinkedIn, X, TikTok. On-brand, at scale. Scripts, thumbnails, emails, generated automatically.",
-    metrics: [{ label: "Content pieces / month", value: "500+" }, { label: "Time saved vs in-house", value: "80 hrs" }],
+    metrics: [{ label: "Content capacity / month, by design", value: "100s" }, { label: "Channels posting daily", value: "4" }],
     tools: ["Content Engine", "Daily Posting", "Full Creative Dept", "Audience Growth"],
   },
   {
@@ -130,7 +134,7 @@ const SERVICES = [
     bg: "#050507",
     tagline: "Your full sales and ops infrastructure, on autopilot.",
     body: "Cold calling, CRM sync, community monitoring, reporting. Manual ops replaced with AI infrastructure, 24/7.",
-    metrics: [{ label: "Automated actions / day", value: "1.2M+" }, { label: "Report delivery", value: "<30s" }],
+    metrics: [{ label: "Ops runtime, no manual steps", value: "24/7" }, { label: "Report generation, by design", value: "<30s" }],
     tools: ["Lead Pipeline", "Sales Funnel", "Full Sales Dept", "24/7 Follow-up"],
   },
 ]
@@ -140,27 +144,31 @@ const SERVICES = [
 // removing a file is safe and reversible. No generation-tool attribution is
 // rendered on the page (owner decision, v6.1): keep `imageSpec` unset here even
 // though ShowcaseMedia still supports a spec chip row for future use.
+// Truth rule (v7): no client names and no invented metrics live in this data
+// object AT ALL. Even unrendered fields ship in the JS bundle, so the shipped
+// data itself must be honest. Cards describe outcome patterns by industry;
+// named results and real numbers are shared under NDA on the call.
 const CASE_STUDIES = [
   {
-    project: "1SecondCopy", tag: "Content Agency", result: "3× more booked calls per week without adding headcount.", color: "#0A0A0F", accent: "#FF2D55",
+    project: "Content Agency", tag: "Content Agency", result: "Booked calls compound week over week. No new headcount.", color: "#0A0A0F", accent: "#FF2D55",
     image: "/generated/outcomes/outcome-content.webp",
     imageAlt: "Content pieces fanning out from a single engine along glowing red distribution lines",
     imageCaption: "One engine, every channel",
   },
   {
-    project: "AfterCall", tag: "SaaS", result: "$180k ARR in the first 90 days from automated pipeline.", color: "#0A0A0F", accent: "#FF2D55",
+    project: "SaaS", tag: "SaaS", result: "A revenue pipeline that runs itself from day one.", color: "#0A0A0F", accent: "#FF2D55",
     image: "/generated/outcomes/outcome-saas.webp",
     imageAlt: "Glass pipeline chambers moving a stream of red signal through each revenue stage",
     imageCaption: "Pipeline running end to end",
   },
   {
-    project: "Dad's Printing", tag: "Local Business", result: "CAC dropped 67%. AI handles the full pipeline.", color: "#050507", accent: "#FF2D55",
+    project: "Local Business", tag: "Local Business", result: "Lower acquisition cost, the whole funnel on autopilot.", color: "#050507", accent: "#FF2D55",
     image: "/generated/outcomes/outcome-local.webp",
     imageAlt: "Neon rings of demand radiating from a location pin over a dark city map",
     imageCaption: "Demand radiating from one point",
   },
   {
-    project: "XWECAN", tag: "Web3", result: "2,200 qualified leads contacted before launch day.", color: "#050507", accent: "#FF2D55",
+    project: "Web3", tag: "Web3", result: "A qualified audience contacted and warmed before launch day.", color: "#050507", accent: "#FF2D55",
     image: "/generated/outcomes/outcome-web3.webp",
     imageAlt: "A luminous sphere of connected community nodes orbiting one bright core",
     imageCaption: "Community mapped before launch",
@@ -203,7 +211,7 @@ const TRACE_CONFIDENCE_TAGS = [
 
 const NAV_LINKS = [
   { label: "Services", href: "#services" },
-  { label: "Work", href: "#ai-team" },
+  { label: "System", href: "#ai-team" },
   { label: "Solutions", href: "#built-for" },
   { label: "Contact", href: "#booking" },
 ]
@@ -302,7 +310,7 @@ const HeroSection = memo(function HeroSection() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF2D55] opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF2D55]" />
           </span>
-          <span className="ai-muted text-xs font-medium tracking-wider">12 active projects · 2 slots remaining</span>
+          <span className="ai-muted text-xs font-medium tracking-wider">Founder-led · Los Angeles · replies within 24h</span>
         </m.div>
 
         <m.div initial={false} animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}>
@@ -754,9 +762,9 @@ export default function Home() {
       <div className="ai-page py-12 px-6">
         <div className="max-w-6xl mx-auto">
           <p className="text-center ai-muted text-xs uppercase tracking-[0.3em] font-bold mb-10">
-            Trusted by fast-moving teams worldwide
+            Our systems run on
           </p>
-          <LogoCloud logos={[...TRUSTED_LOGOS, ...FEATURED_LOGOS]} />
+          <LogoCloud logos={[...STACK_LOGOS, ...FEATURED_LOGOS]} />
         </div>
       </div>
 
@@ -876,7 +884,7 @@ export default function Home() {
                   <div className="rounded-3xl overflow-hidden border border-white/8 bg-[#0C0C0F] p-8 space-y-6">
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-white/55 text-[10px] font-mono uppercase tracking-widest">AI UGC Creators</p>
+                        <p className="text-white/55 text-[10px] font-mono uppercase tracking-widest">AI UGC Creators · Demo</p>
                         <p className="text-white/55 text-[9px] font-mono uppercase tracking-widest">Tap a creator</p>
                       </div>
                       <p className="text-white/70 font-bold text-sm mb-1">Your AI content team</p>
@@ -932,10 +940,10 @@ export default function Home() {
           <m.div {...fadeUp} className="text-center mb-10">
             <Tag>Global reach</Tag>
             <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
-              CLIENTS ACROSS<br /><span style={{ color: "var(--red)" }}>18+ COUNTRIES.</span>
+              BUILT FOR CLIENTS<br /><span style={{ color: "var(--red)" }}>WORLDWIDE.</span>
             </Disp>
             <p className="ai-muted text-sm mt-4 max-w-md mx-auto">
-              From New York to Dubai, London to Tokyo. Our AI systems run 24/7 across every timezone.
+              From New York to Dubai, London to Tokyo: our systems are built to run 24/7 across every timezone.
             </p>
             <div className="flex flex-wrap justify-center gap-2.5 mt-6">
               {["24/7 across every timezone", "Reports in under 30 seconds", "Systems you fully own"].map((chip) => (

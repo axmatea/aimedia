@@ -42,11 +42,12 @@ export function LeadFunnel() {
 
   return (
     <div className="rounded-3xl overflow-hidden border border-[#7B2FFF]/15 bg-[#0A0518] p-6 md:p-8">
-      {/* Header */}
+      {/* Header. Honesty rule (v7): this widget shows how a built pipeline
+          reads, not real client numbers, and it says so. Never label it Live. */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <p className="text-white/70 text-[10px] font-mono uppercase tracking-widest">Lead Pipeline · Live</p>
-          <p className="text-white/70 text-xs font-bold mt-1">Last 30 days performance</p>
+          <p className="text-white/70 text-[10px] font-mono uppercase tracking-widest">Lead Pipeline · Demo view</p>
+          <p className="text-white/70 text-xs font-bold mt-1">Illustrative pipeline</p>
         </div>
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#7B2FFF] opacity-75" />
@@ -122,7 +123,7 @@ export function LeadFunnel() {
             <p className="text-white/65 text-[9px] font-mono">Pipeline value</p>
           </div>
         </div>
-        <p className="text-white/55 text-[9px] font-mono">Updated 3s ago</p>
+        <p className="text-white/55 text-[9px] font-mono">Demo data</p>
       </div>
     </div>
   )
