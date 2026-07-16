@@ -1320,26 +1320,6 @@ html:not(.dark) .ai-panel.ax-panel-melt {
   to { transform: translate(-50%,-50%) scale(30); opacity: 0; }
 }
 
-/* ── Aquamarine calendar overrides ── */
-.calendar-aqua {
-  --primary: #0ACDCD;
-  --primary-foreground: #fff;
-  --ring: #0ACDCD;
-  --accent: rgba(10,205,205,0.12);
-  --accent-foreground: #0ACDCD;
-}
-
-/* ── CPU architecture animations ── */
-.cpu-architecture { animation: cpu-travel 3s ease-in-out infinite; }
-.cpu-line-1 { animation-delay: 0s; }
-.cpu-line-2 { animation-delay: 0.4s; }
-.cpu-line-3 { animation-delay: 0.8s; }
-.cpu-line-4 { animation-delay: 1.2s; }
-.cpu-line-5 { animation-delay: 1.6s; }
-.cpu-line-6 { animation-delay: 2.0s; }
-.cpu-line-7 { animation-delay: 2.4s; }
-.cpu-line-8 { animation-delay: 0.2s; }
-
 /* ── Grain overlay ── */
 .grain::after {
   content: '';

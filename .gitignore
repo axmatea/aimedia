@@ -64,3 +64,14 @@ next-env.d.ts
 
 # generated-image source PNGs (only the optimized .webp ship)
 /public/generated/outcomes/_src/
+
+# local asset archive: files pulled OUT of the deploy payload live here, never
+# in public/ (anything in public/ uploads to prod). Keep on disk, not in git.
+/_assets-archive/
+
+# working renders that must never ride along in the deploy payload again
+/public/chrome-sentinel.png
+/public/hybrid-sentinel.png
+/public/hero-keyvisual.png
+/public/logo-gen/
+/public/logo-preview-gen.html
