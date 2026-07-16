@@ -4,9 +4,9 @@ export default function Legal() {
   return (
     <main className="min-h-screen bg-[#050507] px-6 py-24 select-text">
       <div className="max-w-3xl mx-auto">
-        <p className="text-white/20 text-[10px] uppercase tracking-[0.3em] font-bold mb-4">Legal</p>
+        <p className="text-white/55 text-[10px] uppercase tracking-[0.3em] font-bold mb-4">Legal</p>
         <h1 className="text-white text-4xl md:text-5xl font-black uppercase mb-2" style={{ fontFamily: "var(--font-bebas)" }}>Terms of Service</h1>
-        <p className="text-white/30 text-sm mb-12">Last updated: June 11, 2026</p>
+        <p className="text-white/55 text-sm mb-12">Last updated: June 11, 2026</p>
 
         <div className="space-y-10 text-white/55 text-sm leading-relaxed">
           <section>
@@ -37,7 +37,7 @@ export default function Legal() {
           <section>
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">6. Acceptable Use</h2>
             <p>You may not use our services for:</p>
-            <ul className="list-disc list-inside space-y-1 mt-2 text-white/45">
+            <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
               <li>Spam or unsolicited communications in violation of applicable law</li>
               <li>Deceptive, fraudulent, or illegal activities</li>
               <li>Violating third-party rights or platform terms of service</li>

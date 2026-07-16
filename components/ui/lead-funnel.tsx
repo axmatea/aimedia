@@ -119,7 +119,8 @@ export function LeadFunnel() {
             <p className="text-white/65 text-[9px] font-mono">Reply rate</p>
           </div>
           <div>
-            <p className="text-[#7B2FFF] text-sm font-bold font-mono">$2.4M</p>
+            {/* #A78BFA (not #7B2FFF): the darker purple fails 4.5:1 on this card */}
+            <p className="text-[#A78BFA] text-sm font-bold font-mono">$2.4M</p>
             <p className="text-white/65 text-[9px] font-mono">Pipeline value</p>
           </div>
         </div>

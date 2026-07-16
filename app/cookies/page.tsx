@@ -4,9 +4,9 @@ export default function CookiePreferences() {
   return (
     <main className="min-h-screen bg-[#050507] px-6 py-24 select-text">
       <div className="max-w-3xl mx-auto">
-        <p className="text-white/20 text-[10px] uppercase tracking-[0.3em] font-bold mb-4">Legal</p>
+        <p className="text-white/55 text-[10px] uppercase tracking-[0.3em] font-bold mb-4">Legal</p>
         <h1 className="text-white text-4xl md:text-5xl font-black uppercase mb-2" style={{ fontFamily: "var(--font-bebas)" }}>Cookie Preferences</h1>
-        <p className="text-white/30 text-sm mb-12">Last updated: June 11, 2026</p>
+        <p className="text-white/55 text-sm mb-12">Last updated: June 11, 2026</p>
 
         <div className="space-y-10 text-white/55 text-sm leading-relaxed">
           <section>
@@ -26,9 +26,9 @@ export default function CookiePreferences() {
                 <div key={c.name} className="flex items-start justify-between gap-4 p-4 rounded-xl border border-white/6 bg-white/[0.02]">
                   <div>
                     <p className="text-white/75 font-bold text-sm mb-1">{c.name}</p>
-                    <p className="text-white/40 text-xs">{c.desc}</p>
+                    <p className="text-white/55 text-xs">{c.desc}</p>
                   </div>
-                  <span className={`flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${c.required ? "bg-[#C8FF60]/10 text-[#C8FF60]" : "bg-white/6 text-white/40"}`}>
+                  <span className={`flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${c.required ? "bg-[#C8FF60]/10 text-[#C8FF60]" : "bg-white/10 text-white/60"}`}>
                     {c.required ? "Required" : "Optional"}
                   </span>
                 </div>
@@ -39,7 +39,7 @@ export default function CookiePreferences() {
           <section>
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">Managing Cookies</h2>
             <p>You can control cookies through your browser settings. Note that disabling certain cookies may affect website functionality. Most browsers allow you to:</p>
-            <ul className="list-disc list-inside space-y-1 mt-2 text-white/45">
+            <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
               <li>View cookies stored on your device</li>
               <li>Delete all or specific cookies</li>
               <li>Block third-party cookies</li>

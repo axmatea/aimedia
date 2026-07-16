@@ -4,9 +4,9 @@ export default function PrivacyPolicy() {
   return (
     <main className="min-h-screen bg-[#050507] px-6 py-24 select-text">
       <div className="max-w-3xl mx-auto">
-        <p className="text-white/20 text-[10px] uppercase tracking-[0.3em] font-bold mb-4">Legal</p>
+        <p className="text-white/55 text-[10px] uppercase tracking-[0.3em] font-bold mb-4">Legal</p>
         <h1 className="text-white text-4xl md:text-5xl font-black uppercase mb-2" style={{ fontFamily: "var(--font-bebas)" }}>Privacy Policy</h1>
-        <p className="text-white/30 text-sm mb-12">Last updated: June 11, 2026</p>
+        <p className="text-white/55 text-sm mb-12">Last updated: June 11, 2026</p>
 
         <div className="space-y-10 text-white/55 text-sm leading-relaxed">
           <section>
@@ -17,7 +17,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">2. Information We Collect</h2>
             <p className="mb-3">We collect information you provide directly, including:</p>
-            <ul className="list-disc list-inside space-y-1 text-white/45">
+            <ul className="list-disc list-inside space-y-1 text-white/60">
               <li>Name and email address (via booking forms)</li>
               <li>Phone number (optional, for call scheduling)</li>
               <li>Project details and budget (provided voluntarily)</li>
@@ -27,7 +27,7 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">3. How We Use Your Information</h2>
-            <ul className="list-disc list-inside space-y-1 text-white/45">
+            <ul className="list-disc list-inside space-y-1 text-white/60">
               <li>To schedule and conduct strategy calls</li>
               <li>To communicate about our services</li>
               <li>To improve our website and user experience</li>
@@ -39,7 +39,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">4. Third-Party Services</h2>
             <p>We use the following third-party tools that may process your data:</p>
-            <ul className="list-disc list-inside space-y-1 mt-2 text-white/45">
+            <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
               <li><span className="text-white/65">Cal.com</span> — for call scheduling (governed by the Cal.com Privacy Policy)</li>
               <li><span className="text-white/65">Vercel</span> — for website hosting and analytics</li>
             </ul>

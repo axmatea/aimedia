@@ -774,9 +774,11 @@ export default function Home() {
       <div className="marquee-shell marquee-mask py-5 overflow-hidden bg-[#FF2D55]" aria-hidden>
         <div>
         <div className="flex animate-marquee whitespace-nowrap">
+          {/* Ink-on-red (was white-on-red): white text on #FF2D55 sits at ~3.6:1
+              and fails WCAG AA for this size; near-black ink clears 5.5:1. */}
           {[...TICKER, ...TICKER].map((item, i) => (
-            <span key={i} className="text-white font-bold text-sm uppercase tracking-[0.2em] mx-6 flex items-center gap-6">
-              {item} <span className="w-1.5 h-1.5 rounded-full bg-white/50 flex-shrink-0" />
+            <span key={i} className="text-[#050507] font-bold text-sm uppercase tracking-[0.2em] mx-6 flex items-center gap-6">
+              {item} <span className="w-1.5 h-1.5 rounded-full bg-[#050507]/40 flex-shrink-0" />
             </span>
           ))}
         </div>
@@ -876,7 +878,7 @@ export default function Home() {
                     style={{ borderColor: "rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.7)" }}>
                     {svc.tag}
                   </span>
-                  <span className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.45)" }}>{svc.id}</span>
+                  <span className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.66)" }}>{svc.id}</span>
                 </div>
                 <Disp className="whitespace-pre-line block mb-4" style={{ color: "#fff", fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>{svc.name}</Disp>
                 <p className="text-base md:text-lg leading-snug mb-3 font-semibold" style={{ color: "var(--red)" }}>{svc.tagline}</p>
@@ -917,9 +919,11 @@ export default function Home() {
                     </div>
                     <AIUGCCreators />
                     <div className="space-y-2 pt-2">
+                      {/* Brand hues lightened to clear 4.5:1 on the dark card
+                          (#E1306C and #0A66C2 both failed WCAG AA here). */}
                       {[
-                        { platform: "Instagram", posts: "3 posts/day", color: "#E1306C" },
-                        { platform: "LinkedIn", posts: "2 posts/day", color: "#0A66C2" },
+                        { platform: "Instagram", posts: "3 posts/day", color: "#F26D9C" },
+                        { platform: "LinkedIn", posts: "2 posts/day", color: "#5EA9F0" },
                         { platform: "TikTok", posts: "5 videos/week", color: "#fff" },
                         { platform: "X / Twitter", posts: "8 tweets/day", color: "#fff" },
                       ].map((p, pi) => (
