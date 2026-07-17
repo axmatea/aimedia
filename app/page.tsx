@@ -52,9 +52,16 @@ const WorldMap = dynamic(
   () => import("@/components/ui/map").then((mod) => mod.WorldMap),
   { ssr: false, loading: () => <div className="h-[420px] rounded-xl animate-pulse bg-white/[0.02]" /> }
 )
+// Inline Cal.com embed: chunk + third-party embed script load ONLY when a
+// visitor reaches booking step 3, never during page load.
+const CalInline = dynamic(
+  () => import("@/components/ui/cal-inline").then((mod) => mod.CalInline),
+  { ssr: false, loading: () => <div className="w-full min-h-[560px] rounded-2xl animate-pulse bg-white/[0.03] border border-white/10" /> }
+)
 
 // ── Config ──────────────────────────────────────────────────────────────────
-const CALENDLY_URL = "https://cal.com/axmedia/call"
+const CAL_LINK = "axmedia/call"
+const CALENDLY_URL = `https://cal.com/${CAL_LINK}`
 const CAL_DEFAULTS: Record<string, string> = { duration: "60", overlayCalendar: "true" }
 
 // ── Shared viewport config for whileInView ──────────────────────────────────
@@ -473,6 +480,9 @@ function BookingFlow() {
   const [emailError, setEmailError] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [calBookingUrl, setCalBookingUrl] = useState("")
+  // Inline Cal embed failed to boot (blocked / offline / Cal outage): step 2
+  // falls back to the prominent external-link CTA it used pre-v7.1.
+  const [embedFailed, setEmbedFailed] = useState(false)
 
   const validateEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)
 
@@ -634,24 +644,50 @@ function BookingFlow() {
             )}
 
             {step === 2 && (
-              <m.div key="step2" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35, ease: EASE_SWIFT }} className="max-w-md mx-auto text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-[#FF2D55]/15 border border-[#FF2D55]/30 flex items-center justify-center mx-auto text-3xl">✓</div>
-                <Disp className="text-white text-4xl">ONE LAST STEP.</Disp>
-                <p className="text-white/65 text-base">You are one click away. Pick a time on Cal.com and the call is locked.</p>
-                <Magnetic className="inline-block">
-                  <a
-                    href={calBookingUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    autoFocus
-                    className="inline-flex items-center justify-center gap-2 px-10 py-4 mt-2 bg-[#FF2D55] hover:bg-[#FF1745] text-white text-base font-bold rounded-full transition-colors shadow-[0_24px_70px_-20px_rgba(255,45,85,0.7)]"
-                  >
-                    Pick a time on Cal.com →
-                  </a>
-                </Magnetic>
+              <m.div key="step2" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35, ease: EASE_SWIFT }} className="max-w-3xl mx-auto text-center space-y-4">
+                <Disp className="text-white text-4xl">PICK YOUR TIME.</Disp>
+                <p className="text-white/65 text-base">Choose a slot below and the call is locked.</p>
+                {!embedFailed ? (
+                  <>
+                    {/* Inline Cal.com calendar, prefilled from the quiz + contact.
+                        The embed script loads only now (see CalInline). */}
+                    <CalInline
+                      calLink={CAL_LINK}
+                      config={{
+                        name: contact.name,
+                        email: contact.email,
+                        a1: quiz.projectType,
+                        a2: quiz.goal,
+                        a3: quiz.budget,
+                        duration: "60",
+                      }}
+                      onFail={() => setEmbedFailed(true)}
+                    />
+                    <p className="text-white/60 text-xs">
+                      Calendar not loading?{" "}
+                      <a href={calBookingUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-[#FF2D55] transition-colors">
+                        Open it in a new tab
+                      </a>
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-white/65 text-sm">The embedded calendar could not load here, so grab your time directly on Cal.com. Your answers ride along.</p>
+                    <Magnetic className="inline-block">
+                      <a
+                        href={calBookingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2 px-10 py-4 mt-2 bg-[#FF2D55] hover:bg-[#FF1745] text-white text-base font-bold rounded-full transition-colors shadow-[0_24px_70px_-20px_rgba(255,45,85,0.7)]"
+                      >
+                        Pick a time on Cal.com →
+                      </a>
+                    </Magnetic>
+                  </>
+                )}
                 <p className="text-white/70 text-sm pt-2">Confirmation will be sent to <span className="text-white font-semibold">{contact.email}</span></p>
                 <p className="text-white/60 text-xs">We&apos;ll review your answers and come fully prepared.</p>
-                <button type="button" onClick={() => { setStep(0); setQuiz({ projectType: "", goal: "", budget: "" }); setContact({ name: "", email: "", phone: "" }); setCalBookingUrl("") }}
+                <button type="button" onClick={() => { setStep(0); setQuiz({ projectType: "", goal: "", budget: "" }); setContact({ name: "", email: "", phone: "" }); setCalBookingUrl(""); setEmbedFailed(false) }}
                   className="text-[#FF2D55]/60 text-sm hover:text-[#FF2D55] transition-colors mt-4 block mx-auto">Start over</button>
               </m.div>
             )}
