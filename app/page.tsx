@@ -1,10 +1,29 @@
-"use client"
+/**
+ * Home page (v7.2): SERVER component shell.
+ *
+ * Everything static on this page (headings, copy, section wrappers, services,
+ * FAQ, footer, the LCP hero text) renders on the server and ships ZERO
+ * hydration JS. Interactivity lives in explicit client islands:
+ *
+ *   SiteNav                     theme toggle, Lenis glides, booking triggers
+ *   HeroVisual/HeroRotator/     Spline robot + Lightning, rotating audience
+ *   HeroCtas                    line, hero buttons
+ *   Spotlight                   pointer-follow hero glow (lg+)
+ *   Reveal                      whileInView fadeUp wrapper; children stay
+ *                               server-rendered (children-as-props pattern)
+ *   GlowCard / CountUp /        hover glow, count-up numbers, logo marquee
+ *   LogoCloud(InfiniteSlider)
+ *   lazy-islands                AgentRadial, LeadFunnel, N8nWorkflowBlock,
+ *                               AIUGCCreators, WorldMap (ssr:false, unchanged)
+ *   BookingSection/Dialog/      the whole booking stack + sticky mobile pill
+ *   BookingButton/StickyCta
+ *
+ * Rule for future edits: static content stays OUT of "use client" files; a
+ * new widget gets its own island (or lives in lazy-islands if it should stay
+ * off the critical path). Function props never cross into islands.
+ */
 
-import { memo } from "react"
-import { m } from "motion/react"
-import dynamic from "next/dynamic"
 import { Spotlight } from "@/components/ui/spotlight"
-import { LiquidMetalButton } from "@/components/ui/liquid-metal-button"
 import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import { CountUp } from "@/components/ui/count-up"
@@ -15,46 +34,25 @@ import { AxWordmark } from "@/components/ui/ax-wordmark"
 
 import { Disp, Tag, AmbientImage } from "@/components/home/shared"
 import { BookingSection, BookingDialog } from "@/components/home/booking"
+import { BookingButton } from "@/components/home/booking-button"
 import { SiteNav } from "@/components/home/nav"
 import { HeroVisual, HeroRotator, HeroCtas } from "@/components/home/hero-islands"
-import { openBooking } from "@/components/home/actions"
+import { Reveal } from "@/components/home/reveal"
 import {
-  VP, EASE_SWIFT,
+  N8nWorkflowBlock, AIUGCCreators, AgentRadial, LeadFunnel, WorldMap,
+} from "@/components/home/lazy-islands"
+import {
   TICKER, WHO_WE_SERVE, STACK_LOGOS, FEATURED_LOGOS, MAP_DOTS,
   SERVICES, CASE_STUDIES, TRACE_SYSTEM_NODES, TRACE_DELIVERABLES,
   TRACE_SYSTEM_EDGES, TRACE_CONFIDENCE_TAGS, FAQS,
 } from "@/components/home/data"
-// ── Below-fold heavy components: lazy loaded for faster LCP ──────────────────
-const N8nWorkflowBlock = dynamic(
-  () => import("@/components/ui/n8n-workflow-block-shadcnui").then((mod) => mod.N8nWorkflowBlock),
-  { ssr: false, loading: () => <div className="h-[460px] rounded-2xl animate-pulse bg-white/[0.02] border border-white/5" /> }
-)
-const AIUGCCreators = dynamic(
-  () => import("@/components/ui/animated-tooltip").then((mod) => mod.AIUGCCreators),
-  { ssr: false }
-)
-const AgentRadial = dynamic(
-  () => import("@/components/ui/agent-radial").then((mod) => mod.AgentRadial),
-  { ssr: false, loading: () => <div className="h-[320px] rounded-xl animate-pulse bg-white/[0.02]" /> }
-)
-const LeadFunnel = dynamic(
-  () => import("@/components/ui/lead-funnel").then((mod) => mod.LeadFunnel),
-  { ssr: false, loading: () => <div className="h-[400px] rounded-2xl animate-pulse bg-white/[0.02] border border-white/5" /> }
-)
 
-const WorldMap = dynamic(
-  () => import("@/components/ui/map").then((mod) => mod.WorldMap),
-  { ssr: false, loading: () => <div className="h-[420px] rounded-xl animate-pulse bg-white/[0.02]" /> }
-)
-// ── Shared whileInView reveal (viewport + easing from home/data) ─────────────
-const fadeUp = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 }, viewport: VP, transition: { duration: 0.9, ease: EASE_SWIFT } }
-
-
-const TraceableSystemMap = memo(function TraceableSystemMap() {
+// Server-rendered section: only the two Reveal wrappers hydrate.
+function TraceableSystemMap() {
   return (
     <section id="trace-map" className="trace-map-section">
       <div className="trace-map-layout">
-        <m.div {...fadeUp} className="trace-map-copy">
+        <Reveal className="trace-map-copy">
           <Tag>Traceable systems</Tag>
           <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
             MAP THE WORK.<br />SHIP THE<br /><span style={{ color: "var(--red)" }}>SYSTEM.</span>
@@ -80,9 +78,9 @@ const TraceableSystemMap = memo(function TraceableSystemMap() {
               </div>
             ))}
           </div>
-        </m.div>
+        </Reveal>
 
-        <m.div {...fadeUp} transition={{ duration: 0.9, delay: 0.1, ease: EASE_SWIFT }} className="trace-map-canvas" role="img" aria-label="AX Media traceable AI system map">
+        <Reveal delay={0.1} className="trace-map-canvas" role="img" ariaLabel="AX Media traceable AI system map">
           <svg className="trace-map-svg" viewBox="0 0 720 420" preserveAspectRatio="none" aria-hidden>
             <defs>
               <filter id="traceGlow" x="-30%" y="-30%" width="160%" height="160%">
@@ -119,11 +117,11 @@ const TraceableSystemMap = memo(function TraceableSystemMap() {
               </span>
             </article>
           ))}
-        </m.div>
+        </Reveal>
       </div>
     </section>
   )
-})
+}
 
 // ── Page ────────────────────────────────────────────────────────────────────
 export default function Home() {
@@ -226,7 +224,7 @@ export default function Home() {
           </div>
           <div className="flex flex-wrap justify-center gap-4 md:gap-6">
             {WHO_WE_SERVE.map((w, i) => (
-              <m.div key={w.label} {...fadeUp} transition={{ delay: i * 0.07, duration: 0.9, ease: EASE_SWIFT }}
+              <Reveal key={w.label} delay={i * 0.07}
                 className="w-[calc(50%-8px)] sm:w-[200px] md:w-[210px]">
                 <GlowCard glowColor={w.glowColor} customSize className="w-full h-full min-h-[220px] sm:min-h-[280px]">
                   <div className="flex flex-col justify-between h-full py-3">
@@ -237,7 +235,7 @@ export default function Home() {
                     </div>
                   </div>
                 </GlowCard>
-              </m.div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -250,11 +248,11 @@ export default function Home() {
         <div className="relative z-[1] max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div className="relative z-10">
             <Tag>The Intelligence</Tag>
-            <m.div {...fadeUp} transition={{ duration: 0.6 }} className="mt-6">
+            <Reveal duration={0.6} easeDefault className="mt-6">
               <Disp className="ai-text block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
                 YOUR AI TEAM<br />NEVER<br /><span style={{ color: "var(--red)" }}>SLEEPS.</span>
               </Disp>
-            </m.div>
+            </Reveal>
             <p className="ai-muted text-sm leading-relaxed mt-6 mb-8 max-w-sm">
               Autonomous agents that run lead gen, create content, and monitor data. 24/7, without errors or delays.
             </p>
@@ -378,7 +376,7 @@ export default function Home() {
           <p className="text-white/85 text-base md:text-xl font-semibold leading-snug max-w-xl">
             Want one of these running in your business? Book the call.
           </p>
-          <LiquidMetalButton label="Book the Call" onClick={openBooking} />
+          <BookingButton label="Book the Call" />
         </div>
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[280px] bg-[#FF2D55]/8 rounded-full blur-[110px] pointer-events-none" aria-hidden />
       </section>
@@ -395,7 +393,7 @@ export default function Home() {
         {/* Ambient atmosphere: demand-rings render behind the heading, fully faded out before the map */}
         <AmbientImage src="/generated/outcomes/blur/outcome-local-blur.webp" className="ambient-global" />
         <div className="relative z-[1] max-w-6xl mx-auto">
-          <m.div {...fadeUp} className="text-center mb-10">
+          <Reveal className="text-center mb-10">
             <Tag>Global reach</Tag>
             <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
               BUILT FOR CLIENTS<br /><span style={{ color: "var(--red)" }}>WORLDWIDE.</span>
@@ -408,7 +406,7 @@ export default function Home() {
                 <span key={chip} className="ai-card text-[11px] font-medium px-3.5 py-1.5 rounded-full border ai-border">{chip}</span>
               ))}
             </div>
-          </m.div>
+          </Reveal>
           <WorldMap dots={MAP_DOTS} lineColor="#FF2D55" showLabels />
         </div>
       </section>
@@ -417,12 +415,12 @@ export default function Home() {
           <details> accordion, no new dependencies. */}
       <section id="faq" className="ai-page py-20 px-6" style={{ contain: "layout paint", containIntrinsicSize: "0 620px" }}>
         <div className="max-w-3xl mx-auto">
-          <m.div {...fadeUp} className="text-center mb-10">
+          <Reveal className="text-center mb-10">
             <Tag>FAQ</Tag>
             <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
               STRAIGHT<br /><span style={{ color: "var(--red)" }}>ANSWERS.</span>
             </Disp>
-          </m.div>
+          </Reveal>
           <div className="border-t ai-border">
             {FAQS.map((item) => (
               <details key={item.q} className="group border-b ai-border">
