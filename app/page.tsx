@@ -1,11 +1,10 @@
 "use client"
 
-import { useState, useEffect, memo } from "react"
-import { m, AnimatePresence, useReducedMotion } from "motion/react"
+import { memo } from "react"
+import { m } from "motion/react"
 import dynamic from "next/dynamic"
 import { Spotlight } from "@/components/ui/spotlight"
 import { LiquidMetalButton } from "@/components/ui/liquid-metal-button"
-import ThemeToggle from "@/components/ui/toggle-theme"
 import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import { CountUp } from "@/components/ui/count-up"
@@ -14,14 +13,16 @@ import { StickyCta } from "@/components/ui/sticky-cta"
 import { SERVE_ICONS } from "@/components/ui/serve-icons"
 import { AxWordmark } from "@/components/ui/ax-wordmark"
 
-import { lenisScrollTo } from "@/components/providers/SmoothScroll"
 import { Disp, Tag, AmbientImage } from "@/components/home/shared"
 import { BookingSection, BookingDialog } from "@/components/home/booking"
+import { SiteNav } from "@/components/home/nav"
+import { HeroVisual, HeroRotator, HeroCtas } from "@/components/home/hero-islands"
+import { openBooking } from "@/components/home/actions"
 import {
   VP, EASE_SWIFT,
-  HERO_AUDIENCES, TICKER, WHO_WE_SERVE, STACK_LOGOS, FEATURED_LOGOS, MAP_DOTS,
+  TICKER, WHO_WE_SERVE, STACK_LOGOS, FEATURED_LOGOS, MAP_DOTS,
   SERVICES, CASE_STUDIES, TRACE_SYSTEM_NODES, TRACE_DELIVERABLES,
-  TRACE_SYSTEM_EDGES, TRACE_CONFIDENCE_TAGS, FAQS, NAV_LINKS,
+  TRACE_SYSTEM_EDGES, TRACE_CONFIDENCE_TAGS, FAQS,
 } from "@/components/home/data"
 // ── Below-fold heavy components: lazy loaded for faster LCP ──────────────────
 const N8nWorkflowBlock = dynamic(
@@ -30,10 +31,6 @@ const N8nWorkflowBlock = dynamic(
 )
 const AIUGCCreators = dynamic(
   () => import("@/components/ui/animated-tooltip").then((mod) => mod.AIUGCCreators),
-  { ssr: false }
-)
-const Lightning = dynamic(
-  () => import("@/components/ui/lightning").then((mod) => mod.Lightning),
   { ssr: false }
 )
 const AgentRadial = dynamic(
@@ -45,11 +42,6 @@ const LeadFunnel = dynamic(
   { ssr: false, loading: () => <div className="h-[400px] rounded-2xl animate-pulse bg-white/[0.02] border border-white/5" /> }
 )
 
-// ── All heavy/below-fold components: dynamically loaded ─────────────────────
-const SplineScene = dynamic(
-  () => import("@/components/ui/splite").then((mod) => mod.SplineScene),
-  { ssr: false }
-)
 const WorldMap = dynamic(
   () => import("@/components/ui/map").then((mod) => mod.WorldMap),
   { ssr: false, loading: () => <div className="h-[420px] rounded-xl animate-pulse bg-white/[0.02]" /> }
@@ -57,128 +49,6 @@ const WorldMap = dynamic(
 // ── Shared whileInView reveal (viewport + easing from home/data) ─────────────
 const fadeUp = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 }, viewport: VP, transition: { duration: 0.9, ease: EASE_SWIFT } }
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-const scrollTo = (id: string) => lenisScrollTo(`#${id}`)
-// Opens the native <dialog> booking modal from anywhere (decoupled from memo trees)
-const openBooking = () => window.dispatchEvent(new Event("open-booking"))
-
-// ── HeroSection: isolated so its interval doesn't re-render the whole page ──
-const HeroSection = memo(function HeroSection() {
-  const [audienceIdx, setAudienceIdx] = useState(0)
-  // The Lightning WebGL layer is display:none below lg anyway (hidden dark:lg:block),
-  // so on phones we skip mounting it entirely: no chunk download, no WebGL context.
-  const [desktop, setDesktop] = useState(false)
-  const reduceMotion = useReducedMotion()
-  const riseLine = {
-    hidden: { y: reduceMotion ? "0%" : "105%" },
-    show: { y: "0%", transition: { duration: 0.8, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] } },
-  }
-
-  useEffect(() => {
-    const t = setInterval(() => setAudienceIdx((i) => (i + 1) % HERO_AUDIENCES.length), 2600)
-    return () => clearInterval(t)
-  }, [])
-
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)")
-    const sync = () => setDesktop(mq.matches)
-    sync()
-    mq.addEventListener?.("change", sync)
-    return () => mq.removeEventListener?.("change", sync)
-  }, [])
-
-  return (
-    <section className="hero-section min-h-[100svh] relative overflow-hidden flex flex-col justify-end pb-16 pt-32 px-6 md:px-10">
-      <div className="hidden lg:block"><Spotlight size={500} /></div>
-
-      {/* Backgrounds: stronger red bloom, softer grid. Avoid visible line artifacts. */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute -top-16 right-0 w-[680px] h-[620px] bg-[#FF2D55]/12 rounded-full blur-[110px]" />
-        <div className="absolute bottom-0 left-0 w-[520px] h-[380px] bg-[#7B2FFF]/8 rounded-full blur-[120px]" />
-        <div className="absolute inset-0 opacity-35 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:88px_88px]" />
-      </div>
-
-      {/* Lightning behind robot: subtle ambient in the brand-red family, hidden in light mode.
-          Mounted only on lg+ viewports (it is display:none below that anyway). */}
-      <div className="absolute right-0 top-0 w-[75%] h-full pointer-events-none hidden dark:lg:block z-[1] opacity-30 mix-blend-screen">
-        {desktop && <Lightning hue={350} xOffset={0.3} speed={1.0} intensity={0.35} size={2.2} />}
-      </div>
-
-      {/* Robot */}
-      <div
-        className="hero-robot-shell robot-mobile absolute right-0 top-0 w-[100%] h-[55svh] lg:bottom-0 lg:w-[65%] lg:h-auto pointer-events-none block z-[2]"
-        style={{ transform: "scale(1.35) translate3d(0, -8%, 0)", transformOrigin: "top center", willChange: "transform" }}
-      >
-        {/* No static poster: while the Spline runtime boots, the hero right side
-            shows only the dark ambient background (gradient + red bloom + Lightning).
-            The live scene fades and settles in over it when ready. */}
-        {/* Scene + runtime wasm are self-hosted (public/spline/): no third-party
-            fetches at runtime. Source of truth: Spline export kZDDjO5HuC9GJUM2.
-            To update the scene, re-export and replace the files (see splite.tsx). */}
-        <SplineScene scene="/spline/robot.splinecode" className="w-full h-full dark:opacity-100 opacity-90 dark:mix-blend-normal mix-blend-normal lg:mix-blend-luminosity" />
-        <div className="ai-hero-fade-x absolute inset-y-0 left-0 w-[50%]" />
-        <div className="ai-hero-fade-y absolute bottom-0 left-0 right-0 h-56" />
-        <div className="ai-hero-fade-x absolute inset-y-0 right-0 w-[15%] rotate-180 block dark:hidden" />
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10 max-w-[1440px] mx-auto w-full">
-        <m.div initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex items-center gap-2 mb-10">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF2D55] opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF2D55]" />
-          </span>
-          <span className="ai-muted text-xs font-medium tracking-wider">Founder-led · Los Angeles · replies within 24h</span>
-        </m.div>
-
-        <m.div initial={false} animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}>
-          <div className="overflow-hidden py-[0.04em] -my-[0.04em]">
-            <m.div variants={riseLine}>
-              <Disp className="block ai-text" style={{ fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>WE BUILD</Disp>
-            </m.div>
-          </div>
-          <div className="overflow-hidden py-[0.04em] -my-[0.04em]">
-            <m.div variants={riseLine}>
-              <Disp className="block" style={{ color: "var(--red)", fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>AI SYSTEMS</Disp>
-            </m.div>
-          </div>
-          <div className="overflow-hidden" style={{ height: "var(--fs-mega)" }}>
-            <AnimatePresence mode="wait" initial={false}>
-              <m.div
-                key={audienceIdx}
-                initial={false}
-                animate={{ y: "0%", opacity: 1 }}
-                exit={{ y: "-100%", opacity: 0 }}
-                transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <Disp className="block ai-muted" style={{ fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>
-                  FOR {HERO_AUDIENCES[audienceIdx]}
-                </Disp>
-              </m.div>
-            </AnimatePresence>
-          </div>
-        </m.div>
-
-        <m.div
-          initial={false} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.25 }}
-          className="mt-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 lg:max-w-[55%]"
-        >
-          <p className="ai-muted text-sm md:text-base max-w-sm leading-relaxed">
-            You imagine it. We make it real. Systems for go-to-market, content, and ops, shipped.
-          </p>
-          <div className="flex gap-3 flex-shrink-0">
-            <LiquidMetalButton label="Start a Project" onClick={openBooking} />
-            <button type="button" onClick={() => scrollTo("services")} className="px-8 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-sm font-semibold rounded-full hover:border-[#FF2D55] hover:text-[#FF2D55] transition-[border-color,color]">
-              See Services →
-            </button>
-          </div>
-        </m.div>
-
-      </div>
-    </section>
-  )
-})
 
 const TraceableSystemMap = memo(function TraceableSystemMap() {
   return (
@@ -261,48 +131,59 @@ export default function Home() {
     <main className="w-full ai-page overflow-hidden grain">
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
-      <nav className="ai-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-4 md:py-5 backdrop-blur-md border-b ai-border">
-        <a href="#" className="flex items-center flex-shrink-0">
-          {/* Inline wordmark in the real document fonts, themed via currentColor */}
-          <AxWordmark className="ax-wordmark h-8 md:h-11 w-auto text-[#050507] dark:text-white" />
-        </a>
-        <div className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map((item) => (
-            <a key={item.label} href={item.href}
-              onClick={(e) => { e.preventDefault(); if (item.href === "#booking") openBooking(); else scrollTo(item.href.slice(1)) }}
-              className="px-5 py-2.5 ai-muted text-base font-bold hover:!text-black dark:hover:!text-white hover:bg-black/10 dark:hover:bg-white/12 hover:scale-105 rounded-full transition-[color,background-color,transform] duration-200">
-              {item.label}
-            </a>
-          ))}
-        </div>
-        <div className="flex items-center gap-2 md:gap-4">
-          <a
-            href="mailto:info@aimedia.global"
-            className="hidden lg:inline-flex items-center gap-1.5 ai-muted text-xs font-medium hover:text-[#FF2D55] transition-colors"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <rect x="2" y="4" width="20" height="16" rx="2" />
-              <path d="m22 7-10 6L2 7" />
-            </svg>
-            info@aimedia.global
-          </a>
-          <ThemeToggle />
-          <button
-            type="button"
-            onClick={openBooking}
-            className="group relative px-4 md:px-6 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-bold tracking-wider uppercase overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-95 border-2 border-[#FF2D55] dark:border-[#FF2D55]/60 hover:border-[#FF2D55] text-[#FF2D55] dark:text-white"
-          >
-            <span className="absolute inset-0 bg-[#FF2D55]/20 dark:bg-[#FF2D55]/15 group-hover:bg-[#FF2D55]/30 transition-colors duration-300" />
-            <span className="relative z-10 flex items-center gap-1.5 md:gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#FF2D55] group-hover:animate-ping" />
-              Book a Call
-            </span>
-          </button>
-        </div>
-      </nav>
+      <SiteNav />
 
       {/* 01 HOOK */}
-      <HeroSection />
+      <section className="hero-section min-h-[100svh] relative overflow-hidden flex flex-col justify-end pb-16 pt-32 px-6 md:px-10">
+        <div className="hidden lg:block"><Spotlight size={500} /></div>
+
+        {/* Backgrounds: stronger red bloom, softer grid. Avoid visible line artifacts. */}
+        <div className="absolute inset-0 pointer-events-none" aria-hidden>
+          <div className="absolute -top-16 right-0 w-[680px] h-[620px] bg-[#FF2D55]/12 rounded-full blur-[110px]" />
+          <div className="absolute bottom-0 left-0 w-[520px] h-[380px] bg-[#7B2FFF]/8 rounded-full blur-[120px]" />
+          <div className="absolute inset-0 opacity-35 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:88px_88px]" />
+        </div>
+
+        {/* Lightning + robot: interactive visual layers hydrate as one island */}
+        <HeroVisual />
+
+        {/* Content: static server-rendered text. The pre-v7.2 m.div wrappers all
+            ran with initial={false} (final state, no mount animation), so plain
+            markup here is pixel-identical, and the LCP paragraph no longer waits
+            for any hydration. */}
+        <div className="relative z-10 max-w-[1440px] mx-auto w-full">
+          <div className="flex items-center gap-2 mb-10">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF2D55] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF2D55]" />
+            </span>
+            <span className="ai-muted text-xs font-medium tracking-wider">Founder-led · Los Angeles · replies within 24h</span>
+          </div>
+
+          <div>
+            <div className="overflow-hidden py-[0.04em] -my-[0.04em]">
+              <div>
+                <Disp className="block ai-text" style={{ fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>WE BUILD</Disp>
+              </div>
+            </div>
+            <div className="overflow-hidden py-[0.04em] -my-[0.04em]">
+              <div>
+                <Disp className="block" style={{ color: "var(--red)", fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>AI SYSTEMS</Disp>
+              </div>
+            </div>
+            {/* Rotating audience line: the only headline part that hydrates */}
+            <HeroRotator />
+          </div>
+
+          <div className="mt-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 lg:max-w-[55%]">
+            <p className="ai-muted text-sm md:text-base max-w-sm leading-relaxed">
+              You imagine it. We make it real. Systems for go-to-market, content, and ops, shipped.
+            </p>
+            <HeroCtas />
+          </div>
+
+        </div>
+      </section>
 
       {/* ── Pink marquee ─────────────────────────────────────────────────── */}
       <div className="marquee-shell marquee-mask py-5 overflow-hidden bg-[#FF2D55]" aria-hidden>
