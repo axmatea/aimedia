@@ -29,6 +29,14 @@ const nextConfig: NextConfig = {
         { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
       ],
     },
+    {
+      // Self-hosted Spline scene + runtime wasm. Content-addressed by replace:
+      // updating the scene means shipping new files, so immutable is safe.
+      source: "/spline/:path*",
+      headers: [
+        { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+      ],
+    },
   ],
 };
 

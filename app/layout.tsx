@@ -94,11 +94,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`${bebas.variable} ${space.variable} ${mono.variable} h-full`} suppressHydrationWarning>
       <head>
-        {/* Warm the connections the Spline hero needs before the runtime asks:
-            scene data streams from prod.spline.design, runtime wasm helpers
-            from unpkg. Both are CORS fetches, hence crossOrigin anonymous. */}
-        <link rel="preconnect" href="https://prod.spline.design" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://unpkg.com" crossOrigin="anonymous" />
+        {/* No third-party preconnects (v7.1): the Spline scene and its runtime
+            wasm are self-hosted under /spline/, so prod.spline.design and
+            unpkg.com are no longer contacted at runtime. */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

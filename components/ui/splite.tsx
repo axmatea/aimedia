@@ -44,6 +44,19 @@ const MOBILE_DPR_CAP = 1.5
 // Possible head object names across common Spline robot scenes
 const HEAD_NAMES = ['Head', 'head', 'Robot_Head', 'robot_head', 'HEAD', 'Helmet', 'helmet', 'Skull', 'skull']
 
+// Self-hosted runtime wasm base (v7.1). The runtime's Application constructor
+// accepts { wasmPath } (react-spline forwards the prop) and resolves helper
+// binaries as `${wasmPath}/<name>.wasm` instead of unpkg.com. Our robot scene
+// contains SubdivGeometry meshes, so it needs exactly one helper:
+//   public/spline/process.wasm  (from @splinetool/modelling-wasm@1.12.70/build)
+// It has no BooleanGeometry / navmesh / draco-compressed buffers (verified by
+// scanning the .splinecode), so boolean.wasm, navmesh.wasm, and the draco
+// decoder are never requested. CAUTION: wasmPath also overrides the draco
+// decoder base, so if a future scene ships draco-compressed geometry, copy the
+// gstatic draco 1.5.2 decoder files into public/spline/ as well. Keep the wasm
+// version in lockstep with the installed @splinetool/runtime version.
+const SPLINE_WASM_PATH = '/spline'
+
 export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
   // Nothing renders until the live scene is ready: the dark ambient hero
   // background carries the space, then the 3D scene fades and settles in.
@@ -373,7 +386,7 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
       {showScene && (
         <div className={`hero-spline-live ${sceneReady ? 'is-ready' : ''}`} aria-hidden={!sceneReady}>
           <Suspense fallback={null}>
-            <Spline scene={scene} className={className} onLoad={handleLoad} />
+            <Spline scene={scene} wasmPath={SPLINE_WASM_PATH} className={className} onLoad={handleLoad} />
           </Suspense>
         </div>
       )}
