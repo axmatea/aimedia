@@ -254,6 +254,9 @@ const Disp = ({ children, className = "", style }: { children: React.ReactNode; 
  * Dark theme only (the renders are dark scenes; on the light theme they read
  * as gray smudges, so CSS hides them there). Lazy, below the fold, aria-hidden:
  * never part of LCP and never in the accessibility tree.
+ * v7.1: placements point at the tiny pre-blurred 720px variants
+ * (public/generated/outcomes/blur/): heavily dimmed + masked atmosphere never
+ * needs the full-res renders, and the baked blur costs the GPU nothing.
  */
 const AmbientImage = ({ src, className = "" }: { src: string; className?: string }) => (
   <div className={`ambient-image ${className}`.trim()} aria-hidden>
@@ -834,7 +837,7 @@ export default function Home() {
       {/* AI Team Never Sleeps */}
       <section id="ai-team" className="ai-panel ax-panel-melt py-20 px-6 relative overflow-hidden" style={{ contain: "layout paint" }}>
         {/* Ambient atmosphere: community-sphere render, dimmed + radially masked behind the agent radial */}
-        <AmbientImage src="/generated/outcomes/outcome-web3.webp" className="ambient-ai-team" />
+        <AmbientImage src="/generated/outcomes/blur/outcome-web3-blur.webp" className="ambient-ai-team" />
         <div className="relative z-[1] max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div className="relative z-10">
             <Tag>The Intelligence</Tag>
@@ -867,7 +870,7 @@ export default function Home() {
       {/* Flow bridge: light theme melts paper into the dark services block;
           dark theme gets a faint ambient render bleed instead of a hard seam. */}
       <div aria-hidden className="ax-flow-bridge ax-bridge-into-dark relative h-24 md:h-36 -mb-px">
-        <AmbientImage src="/generated/outcomes/outcome-web3.webp" className="ax-ambient-bleed" />
+        <AmbientImage src="/generated/outcomes/blur/outcome-web3-blur.webp" className="ax-ambient-bleed" />
       </div>
 
       {/* 04 SOLUTION: Services */}
@@ -981,7 +984,7 @@ export default function Home() {
       {/* 07 SCALE: World Map */}
       <section id="global-reach" className="ai-page py-20 px-6 relative overflow-hidden scroll-mt-20" style={{ contain: "layout paint" }}>
         {/* Ambient atmosphere: demand-rings render behind the heading, fully faded out before the map */}
-        <AmbientImage src="/generated/outcomes/outcome-local.webp" className="ambient-global" />
+        <AmbientImage src="/generated/outcomes/blur/outcome-local-blur.webp" className="ambient-global" />
         <div className="relative z-[1] max-w-6xl mx-auto">
           <m.div {...fadeUp} className="text-center mb-10">
             <Tag>Global reach</Tag>

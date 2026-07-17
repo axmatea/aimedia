@@ -1,8 +1,8 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import Image from "next/image"
-import { m, useScroll, useTransform, useReducedMotion, type MotionValue } from "motion/react"
+import { m, useScroll, useTransform, useReducedMotion, useMotionValueEvent, type MotionValue } from "motion/react"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import { CountUp } from "@/components/ui/count-up"
 import { ShowcaseMedia } from "@/components/ui/showcase-media"
@@ -27,6 +27,15 @@ const glowFor = (accent: string): "purple" | "red" | "green" | "blue" => {
   if (a.includes("C8FF60") || a.includes("4A7A00")) return "green"
   return "blue"
 }
+
+// Pre-blurred ambient variant (v7.1): the backdrop slides use tiny 720px webp
+// renders with the blur, the 1.06 crop, and the 0.9 dim baked in offline
+// (scripts note in public/generated/outcomes/blur/). This kills the live CSS
+// blur(9px) that forced phones to re-rasterize four full-viewport layers.
+// Unknown sources fall back to themselves, so a new card image can never
+// break the backdrop, it just renders sharp until its blur variant ships.
+const ambientVariantFor = (src: string) =>
+  src.replace(/^\/generated\/outcomes\/outcome-([a-z0-9-]+)\.webp$/, "/generated/outcomes/blur/outcome-$1-blur.webp")
 
 const outcomeKindFor = (tag: string): "content" | "saas" | "local" | "web3" => {
   const t = tag.toLowerCase()
@@ -82,7 +91,10 @@ export function ProofSection({
   // under LazyMotion domAnimation): MotionValues write styles directly, no
   // React re-renders per scroll frame.
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] })
-  const ambientImages = items.map((c) => c.image).filter((src): src is string => Boolean(src))
+  const ambientImages = items
+    .map((c) => c.image)
+    .filter((src): src is string => Boolean(src))
+    .map(ambientVariantFor)
 
   return (
     // overflow-clip (not hidden): clip does not create a scroll container, so
@@ -167,7 +179,10 @@ export function ProofSection({
  *   tall (mobile, single-column) layouts the image stays pinned while cards
  *   scroll over it; on short desktop layouts it simply fills the section.
  * - Opacity is the ONLY animated property (GPU-composited, cheap on mobile).
- *   Blur/dim are static CSS, rasterized once, never animated per frame.
+ * - Blur/dim/crop are baked into the tiny 720px assets offline (v7.1), so
+ *   there is no CSS filter at all: phones composite plain bitmaps.
+ * - Only slides with nonzero opacity keep their <Image> mounted (current
+ *   crossfade pair), driven by the same MotionValue that fades them.
  * - prefers-reduced-motion: single static dimmed image, no crossfade.
  * - Degrades gracefully: with JS or sticky unavailable it is just a static
  *   dimmed first image; never broken.
@@ -216,9 +231,14 @@ function AmbientSlide({
         : [center - ramp, center, center + ramp]
   const output = index === 0 ? [1, 1, 0] : index === count - 1 ? [0, 1, 1] : [0, 1, 0]
   const opacity = useTransform(progress, input, output)
+  // Mount the bitmap only while its slide is visible (current +-1 during the
+  // crossfade). The wrapper div stays mounted so the MotionValue keeps writing
+  // opacity without React churn; crossing the 0 threshold flips one boolean.
+  const [active, setActive] = useState(() => count === 1 || opacity.get() > 0.001)
+  useMotionValueEvent(opacity, "change", (v) => setActive(count === 1 || v > 0.001))
   return (
     <m.div className="proof-ambient-slide" style={{ opacity: count === 1 ? 1 : opacity }}>
-      <Image src={src} alt="" fill sizes="50vw" loading="lazy" className="proof-ambient-img" />
+      {active && <Image src={src} alt="" fill sizes="100vw" loading="lazy" className="proof-ambient-img" />}
     </m.div>
   )
 }

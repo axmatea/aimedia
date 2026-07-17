@@ -1009,10 +1009,13 @@ html:not(.dark) .pipeline-node { background: rgba(255,255,255,0.72); border-colo
 
 /* ── Proof ambient: scroll-linked crossfade backdrop behind the outcome cards ──
    One dimmed, blurred outcome render flows into the next as the visitor scrolls
-   through the section. Only opacity animates (compositor-cheap, fine on mobile);
-   blur and dim are static. The sticky inner viewport pins the image on tall
-   single-column layouts. The section uses overflow-clip so sticky still works.
-   Dark theme only: the renders are dark scenes and would gray the light canvas.
+   through the section. Only opacity animates (compositor-cheap, fine on mobile).
+   The blur, the 1.06 crop, and the 0.9 dim are BAKED into the tiny 720px webp
+   variants (public/generated/outcomes/blur/), so no CSS filter or transform
+   lives here: phones composite plain bitmaps (v7.1). The sticky inner viewport
+   pins the image on tall single-column layouts. The section uses overflow-clip
+   so sticky still works. Dark theme only: the renders are dark scenes and
+   would gray the light canvas.
 */
 .proof-ambient {
   position: absolute;
@@ -1036,8 +1039,6 @@ html:not(.dark) .pipeline-node { background: rgba(255,255,255,0.72); border-colo
 }
 .proof-ambient-img {
   object-fit: cover;
-  transform: scale(1.06); /* hides blur edge bleed */
-  filter: blur(9px) brightness(0.9);
 }
 /* Scanline texture paints above the ambient image, cards (z-1 shell) above both */
 .proof-section::before { z-index: 1; }
