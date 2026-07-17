@@ -12,6 +12,7 @@ import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import { CountUp } from "@/components/ui/count-up"
 import { ProofSection } from "@/components/ui/proof-section"
+import { StickyCta } from "@/components/ui/sticky-cta"
 import { SERVE_ICONS } from "@/components/ui/serve-icons"
 import { AxWordmark } from "@/components/ui/ax-wordmark"
 
@@ -705,7 +706,12 @@ const BookingDialog = memo(function BookingDialog() {
       ref={ref}
       aria-label="Book a strategy call"
       className="booking-dialog"
-      onClose={() => setOpen(false)}
+      onClose={() => {
+        setOpen(false)
+        // Companion to "open-booking": lets decoupled UI (StickyCta) know the
+        // modal is gone without reaching into dialog internals.
+        window.dispatchEvent(new Event("booking-closed"))
+      }}
       onClick={(e) => { if (e.target === ref.current) close() }}
     >
       {open && (
@@ -1041,6 +1047,10 @@ export default function Home() {
 
       {/* Native <dialog> booking modal, opened by the sticky nav CTA + Contact link */}
       <BookingDialog />
+
+      {/* Mobile-only sticky booking pill: appears after the hero, hides around
+          the booking section and while the dialog is open */}
+      <StickyCta />
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
       <footer className="ai-page py-10 px-6">
