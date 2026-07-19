@@ -413,9 +413,9 @@ export default function Home() {
               STRAIGHT<br /><span style={{ color: "var(--red)" }}>ANSWERS.</span>
             </Disp>
           </Reveal>
-          <div className="border-t ai-border">
+          <div className="ai-faq-list">
             {FAQS.map((item) => (
-              <details key={item.q} className="group border-b ai-border">
+              <details key={item.q} className="group ai-faq-row">
                 <summary className="flex items-center justify-between gap-4 py-5 cursor-pointer list-none [&::-webkit-details-marker]:hidden select-none">
                   <span className="ai-text text-sm md:text-base font-bold">{item.q}</span>
                   <span

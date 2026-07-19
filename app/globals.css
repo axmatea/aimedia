@@ -1276,6 +1276,28 @@ html:not(.dark) .ai-panel.ax-panel-melt {
   -webkit-mask-image: linear-gradient(to bottom, transparent, black 28%, black 72%, transparent);
 }
 
+/* ── Soft faded hairlines (FAQ accordion) ─────────────────────────────────────
+   Replace the hard ai-border seams with gradient hairlines that dissolve at the
+   left/right edges, matching the .ax-flow-bridge family. The container top and
+   the between-item dividers stay present but read as soft fades, never hard
+   lines. Interactive widget borders (the + toggle) keep their solid ring. */
+.ai-faq-list {
+  border-style: solid;
+  border-width: 1px 0 0;
+  border-image: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent) 1;
+}
+.ai-faq-row {
+  border-style: solid;
+  border-width: 0 0 1px;
+  border-image: linear-gradient(to right, transparent, rgba(255,255,255,0.07), transparent) 1;
+}
+html:not(.dark) .ai-faq-list {
+  border-image: linear-gradient(to right, transparent, rgba(0,0,0,0.08), transparent) 1;
+}
+html:not(.dark) .ai-faq-row {
+  border-image: linear-gradient(to right, transparent, rgba(0,0,0,0.05), transparent) 1;
+}
+
 /* ── Glitch ── */
 @keyframes glitch {
   0%,100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
