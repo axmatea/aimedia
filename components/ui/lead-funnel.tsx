@@ -71,7 +71,7 @@ export function LeadFunnel() {
               className="relative"
             >
               <div
-                className="flex items-center gap-3 px-4 py-3 rounded-xl border transition-all duration-500"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl border transition-[border-color,background-color] duration-500"
                 style={{
                   borderColor: isActive ? `${stage.color}40` : "rgba(255,255,255,0.05)",
                   backgroundColor: isActive ? `${stage.color}08` : "rgba(255,255,255,0.02)",
