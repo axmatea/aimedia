@@ -365,12 +365,12 @@ export default function Home() {
           section default, keep the placeholder honest for smooth glides. */}
       <section className="py-16 md:py-20 px-6 bg-[#050507] relative overflow-hidden" style={{ contain: "layout paint", containIntrinsicSize: "0 280px" }}>
         <div className="max-w-3xl mx-auto flex flex-col items-center text-center gap-6 relative z-10">
-          <p className="text-white/85 text-base md:text-xl font-semibold leading-snug max-w-xl">
+          <p className="text-white/90 text-lg md:text-2xl font-semibold leading-snug max-w-xl">
             Want one of these running in your business? Book the call.
           </p>
-          <BookingButton label="Book the Call" />
+          <BookingButton label="Book the Call" magnetic />
         </div>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[280px] bg-[#FF2D55]/8 rounded-full blur-[110px] pointer-events-none" aria-hidden />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[560px] h-[300px] bg-[#FF2D55]/14 rounded-full blur-[130px] pointer-events-none" aria-hidden />
       </section>
 
       {/* Flow bridge out of the dark services block. No ambient bleed here:

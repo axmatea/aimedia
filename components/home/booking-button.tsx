@@ -7,8 +7,21 @@
  */
 
 import { LiquidMetalButton } from "@/components/ui/liquid-metal-button"
+import { Magnetic } from "@/components/ui/magnetic"
 import { openBooking } from "@/components/home/actions"
 
-export function BookingButton({ label, className }: { label: string; className?: string }) {
-  return <LiquidMetalButton label={label} onClick={openBooking} className={className} />
+export function BookingButton({
+  label,
+  className,
+  magnetic = false,
+}: {
+  label: string
+  className?: string
+  magnetic?: boolean
+}) {
+  const button = <LiquidMetalButton label={label} onClick={openBooking} className={className} />
+  if (magnetic) {
+    return <Magnetic className="inline-block">{button}</Magnetic>
+  }
+  return button
 }
