@@ -60,7 +60,7 @@ export function AxWordmark({ className }: { className?: string }) {
         COMPANY
       </text>
       {/* Signature strike: 24 deg long diagonal painted over the letters */}
-      <line x1="14" y1="120" x2="214" y2="31" stroke="#FF2D55" strokeWidth="6" strokeLinecap="round" />
+      <line x1="14" y1="120" x2="214" y2="31" stroke="#FF2D55" strokeWidth="4" strokeLinecap="round" />
     </svg>
   )
 }

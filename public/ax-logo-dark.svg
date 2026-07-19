@@ -9,5 +9,5 @@
   <text x="215" y="130" fill="rgba(255,255,255,0.5)" font-family="'Space Grotesk', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" letter-spacing="0.2em">COMPANY</text>
   <!-- Signature strike (v6.2): 24 deg long diagonal painted AFTER the text so
        it crosses THROUGH the letters, low under A to high top right. -->
-  <line x1="16" y1="120" x2="216" y2="31" stroke="#FF2D55" stroke-width="6" stroke-linecap="round"/>
+  <line x1="16" y1="120" x2="216" y2="31" stroke="#FF2D55" stroke-width="4" stroke-linecap="round"/>
 </svg>
