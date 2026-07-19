@@ -148,6 +148,10 @@ export function WorldMap({
             <feGaussianBlur stdDeviation="2" result="coloredBlur" />
             <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
+          <filter id="glowStrong" x="-75%" y="-75%" width="250%" height="250%">
+            <feGaussianBlur stdDeviation="3.4" result="coloredBlur" />
+            <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
         </defs>
 
         {dots.map((dot, i) => {
@@ -164,7 +168,8 @@ export function WorldMap({
                 d={path}
                 fill="none"
                 stroke="url(#path-gradient)"
-                strokeWidth="1.5"
+                strokeWidth="1.75"
+                filter="url(#glow)"
                 initial={{ pathLength: 0 }}
                 animate={loop ? { pathLength: [0, 0, 1, 1, 0] } : { pathLength: 1 }}
                 transition={loop ? {
@@ -175,7 +180,7 @@ export function WorldMap({
                 } : { duration: animationDuration, delay: i * staggerDelay }}
               />
               {loop && (
-                <m.circle r="5" fill={lineColor} filter="url(#glow)"
+                <m.circle r="5" fill={lineColor} filter="url(#glowStrong)"
                   initial={{ offsetDistance: "0%", opacity: 0 }}
                   animate={{ offsetDistance: [null, "0%", "100%", "100%", "100%"], opacity: [0, 0, 1, 0, 0] }}
                   transition={{ duration: fullCycleDuration, times: [0, startTime, endTime, resetTime, 1], ease: "easeInOut", repeat: Infinity }}
@@ -193,15 +198,15 @@ export function WorldMap({
             <g key={`pts-${i}`}>
               {[{ pt: s, label: dot.start.label }, { pt: e, label: dot.end.label }].map(({ pt, label }, j) => (
                 <g key={j}>
-                  <circle cx={pt.x} cy={pt.y} r="3" fill={lineColor} filter="url(#glow)" />
-                  <circle cx={pt.x} cy={pt.y} r="3" fill={lineColor} opacity="0.4">
-                    <animate attributeName="r" from="3" to="10" dur="2s" begin={`${j * 0.5}s`} repeatCount="indefinite" />
-                    <animate attributeName="opacity" from="0.5" to="0" dur="2s" begin={`${j * 0.5}s`} repeatCount="indefinite" />
+                  <circle cx={pt.x} cy={pt.y} r="3.2" fill={lineColor} filter="url(#glowStrong)" />
+                  <circle cx={pt.x} cy={pt.y} r="3" fill={lineColor} opacity="0.5">
+                    <animate attributeName="r" from="3" to="11" dur="2s" begin={`${j * 0.5}s`} repeatCount="indefinite" />
+                    <animate attributeName="opacity" from="0.6" to="0" dur="2s" begin={`${j * 0.5}s`} repeatCount="indefinite" />
                   </circle>
                   {showLabels && label && (
-                    <foreignObject x={pt.x - 40} y={pt.y - 28} width="80" height="22">
+                    <foreignObject x={pt.x - 48} y={pt.y - 30} width="96" height="22">
                       <div className="flex items-center justify-center h-full">
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-black/80 text-white border border-white/10 whitespace-nowrap">
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/85 text-white border border-white/20 whitespace-nowrap">
                           {label}
                         </span>
                       </div>
