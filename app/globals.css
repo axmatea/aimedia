@@ -744,6 +744,7 @@ html:not(.dark) .trace-edge-inferred { stroke: rgba(5,5,7,0.26); }
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 10px;
+  transition: border-color 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
   background:
     linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018)),
     radial-gradient(circle at 24% 30%, color-mix(in oklch, var(--outcome-accent, var(--red)) 22%, transparent), transparent 34%),
@@ -1156,6 +1157,10 @@ html:not(.dark) .ambient-image { display: none; }
   .showcase-media:hover .showcase-media-img,
   .outcome-card:hover .showcase-media-img {
     transform: scale(1.04);
+  }
+  .outcome-card:hover .outcome-picture {
+    border-color: color-mix(in oklch, var(--outcome-accent, var(--red)) 34%, rgba(255,255,255,0.08));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 0 24px color-mix(in oklch, var(--outcome-accent, var(--red)) 14%, transparent);
   }
 }
 @media (prefers-reduced-motion: reduce) {

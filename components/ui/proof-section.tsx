@@ -69,6 +69,9 @@ const Disp = ({ children, className = "", style }: { children: React.ReactNode; 
 
 const VP = { once: true, margin: "0px 0px -80px 0px" } as const
 const EASE_SWIFT: [number, number, number, number] = [0.2, 0.8, 0.2, 1]
+// Expo-out reveal for the outcome cards: a longer, softer settle than the
+// header beat, so cards glide up rather than snap into place.
+const EASE_REVEAL: [number, number, number, number] = [0.16, 1, 0.3, 1]
 
 /**
  * PROOF / OUTCOMES: credibility beat.
@@ -126,8 +129,8 @@ export function ProofSection({
             return (
               <m.div
                 key={c.project}
-                initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={VP}
-                transition={{ duration: 0.82, ease: EASE_SWIFT, delay: i * 0.08 }}
+                initial={{ opacity: 0, y: 32, scale: 0.985 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={VP}
+                transition={{ duration: 0.72, ease: EASE_REVEAL, delay: i * 0.09 }}
                 className="outcome-card-wrap"
               >
                 <GlowCard glowColor={glowFor(c.accent)} customSize className="w-full h-full min-h-[320px]">
