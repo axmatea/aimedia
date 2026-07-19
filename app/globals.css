@@ -777,7 +777,7 @@ html:not(.dark) .trace-edge-inferred { stroke: rgba(5,5,7,0.26); }
   right: 14px;
   top: 12px;
   z-index: 4;
-  color: rgba(255,255,255,0.58);
+  color: rgba(255,255,255,0.7);
   font-family: var(--font-geist-mono);
   font-size: 10px;
   letter-spacing: 0.22em;
@@ -794,7 +794,7 @@ html:not(.dark) .trace-edge-inferred { stroke: rgba(5,5,7,0.26); }
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  color: rgba(255,255,255,0.58);
+  color: rgba(255,255,255,0.7);
   font-family: var(--font-geist-mono);
   font-size: 10px;
   font-weight: 700;
@@ -1003,7 +1003,7 @@ html:not(.dark) .outcome-picture {
 html:not(.dark) .outcome-title { color: #050507 !important; }
 html:not(.dark) .outcome-body { color: rgba(5,5,7,0.64); }
 html:not(.dark) .outcome-meta,
-html:not(.dark) .outcome-caption { color: rgba(5,5,7,0.58); }
+html:not(.dark) .outcome-caption { color: rgba(5,5,7,0.7); }
 html:not(.dark) .content-card,
 html:not(.dark) .pipeline-node { background: rgba(255,255,255,0.72); border-color: rgba(5,5,7,0.1); }
 
@@ -1582,7 +1582,7 @@ html:not(.dark) .ai-tag {
 }
 html:not(.dark) .ai-tag-dark {
   border-color: rgba(0,0,0,0.15);
-  color: rgba(0,0,0,0.4);
+  color: rgba(0,0,0,0.62);
 }
 html:not(.dark) .ai-switch-track[data-state=checked]   { background-color: rgba(0,0,0,0.3) !important; }
 html:not(.dark) .ai-switch-track[data-state=unchecked] { background-color: rgba(0,0,0,0.12) !important; }

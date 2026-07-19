@@ -116,15 +116,15 @@ export function LeadFunnel() {
         <div className="flex items-center gap-4">
           <div>
             <p className="text-[#C8FF60] text-sm font-bold font-mono">14.6%</p>
-            <p className="text-white/65 text-[9px] font-mono">Reply rate</p>
+            <p className="text-white/75 text-[9px] font-mono">Reply rate</p>
           </div>
           <div>
             {/* #A78BFA (not #7B2FFF): the darker purple fails 4.5:1 on this card */}
             <p className="text-[#A78BFA] text-sm font-bold font-mono">$2.4M</p>
-            <p className="text-white/65 text-[9px] font-mono">Pipeline value</p>
+            <p className="text-white/75 text-[9px] font-mono">Pipeline value</p>
           </div>
         </div>
-        <p className="text-white/55 text-[9px] font-mono">Demo data</p>
+        <p className="text-white/70 text-[9px] font-mono">Demo data</p>
       </div>
     </div>
   )

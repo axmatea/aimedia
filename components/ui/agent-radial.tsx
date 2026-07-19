@@ -154,7 +154,7 @@ export function AgentRadial() {
                       initial={reduceMotion ? false : { opacity: 0, y: 3 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
-                      className="text-[8px] font-mono text-black/55 dark:text-white/55 whitespace-nowrap"
+                      className="text-[9px] font-mono text-black/70 dark:text-white/70 whitespace-nowrap"
                     >
                       {agent.tasks[(tick + i) % agent.tasks.length]}
                     </m.span>
@@ -168,7 +168,7 @@ export function AgentRadial() {
         {/* Central Orchestrator */}
         <div className="relative z-10 flex flex-col items-center justify-center w-[88px] h-[88px] rounded-full bg-gradient-to-br from-[#7B2FFF] to-[#FF2D55] shadow-[0_0_50px_rgba(123,47,255,0.25)]">
           <Bot className="text-white w-9 h-9" />
-          <span className="text-[7px] font-bold text-white/90 mt-1 uppercase tracking-[0.15em]">Orchestrator</span>
+          <span className="text-[9px] font-bold text-white/90 mt-1 uppercase tracking-[0.15em]">Orchestrator</span>
           {/* Two-tone sonar */}
           <div className="absolute inset-[-4px] rounded-full border border-[#7B2FFF]/30 animate-[ping_3s_ease-in-out_infinite]" />
           <div className="absolute inset-[-4px] rounded-full border border-[#FF2D55]/20 animate-[ping_3s_ease-in-out_infinite]" style={{ animationDelay: "1.5s" }} />
@@ -184,7 +184,7 @@ export function AgentRadial() {
           </span>
           <span className="text-[#16a34a] dark:text-[#C8FF60] text-[9px] font-bold">All systems online</span>
         </div>
-        <span className="text-black/45 dark:text-white/50 text-[9px] font-mono">5 agents · monitored 24/7</span>
+        <span className="text-black/65 dark:text-white/70 text-[9px] font-mono">5 agents · monitored 24/7</span>
       </div>
     </div>
   )
