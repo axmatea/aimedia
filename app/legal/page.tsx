@@ -1,4 +1,12 @@
+import type { Metadata } from "next"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: { absolute: "Legal | AI MEDIA" },
+  description:
+    "Terms of Service for AX Media, the AI automation brand of AXMATEA MEDIA CORP. How our services, ownership, confidentiality, and engagements are governed.",
+  alternates: { canonical: "https://aimedia.global/legal" },
+}
 
 export default function Legal() {
   return (

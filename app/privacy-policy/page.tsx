@@ -1,4 +1,12 @@
+import type { Metadata } from "next"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: { absolute: "Privacy Policy | AI MEDIA" },
+  description:
+    "How AX Media collects, uses, and protects your personal information across our website and services, and the rights you have over your data.",
+  alternates: { canonical: "https://aimedia.global/privacy-policy" },
+}
 
 export default function PrivacyPolicy() {
   return (

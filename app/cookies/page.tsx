@@ -1,4 +1,12 @@
+import type { Metadata } from "next"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: { absolute: "Cookies | AI MEDIA" },
+  description:
+    "How AX Media uses cookies, the categories we rely on, and how you can manage your cookie preferences in your browser.",
+  alternates: { canonical: "https://aimedia.global/cookies" },
+}
 
 export default function CookiePreferences() {
   return (
