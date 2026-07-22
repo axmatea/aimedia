@@ -34,7 +34,6 @@ import { AxWordmark } from "@/components/ui/ax-wordmark"
 
 import { Disp, Tag, AmbientImage } from "@/components/home/shared"
 import { BookingSection, BookingDialog } from "@/components/home/booking"
-import { BookingButton } from "@/components/home/booking-button"
 import { SiteNav } from "@/components/home/nav"
 import { HeroVisual, HeroRotator, HeroCtas } from "@/components/home/hero-islands"
 import { Reveal } from "@/components/home/reveal"
@@ -358,20 +357,6 @@ export default function Home() {
           </section>
         ))}
       </div>
-
-      {/* Mid-page CTA band (v7): one sentence + the primary CTA while the three
-          engines are still fresh, before the canvas leaves the dark block. */}
-      {/* containIntrinsicSize inline: this band is far shorter than the 800px
-          section default, keep the placeholder honest for smooth glides. */}
-      <section className="py-16 md:py-20 px-6 bg-[#050507] relative overflow-hidden" style={{ contain: "layout paint", containIntrinsicSize: "0 280px" }}>
-        <div className="max-w-3xl mx-auto flex flex-col items-center text-center gap-6 relative z-10">
-          <p className="text-white/90 text-lg md:text-2xl font-semibold leading-snug max-w-xl">
-            Want one of these running in your business? Book the call.
-          </p>
-          <BookingButton label="Book the Call" magnetic />
-        </div>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[560px] h-[300px] bg-[#FF2D55]/14 rounded-full blur-[130px] pointer-events-none" aria-hidden />
-      </section>
 
       {/* Flow bridge out of the dark services block. No ambient bleed here:
           the proof section already runs its own scroll-linked ambient imagery. */}
