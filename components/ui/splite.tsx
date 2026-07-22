@@ -156,10 +156,10 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
   //      engaged user gets the robot right away, routed through
   //      requestIdleCallback so the boot lands in a main-thread gap and never
   //      mid-gesture.
-  //   b) FALLBACK: no gesture at all. Wait for the window load event plus a
-  //      quiet beat, then mount on idle. The dark ambient hero background
-  //      carries the space until then, and the runtime never competes with
-  //      hydration or the initial chunk work.
+  //   b) DEFAULT (no gesture): a short 200ms beat after this post-hydration
+  //      effect runs, then mount on the next idle gap. The hero headline is
+  //      already painted server-side (the LCP), so this reads as a fast,
+  //      intentional arrival without the boot blocking the load frame.
   useEffect(() => {
     if (motionOk !== true || !inView || canMountScene) return
 
@@ -178,9 +178,9 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
 
     // Every mount goes through requestIdleCallback with a hard ceiling so the
     // boot waits for a gap but can never stall forever. The ceiling differs by
-    // path: the gesture fast-path keeps the original tight 600ms (an engaged
-    // user gets the robot right away), the no-gesture fallback allows a longer
-    // 1200ms window so the boot stays clear of the Lighthouse/LCP phase.
+    // path: the gesture fast-path uses a tight 300ms (an engaged user gets the
+    // robot near-instantly), the no-gesture default uses a 500ms window so an
+    // idle visitor still sees the robot arrive fast, right after first paint.
     const scheduleIdle = (timeout: number) => {
       if (cancelled || idleId !== null) return
       if (win.requestIdleCallback) {
@@ -193,7 +193,7 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
     const INPUT_EVENTS: (keyof WindowEventMap)[] = ['pointerdown', 'mousemove', 'wheel', 'touchstart', 'keydown']
     const onFirstInput = () => {
       detachInput()
-      scheduleIdle(600)
+      scheduleIdle(300)
     }
     const detachInput = () => {
       for (const ev of INPUT_EVENTS) window.removeEventListener(ev, onFirstInput)
@@ -202,21 +202,18 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
       window.addEventListener(ev, onFirstInput, { passive: true })
     }
 
-    // No-gesture post-load beat (v7: 800 -> 2400ms). Long enough that the
-    // ~1.3 MB runtime + scene boot never overlaps the load/LCP window on
-    // throttled phones, short enough that an idle visitor still sees the live
-    // robot in ~2.5-3.5s. Any real gesture short-circuits this via the fast
-    // path above, so engaged users are unaffected.
-    const afterLoad = () => {
-      timeouts.push(window.setTimeout(() => scheduleIdle(1200), 2400))
-    }
-    if (document.readyState === 'complete') afterLoad()
-    else window.addEventListener('load', afterLoad, { once: true })
+    // No-gesture path (v7.3): the robot should read as a fast, intentional
+    // arrival, not a late pop. This effect already runs post-hydration, after
+    // the server-rendered hero headline (the LCP element) has painted, so a
+    // short 200ms beat here does not push LCP. It just lets hydration settle one
+    // frame, then boots the ~1.3 MB runtime on the next idle gap (500ms ceiling)
+    // so the boot never blocks the main thread on load. Any real gesture still
+    // short-circuits this via the tighter fast path above.
+    timeouts.push(window.setTimeout(() => scheduleIdle(500), 200))
 
     return () => {
       cancelled = true
       detachInput()
-      window.removeEventListener('load', afterLoad)
       for (const t of timeouts) window.clearTimeout(t)
       if (idleId !== null) win.cancelIdleCallback?.(idleId)
     }
