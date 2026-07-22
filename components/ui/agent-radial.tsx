@@ -12,7 +12,15 @@ const AGENTS = [
   { icon: Brain, label: "Strategy", color: "#FF8C42", tasks: ["3 campaigns live", "Reallocating budget", "Planning next sprint"] },
 ]
 
-const RADIUS = 125
+// Geometry (px, and 1:1 with the beam SVG viewBox units). The dashed boundary
+// ring is the visible circle; every node body AND its label must land inside it
+// with margin. Nodes orbit well inside the ring, and the container (max 340 =>
+// radius 170) leaves a further margin so nothing clips at any width.
+const NODE_ORBIT = 80  // node-center distance from the hub (was 125)
+const RING = 162       // dashed boundary-ring radius; nodes + labels sit inside it
+const INNER_RING = 122 // faint concentric guide between hub and boundary
+const BEAM_START = 40  // beam rail start (just outside the 76px hub)
+const BEAM_END = 56    // beam rail end (just inside the node body)
 const BEAM_PERIOD = 2.8 // seconds; must match .agent-beam / .agent-rx in globals.css
 
 /**
@@ -60,14 +68,14 @@ export function AgentRadial() {
       </div>
 
       <div className="relative aspect-square w-full max-w-[340px] flex items-center justify-center">
-        {/* Orbit rings */}
+        {/* Orbit rings: dashed circle is the boundary the nodes stay inside */}
         <div
           className="orbit-ring-drift absolute rounded-full border border-dashed border-black/10 dark:border-white/8"
-          style={{ width: `${RADIUS * 2}px`, height: `${RADIUS * 2}px` }}
+          style={{ width: `${RING * 2}px`, height: `${RING * 2}px` }}
         />
         <div
           className="absolute rounded-full border border-black/[0.05] dark:border-white/[0.03]"
-          style={{ width: `${RADIUS * 2.5}px`, height: `${RADIUS * 2.5}px` }}
+          style={{ width: `${INNER_RING * 2}px`, height: `${INNER_RING * 2}px` }}
         />
 
         {/* Rotating constellation: beams + agents */}
@@ -76,10 +84,10 @@ export function AgentRadial() {
           <svg className="absolute inset-0 w-full h-full" viewBox="-170 -170 340 340" fill="none" aria-hidden>
             {AGENTS.map((agent, i) => {
               const angle = (i / AGENTS.length) * 2 * Math.PI - Math.PI / 2
-              const x1 = 52 * Math.cos(angle)
-              const y1 = 52 * Math.sin(angle)
-              const x2 = 101 * Math.cos(angle)
-              const y2 = 101 * Math.sin(angle)
+              const x1 = BEAM_START * Math.cos(angle)
+              const y1 = BEAM_START * Math.sin(angle)
+              const x2 = BEAM_END * Math.cos(angle)
+              const y2 = BEAM_END * Math.sin(angle)
               const delay = `${(i * (BEAM_PERIOD / AGENTS.length)).toFixed(2)}s`
               const beamStyle = { animationDelay: delay, "--beam-dur": `${(2.4 + i * 0.2).toFixed(1)}s` } as React.CSSProperties
               return (
@@ -116,8 +124,8 @@ export function AgentRadial() {
           {/* Orbiting sub-agents (counter-rotated to stay upright) */}
           {AGENTS.map((agent, i) => {
             const angle = (i / AGENTS.length) * 2 * Math.PI - Math.PI / 2
-            const x = RADIUS * Math.cos(angle)
-            const y = RADIUS * Math.sin(angle)
+            const x = NODE_ORBIT * Math.cos(angle)
+            const y = NODE_ORBIT * Math.sin(angle)
             const Icon = agent.icon
             const delay = (i * (BEAM_PERIOD / AGENTS.length)).toFixed(2)
             return (
@@ -165,10 +173,10 @@ export function AgentRadial() {
           })}
         </div>
 
-        {/* Central Orchestrator */}
-        <div className="relative z-10 flex flex-col items-center justify-center w-[88px] h-[88px] rounded-full bg-gradient-to-br from-[#7B2FFF] to-[#FF2D55] shadow-[0_0_50px_rgba(123,47,255,0.25)]">
-          <Bot className="text-white w-9 h-9" />
-          <span className="text-[9px] font-bold text-white/90 mt-1 uppercase tracking-[0.15em]">Orchestrator</span>
+        {/* Central Orchestrator (76px hub: beams start just outside its edge) */}
+        <div className="relative z-10 flex flex-col items-center justify-center w-[76px] h-[76px] rounded-full bg-gradient-to-br from-[#7B2FFF] to-[#FF2D55] shadow-[0_0_50px_rgba(123,47,255,0.25)]">
+          <Bot className="text-white w-8 h-8" />
+          <span className="text-[8px] font-bold text-white/90 mt-0.5 uppercase tracking-[0.12em]">Orchestrator</span>
           {/* Two-tone sonar */}
           <div className="absolute inset-[-4px] rounded-full border border-[#7B2FFF]/30 animate-[ping_3s_ease-in-out_infinite]" />
           <div className="absolute inset-[-4px] rounded-full border border-[#FF2D55]/20 animate-[ping_3s_ease-in-out_infinite]" style={{ animationDelay: "1.5s" }} />
