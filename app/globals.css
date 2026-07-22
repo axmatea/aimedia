@@ -1681,23 +1681,29 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
 
 @media (max-width: 767px) {
   .global-world-map {
-    width: 132vw !important;
+    /* Full-bleed to the viewport edges but never WIDER than the viewport, so no
+       horizontal overflow can appear. Keep the true 2:1 aspect: the dotted image
+       (object-cover) and the animated overlay (preserveAspectRatio meet) then
+       frame identically, so no squish, no warped dots, no misaligned beams. */
+    width: 100vw !important;
     max-width: none;
-    height: clamp(330px, 58svh, 520px) !important;
-    aspect-ratio: auto !important;
+    aspect-ratio: 2 / 1 !important;
+    height: auto !important;
     margin-left: 50%;
-    transform: translateX(-50%) translateY(-10px);
+    transform: translateX(-50%);
     border-radius: 0;
   }
 
+  /* Drop the 1.16 zoom that cropped and warped the map on phones. With a real
+     2:1 box the image and overlay already fill the frame with no crop. */
   .global-world-map > img,
   .global-world-map > svg {
-    transform: scale(1.16);
-    transform-origin: center center;
+    transform: none;
   }
 
-  .global-world-map foreignObject span {
-    font-size: 11px !important;
-    padding: 2px 7px !important;
+  /* Ten city pills overlap heavily at phone width (Europe cluster, Dubai twice),
+     so hide the labels and keep the glowing endpoints plus the beam lines. */
+  .global-world-map foreignObject {
+    display: none;
   }
 }
