@@ -995,6 +995,18 @@ html:not(.dark) .proof-section {
     radial-gradient(700px 380px at 18% 6%, rgba(255,45,85,0.08), transparent 60%),
     linear-gradient(180deg, #F5F4F0 0%, #ECEAE5 14%, #ECEAE5 86%, #F5F4F0 100%);
 }
+/* Dark theme, phones only (the light rule above is more specific, so it always
+   wins in light): start the proof red glow lower and softer so the section's
+   top edge stays flat #050507. That lets it melt into the out-of-dark bridge and
+   the AI-ops services tail above instead of showing a hard band on mobile. */
+@media (max-width: 767px) {
+  .proof-section {
+    background:
+      radial-gradient(660px 340px at 26% 30%, rgba(255,45,85,0.06), transparent 62%),
+      radial-gradient(560px 300px at 84% 80%, rgba(255,255,255,0.03), transparent 62%),
+      var(--ai-bg);
+  }
+}
 html:not(.dark) .outcome-picture {
   background:
     linear-gradient(180deg, rgba(255,255,255,0.92), rgba(245,244,240,0.78)),
@@ -1257,6 +1269,13 @@ html:not(.dark) .ai-booking-bridge { background: linear-gradient(to bottom, #F5F
    ambient render bleed. Light theme: gradient melts the paper surface into and
    out of the dark services block instead of a hard edge. */
 .ax-flow-bridge { pointer-events: none; }
+/* Dark theme: services tail and the proof section are both #050507, so the
+   band the eye caught on mobile was the proof top-glow appearing abruptly. Carry
+   a faint warm gradient through the bridge so the two surfaces melt rather than
+   meet at a line. Light theme keeps its own more-specific rules below. */
+.ax-bridge-out-of-dark {
+  background: linear-gradient(to bottom, transparent, rgba(255,45,85,0.02));
+}
 html:not(.dark) .ax-bridge-into-dark {
   background: linear-gradient(to bottom, #ECEAE5, #050507);
 }
