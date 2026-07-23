@@ -1322,6 +1322,59 @@ html:not(.dark) .ai-faq-row {
   border-image: linear-gradient(to right, transparent, rgba(0,0,0,0.05), transparent) 1;
 }
 
+/* App-grade FAQ disclosure. A native <details> snaps open with no motion, which
+   is the most web-like moment left on the page: on a phone a disclosure row is
+   expected to glide open and to answer the finger while it is held. Both are
+   pure CSS, so the FAQ stays server-rendered with zero hydration JS and no
+   extra bytes on the critical path.
+
+   The height glide animates ::details-content with interpolate-size scoped to
+   the row (allow-keywords is what makes 0 -> auto animatable) plus
+   transition-behavior: allow-discrete, so the collapse animates too instead of
+   the content vanishing on frame one. Browsers without ::details-content keep
+   exactly today's instant open, so this is additive with no fallback risk. */
+.ai-faq-row {
+  interpolate-size: allow-keywords;
+}
+.ai-faq-row::details-content {
+  block-size: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition-property: block-size, opacity, content-visibility;
+  transition-duration: 340ms, 220ms, 340ms;
+  transition-timing-function: var(--ease-swift), ease, linear;
+  transition-behavior: allow-discrete;
+}
+.ai-faq-row[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+}
+
+/* Tactile press on the whole row, iOS list-row style. The inline padding is
+   cancelled by an equal negative margin, so the question and the + toggle stay
+   on the exact pixels they sit on today and nothing reflows when the highlight
+   appears. Touch-only: pointer devices already get the cursor affordance. */
+.ai-faq-row > summary {
+  margin-inline: -0.75rem;
+  padding-inline: 0.75rem;
+  border-radius: 0.875rem;
+  transition: background-color 200ms ease;
+}
+@media (hover: none) {
+  .ai-faq-row > summary:active {
+    background-color: rgba(255, 255, 255, 0.055);
+  }
+  html:not(.dark) .ai-faq-row > summary:active {
+    background-color: rgba(0, 0, 0, 0.045);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-faq-row::details-content,
+  .ai-faq-row > summary {
+    transition: none;
+  }
+}
+
 /* ── Glitch ── */
 @keyframes glitch {
   0%,100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
