@@ -1512,6 +1512,32 @@ input, textarea, [contenteditable="true"], [contenteditable=""] {
   user-select: text;
 }
 
+/* ── Standalone / safe-area (installed PWA) ──────────────────────────────
+   With viewportFit: cover the layout extends under the notch and the home
+   indicator. Pad the fixed nav (and, via the tab bar layer below, the page
+   bottom) so no content or control sits under system UI. max(env, fallback)
+   collapses to the plain fallback in a normal browser tab (insets are 0
+   there), so nothing shifts outside standalone mode. */
+.ai-nav {
+  padding-top: max(env(safe-area-inset-top), 1rem);
+  padding-left: max(env(safe-area-inset-left), 1rem);
+  padding-right: max(env(safe-area-inset-right), 1rem);
+}
+@media (min-width: 768px) {
+  .ai-nav {
+    padding-top: max(env(safe-area-inset-top), 1.25rem);
+    padding-left: max(env(safe-area-inset-left), 2.5rem);
+    padding-right: max(env(safe-area-inset-right), 2.5rem);
+  }
+}
+
+/* Kill the browser pull-to-refresh / rubber-band bounce at the document root
+   (already set on body; mirrored on html so an installed shell never bounces),
+   while keeping iOS momentum scrolling intact. */
+html {
+  overscroll-behavior-y: none;
+}
+
 /* Sections keep layout/style containment for cheap invalidation. The old
    blanket transform: translateZ(0) layer promotion was removed (v7): a
    compositor layer per section costs GPU memory and raster work on phones
