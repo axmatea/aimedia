@@ -4,16 +4,43 @@
  * SiteNav island (v7.2): the fixed top nav. Client because of the theme
  * toggle, the Lenis anchor glides, and the booking dialog triggers. Markup
  * moved verbatim from app/page.tsx.
+ *
+ * Condensing bar (app-shell behaviour): at the very top the bar is fully
+ * transparent so the hero reads edge to edge, the way a native app opens on a
+ * full-bleed large-title screen. Past ~12px it materialises into a compact
+ * blurred bar with a hairline, and the wordmark scales down a touch. Styling
+ * lives in globals.css under .ai-nav.is-top / .is-scrolled; this only flips
+ * the class from a passive, rAF-coalesced scroll listener.
  */
 
+import { useEffect, useState } from "react"
 import ThemeToggle from "@/components/ui/toggle-theme"
 import { AxWordmark } from "@/components/ui/ax-wordmark"
 import { NAV_LINKS } from "@/components/home/data"
 import { scrollToId, openBooking } from "@/components/home/actions"
 
 export function SiteNav() {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    let frame = 0
+    const read = () => {
+      frame = 0
+      setScrolled(window.scrollY > 12)
+    }
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(read)
+    }
+    read()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      if (frame) cancelAnimationFrame(frame)
+    }
+  }, [])
+
   return (
-    <nav className="ai-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-4 md:py-5 backdrop-blur-md border-b ai-border">
+    <nav className={`ai-nav ${scrolled ? "is-scrolled" : "is-top"} fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-4 md:py-5 backdrop-blur-md border-b ai-border`}>
       <a href="#" className="flex items-center flex-shrink-0">
         {/* Inline wordmark in the real document fonts, themed via currentColor */}
         <AxWordmark className="ax-wordmark h-8 md:h-11 w-auto text-[#050507] dark:text-white" />

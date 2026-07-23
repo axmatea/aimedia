@@ -1520,14 +1520,62 @@ input, textarea, [contenteditable="true"], [contenteditable=""] {
    there), so nothing shifts outside standalone mode. */
 .ai-nav {
   padding-top: max(env(safe-area-inset-top), 1rem);
+  padding-bottom: 1rem;
   padding-left: max(env(safe-area-inset-left), 1rem);
   padding-right: max(env(safe-area-inset-right), 1rem);
 }
 @media (min-width: 768px) {
   .ai-nav {
     padding-top: max(env(safe-area-inset-top), 1.25rem);
+    padding-bottom: 1.25rem;
     padding-left: max(env(safe-area-inset-left), 2.5rem);
     padding-right: max(env(safe-area-inset-right), 2.5rem);
+  }
+}
+
+/* ── Condensing nav (native app-shell behaviour) ─────────────────────────
+   At the top of the page the bar dissolves so the hero reads full-bleed,
+   like a native large-title screen. Past the scroll threshold the SiteNav
+   island adds .is-scrolled and the bar materialises: blur, hairline, soft
+   lift, and a tighter height with a slightly smaller wordmark. Only
+   compositor-cheap properties animate, and the nav is fixed so nothing in
+   the page shifts (no CLS). */
+.ai-nav {
+  transition:
+    padding-top 260ms ease,
+    padding-bottom 260ms ease,
+    background-color 260ms ease,
+    border-bottom-color 260ms ease,
+    box-shadow 260ms ease;
+}
+.ai-nav.is-top {
+  background-color: transparent !important;
+  border-bottom-color: transparent !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.ai-nav.is-scrolled {
+  padding-top: max(env(safe-area-inset-top), 0.625rem);
+  padding-bottom: 0.625rem;
+  box-shadow: 0 10px 34px -22px rgba(0, 0, 0, 0.75);
+}
+@media (min-width: 768px) {
+  .ai-nav.is-scrolled {
+    padding-top: max(env(safe-area-inset-top), 0.875rem);
+    padding-bottom: 0.875rem;
+  }
+}
+.ai-nav .ax-wordmark {
+  transform-origin: left center;
+  transition: transform 260ms ease;
+}
+.ai-nav.is-scrolled .ax-wordmark {
+  transform: scale(0.92);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-nav,
+  .ai-nav .ax-wordmark {
+    transition: none;
   }
 }
 
