@@ -1547,6 +1547,17 @@ html {
   }
 }
 
+/* App-grade touch niceties: kill the grey iOS tap-highlight flash everywhere.
+   Tactile feedback is carried intentionally by the active:scale states on the
+   nav, tab bar, and primary buttons instead. Text selection is unchanged and
+   still governed by the rules above: off site-wide as an editorial surface,
+   and re-enabled only where intended (form fields via input/textarea, and the
+   legal / privacy / cookies pages via their select-text roots). color-scheme
+   dark is declared via the viewport meta in app/layout.tsx. */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* Sections keep layout/style containment for cheap invalidation. The old
    blanket transform: translateZ(0) layer promotion was removed (v7): a
    compositor layer per section costs GPU memory and raster work on phones
