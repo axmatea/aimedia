@@ -1632,6 +1632,59 @@ input, textarea, [contenteditable="true"], [contenteditable=""] {
   }
 }
 
+/* ── Scroll progress hairline (native reading-progress cue) ──────────────
+   A 2px brand rule riding the nav's bottom edge, filling left to right as
+   the document scrolls. This is the cue installed reading apps use to say
+   "here is how much is left", and it makes the condensing bar feel like a
+   live app-shell chrome rather than a static header.
+
+   Driven entirely by a CSS scroll-driven animation on ::after, so it costs
+   zero JavaScript, zero hydration, and never runs on the main thread: the
+   compositor maps scroll offset straight onto scaleX. Lenis moves the real
+   document scroll (syncTouch is off, so phones use native scroll), which is
+   exactly what scroll(root block) reads, so the fill stays in lockstep with
+   the glide.
+
+   Wrapped in @supports so browsers without scroll-driven animations simply
+   never paint the element, and hidden under prefers-reduced-motion. It only
+   fades in once the bar has materialised (.is-scrolled), keeping the hero
+   edge to edge and clean. */
+@supports (animation-timeline: scroll()) {
+  .ai-nav::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left center;
+    background: linear-gradient(
+      90deg,
+      color-mix(in oklch, var(--red, #FF2D55) 45%, transparent) 0%,
+      var(--red, #FF2D55) 55%,
+      var(--red-hover, #FF2D55) 100%
+    );
+    opacity: 0;
+    transition: opacity 260ms ease;
+    pointer-events: none;
+    animation: ai-nav-progress linear both;
+    animation-timeline: scroll(root block);
+  }
+  .ai-nav.is-scrolled::after {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ai-nav::after {
+      display: none;
+    }
+  }
+}
+@keyframes ai-nav-progress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
 /* Kill the browser pull-to-refresh / rubber-band bounce at the document root
    (already set on body; mirrored on html so an installed shell never bounces),
    while keeping iOS momentum scrolling intact. */
