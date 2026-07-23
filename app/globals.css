@@ -1832,6 +1832,61 @@ html:not(.dark) .app-tabbar-shell::before {
   );
 }
 
+/* ── Footer rail (app-style About / Legal rows on phones) ────────────────
+   The footer is the last surface before the mobile tab bar, and its contact
+   and legal links were a single wrapped line of 12px text: roughly a 14px
+   hit area, well under the 44px minimum an installed app gives these rows,
+   and visually a desktop footer squeezed onto a phone.
+
+   Below md each link becomes a bordered row in a 2-up grid with a full 44px
+   target, the site's standard tactile press-scale, and the email spanning the
+   full width as the primary contact. From md up the rail is inert (the markup
+   carries md:flex md:gap-6) and the desktop footer stays exactly as it was, so
+   nothing above phone width changes. Pure CSS: no new element, no JS, no
+   layout work outside this media query. */
+@media (max-width: 767.98px) {
+  .ai-footer-rail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .ai-footer-rail .ai-footer-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.04);
+    text-align: center;
+    transition: transform 200ms ease, background-color 200ms ease, color 200ms ease;
+  }
+  html:not(.dark) .ai-footer-rail .ai-footer-link {
+    border-color: rgba(0, 0, 0, 0.07);
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+  .ai-footer-rail .ai-footer-link-wide {
+    grid-column: span 2;
+  }
+  .ai-footer-rail .ai-footer-link:active {
+    transform: scale(0.97);
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+  html:not(.dark) .ai-footer-rail .ai-footer-link:active {
+    background-color: rgba(0, 0, 0, 0.07);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ai-footer-rail .ai-footer-link {
+      transition: none;
+    }
+    .ai-footer-rail .ai-footer-link:active {
+      transform: none;
+    }
+  }
+}
+
 /* App-grade touch niceties: kill the grey iOS tap-highlight flash everywhere.
    Tactile feedback is carried intentionally by the active:scale states on the
    nav, tab bar, and primary buttons instead. Text selection is unchanged and

@@ -442,12 +442,18 @@ export default function Home() {
             <AxWordmark className="ax-wordmark h-8 w-auto text-[#050507] dark:text-white" />
             <span className="ai-muted text-xs">© 2026 AX Media · aimedia.global</span>
           </div>
-          <div className="flex gap-6 flex-wrap justify-center">
-            <a href="mailto:info@aimedia.global" className="ai-muted text-xs hover:text-[#FF2D55] transition-colors">info@aimedia.global</a>
-            <a href="/privacy-policy" className="ai-muted text-xs hover:text-[#FF2D55] transition-colors">Privacy</a>
-            <a href="/cookies" className="ai-muted text-xs hover:text-[#FF2D55] transition-colors">Cookies</a>
-            <a href="/legal" className="ai-muted text-xs hover:text-[#FF2D55] transition-colors">Legal</a>
-          </div>
+          {/* Bottom rail. On phones this row sits directly above the app tab
+              bar, so below md the links become real 44px rows in a 2-up grid,
+              the way an installed app lists its About / Legal entries, instead
+              of a squeezed line of 12px text. From md up it collapses back to
+              the inline link row the desktop footer has always had. Layout and
+              press feedback live in globals.css under .ai-footer-rail. */}
+          <nav aria-label="Contact and legal" className="ai-footer-rail md:flex md:gap-6 md:flex-wrap md:justify-center">
+            <a href="mailto:info@aimedia.global" className="ai-footer-link ai-footer-link-wide ai-muted text-xs hover:text-[#FF2D55] transition-colors">info@aimedia.global</a>
+            <a href="/privacy-policy" className="ai-footer-link ai-muted text-xs hover:text-[#FF2D55] transition-colors">Privacy</a>
+            <a href="/cookies" className="ai-footer-link ai-muted text-xs hover:text-[#FF2D55] transition-colors">Cookies</a>
+            <a href="/legal" className="ai-footer-link ai-muted text-xs hover:text-[#FF2D55] transition-colors">Legal</a>
+          </nav>
         </div>
       </footer>
 
