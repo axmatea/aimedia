@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, type ReactElement } from "react"
 import { scrollToId, openBooking } from "@/components/home/actions"
 
 /**
@@ -22,13 +22,56 @@ import { scrollToId, openBooking } from "@/components/home/actions"
  * No new dependencies, no per-frame work: three IntersectionObservers and two
  * listeners. Entrance and tap feedback are CSS transitions, disabled under
  * prefers-reduced-motion.
+ *
+ * Each tab is an icon-over-label stack, the shape every installed iOS/Android
+ * app uses, which also lifts each target past the 44px minimum tap size.
  */
 
 type TabId = "services" | "proof"
 
-const TABS: { id: TabId; label: string; target: string }[] = [
-  { id: "services", label: "Services", target: "services" },
-  { id: "proof", label: "Work", target: "proof" },
+const iconProps = {
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.75,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+  className: "h-5 w-5",
+  "aria-hidden": true,
+}
+
+function ServicesIcon() {
+  return (
+    <svg {...iconProps}>
+      <path d="M12 3 3 7.5l9 4.5 9-4.5L12 3Z" />
+      <path d="m3 12.5 9 4.5 9-4.5" />
+      <path d="m3 17 9 4.5 9-4.5" />
+    </svg>
+  )
+}
+
+function WorkIcon() {
+  return (
+    <svg {...iconProps}>
+      <rect x="3" y="4" width="18" height="16" rx="2.5" />
+      <path d="m3 15.5 4.5-4a2 2 0 0 1 2.7 0L15 16" />
+      <circle cx="15.5" cy="9" r="1.5" />
+    </svg>
+  )
+}
+
+function BookIcon() {
+  return (
+    <svg {...iconProps}>
+      <rect x="3" y="5" width="18" height="16" rx="2.5" />
+      <path d="M8 3v4M16 3v4M3 10h18" />
+    </svg>
+  )
+}
+
+const TABS: { id: TabId; label: string; target: string; Icon: () => ReactElement }[] = [
+  { id: "services", label: "Services", target: "services", Icon: ServicesIcon },
+  { id: "proof", label: "Work", target: "proof", Icon: WorkIcon },
 ]
 
 export function AppTabBar() {
@@ -92,23 +135,27 @@ export function AppTabBar() {
             type="button"
             onClick={() => scrollToId(tab.target)}
             aria-current={active === tab.id ? "true" : undefined}
-            className={`flex-1 rounded-xl px-3 py-2.5 text-xs font-bold uppercase tracking-wider transition-[color,background-color,transform] duration-200 active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100 ${
+            className={`flex flex-1 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-[10px] font-bold uppercase tracking-wider transition-[color,background-color,transform] duration-200 active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100 ${
               active === tab.id
                 ? "bg-white/10 text-white"
                 : "text-white/60 [@media(hover:hover)]:hover:text-white [@media(hover:hover)]:hover:bg-white/5"
             }`}
           >
+            <tab.Icon />
             {tab.label}
           </button>
         ))}
         <button
           type="button"
           onClick={openBooking}
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[#FF2D55]/70 bg-[#FF2D55]/15 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-transform duration-200 active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100"
+          className="flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border border-[#FF2D55]/70 bg-[#FF2D55]/15 px-2 py-2 text-[10px] font-bold uppercase tracking-wider text-white transition-transform duration-200 active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100"
         >
-          <span className="relative flex h-2 w-2" aria-hidden>
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF2D55] opacity-75 motion-reduce:animate-none" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF2D55]" />
+          <span className="relative">
+            <BookIcon />
+            <span className="absolute -right-1 -top-0.5 flex h-2 w-2" aria-hidden>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF2D55] opacity-75 motion-reduce:animate-none" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF2D55]" />
+            </span>
           </span>
           Book
         </button>
