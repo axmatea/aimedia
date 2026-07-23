@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Space_Grotesk, Bebas_Neue } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { LazyMotion, domAnimation } from "motion/react";
@@ -64,6 +64,26 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" },
   },
+  // Installable / standalone (iOS home-screen) behaviour. These render the
+  // apple-mobile-web-app meta tags so the site launches full-bleed with a
+  // translucent status bar over the dark hero. The web manifest lives in
+  // app/manifest.ts and is auto-linked by Next.
+  appleWebApp: {
+    capable: true,
+    title: "AI MEDIA",
+    statusBarStyle: "black-translucent",
+  },
+};
+
+// Viewport-scoped fields (Next requires themeColor / colorScheme / viewportFit
+// here, not in `metadata`). viewportFit "cover" lets env(safe-area-inset-*)
+// resolve to real notch/home-indicator insets in standalone mode.
+export const viewport: Viewport = {
+  themeColor: "#050507",
+  colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 const jsonLd = {
