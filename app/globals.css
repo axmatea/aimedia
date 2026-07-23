@@ -1538,6 +1538,15 @@ html {
   overscroll-behavior-y: none;
 }
 
+/* Reserve space for the mobile app tab bar (AppTabBar, hidden lg+) so the
+   footer and any bottom content clear the fixed bar plus the home indicator.
+   Bar surface ≈ 3.25rem + its own safe-area padding. */
+@media (max-width: 1023px) {
+  .ai-app-root {
+    padding-bottom: calc(3.25rem + max(env(safe-area-inset-bottom, 0px), 0.5rem));
+  }
+}
+
 /* Sections keep layout/style containment for cheap invalidation. The old
    blanket transform: translateZ(0) layer promotion was removed (v7): a
    compositor layer per section costs GPU memory and raster work on phones

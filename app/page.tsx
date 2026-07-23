@@ -16,7 +16,7 @@
  *   lazy-islands                AgentRadial, LeadFunnel, N8nWorkflowBlock,
  *                               AIUGCCreators, WorldMap (ssr:false, unchanged)
  *   BookingSection/Dialog/      the whole booking stack + sticky mobile pill
- *   BookingButton/StickyCta
+ *   BookingButton/AppTabBar
  *
  * Rule for future edits: static content stays OUT of "use client" files; a
  * new widget gets its own island (or lives in lazy-islands if it should stay
@@ -28,7 +28,7 @@ import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import { CountUp } from "@/components/ui/count-up"
 import { ProofSection } from "@/components/ui/proof-section"
-import { StickyCta } from "@/components/ui/sticky-cta"
+import { AppTabBar } from "@/components/home/app-tabbar"
 import { SERVE_ICONS } from "@/components/ui/serve-icons"
 import { AxWordmark } from "@/components/ui/ax-wordmark"
 
@@ -125,7 +125,7 @@ function TraceableSystemMap() {
 // ── Page ────────────────────────────────────────────────────────────────────
 export default function Home() {
   return (
-    <main className="w-full ai-page overflow-hidden grain">
+    <main className="w-full ai-page ai-app-root overflow-hidden grain">
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <SiteNav />
@@ -426,9 +426,10 @@ export default function Home() {
       {/* Native <dialog> booking modal, opened by the sticky nav CTA + Contact link */}
       <BookingDialog />
 
-      {/* Mobile-only sticky booking pill: appears after the hero, hides around
-          the booking section and while the dialog is open */}
-      <StickyCta />
+      {/* Mobile-only app-style bottom tab bar (Services / Work / Book): appears
+          after the hero, hides around the booking section and while the dialog
+          is open. Replaces the old floating booking pill. */}
+      <AppTabBar />
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
       <footer className="ai-page py-10 px-6">
