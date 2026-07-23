@@ -306,6 +306,9 @@ export const BookingDialog = memo(function BookingDialog() {
     >
       {open && (
         <div className="relative bg-[#050507]">
+          {/* Sheet grab handle (phones only, styled in globals.css): the visual
+              cue that this modal is presented as a bottom sheet. Decorative. */}
+          <span className="booking-sheet-grip" aria-hidden />
           <button
             type="button"
             onClick={close}

@@ -1484,6 +1484,98 @@ html:not(.dark) .ai-faq-row {
   backdrop-filter: blur(6px);
 }
 
+/* ── Bottom-sheet presentation on phones (native modal-presentation feel) ──
+   Instead of a small centered box floating mid screen, the booking modal is
+   presented the way an installed app presents a modal on a phone: a full-width
+   sheet anchored to the bottom edge, rounded only at the top, rising over a
+   blurred backdrop, with a grab handle at its lip. The desktop dialog is
+   untouched. The <dialog> element, showModal focus trap, and the open-booking /
+   booking-closed event contract are all unchanged: this is presentation only. */
+@media (max-width: 767px) {
+  .booking-dialog {
+    margin: auto auto 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 92svh;
+    border-bottom: 0;
+    border-radius: 22px 22px 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-shadow: 0 -24px 90px -20px rgba(0, 0, 0, 0.85);
+  }
+}
+
+/* Entrance choreography. The transition lives on the [open] state only, so the
+   sheet animates IN (from the starting style below) and closes instantly, which
+   matches the markup: BookingDialog unmounts its children on close, so a slow
+   exit would animate an empty shell. display and overlay ride along as discrete
+   properties so the transition is allowed to run as the dialog enters the top
+   layer. Browsers without @starting-style simply show the dialog immediately,
+   exactly as before, and an unsupported allow-discrete drops the whole
+   declaration rather than breaking anything. */
+.booking-dialog[open] {
+  transition:
+    opacity 260ms var(--ease-swift, cubic-bezier(0.22, 1, 0.36, 1)),
+    transform 340ms var(--ease-swift, cubic-bezier(0.22, 1, 0.36, 1)),
+    display 340ms allow-discrete,
+    overlay 340ms allow-discrete;
+}
+.booking-dialog[open]::backdrop {
+  transition:
+    opacity 260ms ease,
+    display 260ms allow-discrete,
+    overlay 260ms allow-discrete;
+}
+@starting-style {
+  .booking-dialog[open] {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  .booking-dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+@media (max-width: 767px) {
+  @starting-style {
+    .booking-dialog[open] {
+      opacity: 1;
+      transform: translateY(100%);
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .booking-dialog[open],
+  .booking-dialog[open]::backdrop {
+    transition: none;
+  }
+}
+
+/* Grab handle: the one detail that tells a thumb "this is a sheet". Sticky to
+   the sheet lip so it stays visible while the flow scrolls, pointer-events off
+   so it never steals a tap from the close button above it. Phones only. */
+.booking-sheet-grip {
+  display: none;
+}
+@media (max-width: 767px) {
+  .booking-sheet-grip {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 10px 0 6px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, #050507 62%, transparent);
+  }
+  .booking-sheet-grip::after {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 4px;
+    margin: 0 auto;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.22);
+  }
+}
+
 /* ── Smooth scroll (Lenis) ── */
 html {
   scroll-behavior: smooth;       /* fallback when Lenis is off (reduced-motion) */
