@@ -165,7 +165,7 @@ export function AppTabBar() {
         <button
           type="button"
           onClick={openBooking}
-          className="relative z-10 flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border border-[#FF2D55]/70 bg-[#FF2D55]/15 px-2 py-2 text-[10px] font-bold uppercase tracking-wider text-white transition-transform duration-200 active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100"
+          className="app-tab-cta relative z-10 flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2 text-[10px] font-bold uppercase tracking-wider text-white transition-[transform,box-shadow] duration-200 active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100"
         >
           <span className="relative">
             <BookIcon />
