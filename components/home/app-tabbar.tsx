@@ -124,7 +124,7 @@ export function AppTabBar() {
     <nav
       aria-label="Quick navigation"
       inert={!show}
-      className={`lg:hidden fixed bottom-0 left-0 right-0 z-40 transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none ${
+      className={`app-tabbar-shell lg:hidden fixed bottom-0 left-0 right-0 z-40 transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none ${
         show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full pointer-events-none"
       }`}
       style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 0.5rem)" }}

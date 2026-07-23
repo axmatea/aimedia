@@ -1793,6 +1793,45 @@ html {
   }
 }
 
+/* Material scrim under the mobile tab bar. Today the page runs edge to edge
+   beneath a floating pill, so the last line of content and the bar's rounded
+   corners collide at the viewport bottom and the chrome reads as a card lying
+   on the page. Installed apps veil the strip above their tab bar so content
+   dissolves into the chrome instead of sliding behind a hard edge, which is
+   what gives the bar its sense of depth and makes it read as a layer above the
+   content rather than in it.
+
+   Pure CSS on a pseudo-element inside the existing <nav>, so it inherits the
+   bar's entrance fade, its translate, and its hidden/inert state for free: no
+   new element, no new JS, no per-frame work. pointer-events: none means it can
+   never steal a tap, and z-index -1 keeps it under the bar surface while still
+   painting above the page, because the fixed z-40 nav is its own stacking
+   context. Phones only, since the nav itself is lg:hidden. */
+.app-tabbar-shell::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -3.25rem;
+  bottom: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(5, 5, 7, 0.92) 0%,
+    rgba(5, 5, 7, 0.66) 44%,
+    rgba(5, 5, 7, 0) 100%
+  );
+}
+html:not(.dark) .app-tabbar-shell::before {
+  background: linear-gradient(
+    to top,
+    rgba(245, 244, 240, 0.94) 0%,
+    rgba(245, 244, 240, 0.7) 44%,
+    rgba(245, 244, 240, 0) 100%
+  );
+}
+
 /* App-grade touch niceties: kill the grey iOS tap-highlight flash everywhere.
    Tactile feedback is carried intentionally by the active:scale states on the
    nav, tab bar, and primary buttons instead. Text selection is unchanged and
