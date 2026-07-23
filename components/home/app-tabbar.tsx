@@ -118,6 +118,7 @@ export function AppTabBar() {
   }, [])
 
   const show = heroPassed && !bookingInView && !dialogOpen
+  const activeIndex = TABS.findIndex((t) => t.id === active)
 
   return (
     <nav
@@ -128,18 +129,34 @@ export function AppTabBar() {
       }`}
       style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 0.5rem)" }}
     >
-      <div className="mx-3 mb-2 flex items-stretch gap-1 rounded-2xl border border-white/12 bg-[#050507]/85 p-1.5 shadow-[0_-8px_40px_-12px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+      <div className="relative mx-3 mb-2 flex items-stretch gap-1 rounded-2xl border border-white/12 bg-[#050507]/85 p-1.5 shadow-[0_-8px_40px_-12px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+        {/* Sliding selection pill: the signature native tab-bar move. One shared
+            surface glides between tabs on a spring curve instead of each tab
+            fading its own background in and out. Transform-only, so it stays on
+            the compositor; it fades out when no mapped section owns the
+            viewport. Track width mirrors the three flex-1 tabs inside p-1.5
+            with gap-1 (0.25rem). */}
+        <span
+          aria-hidden
+          className={`pointer-events-none absolute bottom-1.5 left-1.5 top-1.5 rounded-xl bg-white/10 ring-1 ring-inset ring-white/10 transition-[transform,opacity] duration-[420ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none ${
+            activeIndex >= 0 ? "opacity-100" : "opacity-0"
+          }`}
+          style={{
+            width: "calc((100% - 1.25rem) / 3)",
+            transform: `translateX(calc(${Math.max(activeIndex, 0)} * (100% + 0.25rem)))`,
+          }}
+        />
         {TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => scrollToId(tab.target)}
             aria-current={active === tab.id ? "true" : undefined}
-            className={`flex flex-1 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-[10px] font-bold uppercase tracking-wider transition-[color,background-color,transform] duration-200 active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100 ${
+            className={`relative z-10 flex flex-1 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-[10px] font-bold uppercase tracking-wider transition-[color,transform] duration-200 active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100 ${
               active === tab.id
-                ? "bg-white/10 text-white"
-                : "text-white/60 [@media(hover:hover)]:hover:text-white [@media(hover:hover)]:hover:bg-white/5"
-            }`}
+                ? "text-white [&>svg]:-translate-y-px [&>svg]:scale-105"
+                : "text-white/60 [@media(hover:hover)]:hover:text-white"
+            } [&>svg]:transition-transform [&>svg]:duration-300 [&>svg]:ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:[&>svg]:transition-none`}
           >
             <tab.Icon />
             {tab.label}
@@ -148,7 +165,7 @@ export function AppTabBar() {
         <button
           type="button"
           onClick={openBooking}
-          className="flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border border-[#FF2D55]/70 bg-[#FF2D55]/15 px-2 py-2 text-[10px] font-bold uppercase tracking-wider text-white transition-transform duration-200 active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100"
+          className="relative z-10 flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border border-[#FF2D55]/70 bg-[#FF2D55]/15 px-2 py-2 text-[10px] font-bold uppercase tracking-wider text-white transition-transform duration-200 active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100"
         >
           <span className="relative">
             <BookIcon />
