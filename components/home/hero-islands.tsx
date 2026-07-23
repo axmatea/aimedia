@@ -109,7 +109,7 @@ export function HeroCtas() {
   return (
     <div className="flex gap-3 flex-shrink-0">
       <LiquidMetalButton label="Start a Project" onClick={openBooking} />
-      <button type="button" onClick={() => scrollToId("services")} className="px-8 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-sm font-semibold rounded-full hover:border-[#FF2D55] hover:text-[#FF2D55] transition-[border-color,color]">
+      <button type="button" onClick={() => scrollToId("services")} className="px-8 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-sm font-semibold rounded-full transition-[border-color,color,transform] active:scale-[0.97] motion-reduce:active:scale-100 [@media(hover:hover)]:hover:border-[#FF2D55] [@media(hover:hover)]:hover:text-[#FF2D55]">
         See Services →
       </button>
     </div>

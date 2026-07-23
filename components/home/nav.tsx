@@ -22,7 +22,7 @@ export function SiteNav() {
         {NAV_LINKS.map((item) => (
           <a key={item.label} href={item.href}
             onClick={(e) => { e.preventDefault(); if (item.href === "#booking") openBooking(); else scrollToId(item.href.slice(1)) }}
-            className="px-5 py-2.5 ai-muted text-base font-bold hover:!text-black dark:hover:!text-white hover:bg-black/10 dark:hover:bg-white/12 hover:scale-105 rounded-full transition-[color,background-color,transform] duration-200">
+            className="px-5 py-2.5 ai-muted text-base font-bold hover:!text-black dark:hover:!text-white rounded-full transition-[color,background-color,transform] duration-200 active:scale-95 motion-reduce:active:scale-100 [@media(hover:hover)]:hover:bg-black/10 [@media(hover:hover)]:dark:hover:bg-white/12 [@media(hover:hover)]:hover:scale-105">
             {item.label}
           </a>
         ))}

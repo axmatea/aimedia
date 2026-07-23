@@ -192,9 +192,11 @@ export default function Home() {
       {/* 02 CREDIBILITY */}
       <div className="ai-page py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          <p className="text-center ai-muted text-xs uppercase tracking-[0.3em] font-bold mb-10">
-            Our systems run on
-          </p>
+          <Reveal className="text-center mb-10">
+            <p className="ai-muted text-xs uppercase tracking-[0.3em] font-bold">
+              Our systems run on
+            </p>
+          </Reveal>
           <LogoCloud logos={[...STACK_LOGOS, ...FEATURED_LOGOS]} />
         </div>
       </div>
@@ -202,7 +204,7 @@ export default function Home() {
       {/* 03 FOR WHO */}
       <section id="built-for" className="ai-page py-20 px-6 overflow-hidden" style={{ contain: "layout paint" }}>
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-end justify-between mb-12 gap-4 flex-wrap">
+          <Reveal className="flex items-end justify-between mb-12 gap-4 flex-wrap">
             <div>
               <Tag>Who we build for</Tag>
               <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
@@ -212,7 +214,7 @@ export default function Home() {
             <p className="ai-muted text-sm max-w-xs leading-relaxed">
               From early-stage founders to Web3 protocols, we build AI systems that scale with your ambitions.
             </p>
-          </div>
+          </Reveal>
           <div className="flex flex-wrap justify-center gap-4 md:gap-6">
             {WHO_WE_SERVE.map((w, i) => (
               <Reveal key={w.label} delay={i * 0.07}

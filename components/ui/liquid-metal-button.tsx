@@ -28,7 +28,7 @@ export function LiquidMetalButton({ label = "Book a Call", onClick, className = 
       ref={buttonRef}
       type="button"
       onClick={handleClick}
-      className={`liquid-metal-btn relative overflow-hidden rounded-full px-9 py-3.5 text-sm font-semibold transition-transform hover:scale-[1.03] active:scale-[0.97] ${className}`}
+      className={`liquid-metal-btn relative overflow-hidden rounded-full px-9 py-3.5 text-sm font-semibold transition-transform [@media(hover:hover)]:hover:scale-[1.03] active:scale-[0.97] motion-reduce:active:scale-100 ${className}`}
     >
       {ripples.map((r) => (
         <span
