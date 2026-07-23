@@ -2112,3 +2112,36 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
     display: none;
   }
 }
+
+/* ── Keyboard focus: one brand ring for the whole app ───────────────────────
+   Until now nothing owned :focus-visible outside a few shadcn primitives, so
+   tabbing through the nav, tab bar, FAQ rows and footer fell back to whatever
+   ring the browser felt like drawing, and on the blurred dark surfaces that
+   ring is easy to lose. An installed app has exactly one focus look, so this
+   declares it once in brand red, offset far enough to read as a deliberate
+   halo rather than a border. Outlines inherit the element's border-radius, so
+   pills stay pills and the 44px tab-bar rows stay rounded.
+
+   Everything is wrapped in :where() (specificity 0) on purpose: any component
+   that already ships its own focus treatment (shadcn Button's outline-none +
+   ring, the GlowCard rule near the top of this file) keeps winning, and this
+   only fills the gap where nothing was defined. Zero JS, zero layout cost,
+   paints only while a key-driven focus is present. */
+:where(a, button, summary, [role="button"], [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--ax-hot, #FF2D55);
+  outline-offset: 3px;
+}
+
+/* Inside the two fixed app-shell bars the ring is drawn just inside the tap
+   target instead of around it, so it can never be clipped by the bar edge or
+   spill over the blurred surface into the page behind it. */
+:where(.ai-nav, .app-tabbar-shell) :where(a, button, [role="button"]):focus-visible {
+  outline-offset: -3px;
+}
+
+/* Keyboard focus should never land under the sticky top nav or behind the
+   bottom tab bar when the browser scrolls the focused control into view. */
+:where(a, button, summary, [role="button"], input, textarea, select):focus-visible {
+  scroll-margin-top: 6rem;
+  scroll-margin-bottom: 7rem;
+}
