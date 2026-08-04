@@ -9,7 +9,7 @@ let lenisInstance: Lenis | null = null
 
 export function lenisScrollTo(target: string | HTMLElement, offset = -80) {
   if (lenisInstance) {
-    // Long, decelerating glide for anchor jumps: quart-out easing over 1.35s.
+    // Short, decelerating glide for anchor jumps: smooth without hijacking.
     // Sections between here and the target render under content-visibility
     // with estimated placeholder heights, so layout can shift mid-glide and
     // the landing drifts. After the glide, re-measure the real target position
@@ -21,13 +21,13 @@ export function lenisScrollTo(target: string | HTMLElement, offset = -80) {
       if (!el) return
       const drift = el.getBoundingClientRect().top + offset
       if (Math.abs(drift) > 2) {
-        lenis.scrollTo(el, { offset, duration: 0.3, easing: (t: number) => 1 - Math.pow(1 - t, 3) })
+        lenis.scrollTo(el, { offset, duration: 0.18, easing: (t: number) => 1 - Math.pow(1 - t, 3) })
       }
     }
     lenisInstance.scrollTo(target, {
       offset,
-      duration: 1.35,
-      easing: (t: number) => 1 - Math.pow(1 - t, 4),
+      duration: 0.85,
+      easing: (t: number) => 1 - Math.pow(1 - t, 3),
       onComplete: correct,
     })
   } else if (typeof target === "string") {
@@ -45,11 +45,14 @@ export function lenisScrollTo(target: string | HTMLElement, offset = -80) {
  */
 export function SmoothScroll() {
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      !window.matchMedia("(hover: hover) and (pointer: fine)").matches
+    ) return
 
-    // lerp 0.09: heavier, more cinematic glide than the 0.115 default feel,
-    // still responsive on trackpads (wheelMultiplier stays 1.0 implicit).
-    const lenis = new Lenis({ smoothWheel: true, syncTouch: false, lerp: 0.09 })
+    // Keep desktop wheel movement polished but responsive. Touch devices stay
+    // fully native, and reduced-motion users bypass Lenis altogether.
+    const lenis = new Lenis({ smoothWheel: true, syncTouch: false, lerp: 0.14 })
     lenisInstance = lenis
 
     const update = (data: { timestamp: number }) => lenis.raf(data.timestamp)

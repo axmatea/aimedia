@@ -13,7 +13,7 @@ export const CALENDLY_URL = `https://cal.com/${CAL_LINK}`
 export const CAL_DEFAULTS: Record<string, string> = { duration: "60", overlayCalendar: "true" }
 
 // ── Shared viewport config for whileInView reveals ──────────────────────────
-export const VP = { once: true, margin: "0px 0px -80px 0px" } as const
+export const VP = { once: true, margin: "0px 0px -40px 0px" } as const
 export const EASE_SWIFT: [number, number, number, number] = [0.2, 0.8, 0.2, 1]
 
 // ── Data ────────────────────────────────────────────────────────────────────
@@ -85,12 +85,12 @@ export const SERVICES = [
     tools: ["Content Engine", "Daily Posting", "Full Creative Dept", "Audience Growth"],
   },
   {
-    id: "03", name: "AI OPS\nPIPELINE", tag: "AUTOMATION",
+    id: "03", name: "BUSINESS\nPLATFORMS", tag: "PLATFORMS + AI OPS",
     bg: "#050507",
-    tagline: "Your full sales and ops infrastructure, on autopilot.",
-    body: "Cold calling, CRM sync, community monitoring, reporting. Manual ops replaced with AI infrastructure, 24/7.",
-    metrics: [{ label: "Ops runtime, no manual steps", value: "24/7" }, { label: "Report generation, by design", value: "<30s" }],
-    tools: ["Lead Pipeline", "Sales Funnel", "Full Sales Dept", "24/7 Follow-up"],
+    tagline: "Custom software for the way your business actually runs.",
+    body: "We build custom business platforms, client portals, internal operations systems, and AI-enabled workflows that connect teams, data, approvals, and client delivery in one operating layer.",
+    metrics: [{ label: "Ownership", value: "100%" }, { label: "Operations visibility", value: "24/7" }],
+    tools: ["Custom Platforms", "Client Portals", "Internal Ops", "AI Workflows"],
   },
 ]
 
@@ -164,8 +164,8 @@ export const TRACE_CONFIDENCE_TAGS = [
   { label: "AMBIGUOUS", detail: "Human review before client-facing output or spend." },
 ] as const
 
-// FAQ (v7): four honest answers in front of the booking ask. No guarantees,
-// no invented numbers; pricing and timelines stated the way they are sold.
+// FAQ: honest answers in front of the booking ask. No guarantees, invented
+// numbers, or pricing before the work has been scoped.
 export const FAQS = [
   {
     q: "What happens on the call?",
@@ -181,13 +181,13 @@ export const FAQS = [
   },
   {
     q: "What does it cost?",
-    a: "Engagements start at $3k per month. Exact scope is priced after the call, in writing, so you only pay for what your business actually needs.",
+    a: "We first analyze the task and current systems, then define the scope, responsibilities, and delivery plan. Once that is clear, we prepare a written proposal with the appropriate cost.",
   },
 ]
 
 export const NAV_LINKS = [
   { label: "Services", href: "#services" },
   { label: "System", href: "#ai-team" },
-  { label: "Solutions", href: "#built-for" },
+  { label: "Platforms", href: "#service-03" },
   { label: "Contact", href: "#booking" },
 ]

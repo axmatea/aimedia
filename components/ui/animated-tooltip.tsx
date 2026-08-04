@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { motion, useTransform, useMotionValue, useSpring, useReducedMotion } from "motion/react"
 
 type AICreator = {
@@ -39,7 +39,7 @@ const TooltipItem = ({
 
   return (
     <motion.div
-      className="group relative creator-float"
+      className="group relative"
       style={{ "--i": index } as React.CSSProperties}
       initial={reduceMotion ? false : { opacity: 0, scale: 0.6, y: 10 }}
       whileInView={{ opacity: 1, scale: 1, y: 0 }}
@@ -66,7 +66,7 @@ const TooltipItem = ({
         {active && (
           <span
             aria-hidden
-            className="absolute -inset-1 rounded-full border-2 border-[#FF2D55]/70 animate-[ping_2.2s_ease-in-out_infinite]"
+            className="absolute -inset-1 rounded-full border-2 border-[#FF2D55]/70"
           />
         )}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -82,7 +82,7 @@ const TooltipItem = ({
             active ? "z-30 scale-110 border-[#FF2D55]" : "border-white/10"
           }`}
         />
-        <span className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full bg-[#C8FF60] border-2 border-[#0C0C0F] flex items-center justify-center animate-[pulse_3s_ease-in-out_infinite]">
+        <span className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full bg-[#C8FF60] border-2 border-[#0C0C0F] flex items-center justify-center">
           <span className="text-[6px] font-black text-[#050507]">AI</span>
         </span>
       </button>
@@ -92,21 +92,14 @@ const TooltipItem = ({
 
 export function AIUGCCreators() {
   const reduceMotion = useReducedMotion()
-  // null = auto-cycle through the team; a tap pins one creator (tap again to unpin)
+  // A tap selects a creator. No auto-cycle: the content section stays calm.
   const [selectedId, setSelectedId] = useState<number | null>(null)
-  const [tick, setTick] = useState(0)
-
-  useEffect(() => {
-    if (reduceMotion) return
-    const t = setInterval(() => setTick((v) => v + 1), 3200)
-    return () => clearInterval(t)
-  }, [reduceMotion])
 
   const activeCreator =
     selectedId !== null
       ? CREATORS.find((c) => c.id === selectedId) ?? CREATORS[0]
-      : CREATORS[tick % CREATORS.length]
-  const task = activeCreator.creating[tick % activeCreator.creating.length]
+      : CREATORS[0]
+  const task = activeCreator.creating[0]
 
   return (
     <div>
@@ -127,7 +120,6 @@ export function AIUGCCreators() {
       {/* Live micro-line: auto-cycles the team, or pins to the tapped creator */}
       <div className="mt-4 flex items-center gap-2 min-h-[18px]" aria-live="off">
         <span className="relative flex h-1.5 w-1.5 flex-shrink-0">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF2D55] opacity-75" />
           <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#FF2D55]" />
         </span>
         <motion.p

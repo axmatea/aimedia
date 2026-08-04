@@ -29,7 +29,7 @@ const CalInline = dynamic(
 // ── BookingFlow: 3-step quiz + contact + schedule, reused inline and in the modal ──
 function BookingFlow() {
   const [step, setStep] = useState<0 | 1 | 2>(0)
-  const [quiz, setQuiz] = useState({ projectType: "", goal: "", budget: "" })
+  const [quiz, setQuiz] = useState({ projectType: "", goal: "" })
   const [contact, setContact] = useState({ name: "", email: "", phone: "" })
   const [emailError, setEmailError] = useState("")
   const [submitting, setSubmitting] = useState(false)
@@ -53,7 +53,6 @@ function BookingFlow() {
       email: contact.email,
       a1: quiz.projectType,
       a2: quiz.goal,
-      a3: quiz.budget,
     })
     const fullCalUrl = `${CALENDLY_URL}?${params.toString()}`
     setCalBookingUrl(fullCalUrl)
@@ -69,7 +68,6 @@ function BookingFlow() {
           phone: contact.phone,
           projectType: quiz.projectType,
           goal: quiz.goal,
-          budget: quiz.budget,
         }),
       })
     } catch { /* silent: fallback link on step 2 always works */ }
@@ -80,19 +78,19 @@ function BookingFlow() {
   return (
     <div className="relative z-10 max-w-2xl md:max-w-6xl mx-auto">
           <div className="text-center mb-8 md:mb-14">
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/75">Free strategy call</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 border rounded-full border-white/20 text-white/75">Project request</span>
             <Disp className="text-white block mt-4" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
-              BOOK A<br /><span style={{ color: "var(--red)" }}>STRATEGY CALL.</span>
+              SHARE THE TASK.<br /><span style={{ color: "var(--red)" }}>WE&apos;LL MAP THE SCOPE.</span>
             </Disp>
             <p className="text-white/75 text-sm md:text-lg mt-4 max-w-lg mx-auto leading-relaxed">
-              Answer three quick filters, then pick a time. We come prepared with the highest-leverage AI systems for your business.
+              Send the context. We review the problem, define the scope, and prepare the right proposal.
             </p>
-            <p className="text-white/55 text-xs md:text-sm mt-2 tracking-wide">30 minutes. A concrete map of what to automate first. No obligation.</p>
+            <p className="text-white/55 text-xs md:text-sm mt-2 tracking-wide">Context first. Scope second. Proposal after analysis.</p>
           </div>
 
           {/* Step indicator */}
           <div className="flex items-center justify-center gap-1.5 md:gap-2 mb-6 md:mb-10">
-            {["Fit", "Contact", "Time"].map((label, i) => (
+            {["Brief", "Contact", "Time"].map((label, i) => (
               <div key={label} className="flex items-center gap-1 md:gap-2">
                 <div className="flex items-center gap-1 md:gap-1.5">
                   <div className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold transition-all" style={{
@@ -109,13 +107,13 @@ function BookingFlow() {
 
           <AnimatePresence mode="wait">
             {step === 0 && (
-              <m.div key="step0" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25, ease: EASE_SWIFT }} className="max-w-2xl mx-auto space-y-6 md:space-y-8 rounded-3xl border border-white/10 bg-white/[0.035] p-5 md:p-8 shadow-[0_30px_90px_-45px_rgba(255,45,85,0.65)]">
+              <m.div key="step0" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.22, ease: EASE_SWIFT }} className="max-w-2xl mx-auto space-y-6 md:space-y-7 rounded-3xl border border-white/10 bg-white/[0.035] p-5 md:p-8 shadow-[0_30px_90px_-45px_rgba(255,45,85,0.65)]">
 
                 {/* Project type */}
                 <div>
                   <label className="text-white/90 text-base md:text-xl font-black block mb-3">What best describes your project?</label>
                   <div className="flex flex-wrap gap-2">
-                    {["Web3 / NFT", "SaaS / Product", "Agency", "Brand", "Startup", "Enterprise"].map(opt => (
+                    {["Custom Platform", "Client Portal", "Internal Ops", "AI Automation", "Growth System", "Content System", "Other"].map(opt => (
                       <button key={opt} type="button" onClick={() => setQuiz(p => ({ ...p, projectType: opt }))}
                         className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 active:scale-[0.98] ${
                           quiz.projectType === opt
@@ -128,46 +126,22 @@ function BookingFlow() {
                   </div>
                 </div>
 
-                {/* Primary goal */}
+                {/* Context */}
                 <div>
-                  <label className="text-white/90 text-base md:text-xl font-black block mb-3">Primary goal?</label>
-                  <div className="flex flex-wrap gap-2">
-                    {["Lead Generation", "Content Automation", "Community Growth", "Sales Pipeline", "Ops Efficiency", "Other"].map(opt => (
-                      <button key={opt} type="button" onClick={() => setQuiz(p => ({ ...p, goal: opt }))}
-                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 active:scale-[0.98] ${
-                          quiz.goal === opt
-                            ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
-                            : "bg-white/10 border-white/30 text-white/80 hover:border-[#FF2D55]/60 hover:text-white"
-                        }`}>
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
+                  <label htmlFor="project-context" className="text-white/90 text-base md:text-xl font-black block mb-3">What should change?</label>
+                  <textarea
+                    id="project-context"
+                    value={quiz.goal}
+                    onChange={(e) => setQuiz((current) => ({ ...current, goal: e.target.value }))}
+                    rows={4}
+                    maxLength={1200}
+                    placeholder="Describe the problem, current workflow, or outcome you want to create."
+                    className="w-full resize-y min-h-28 bg-white/5 border border-white/25 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/45 focus:outline-none focus:border-[#FF2D55]/70 focus:bg-white/[0.07] focus:shadow-[0_0_0_3px_rgba(255,45,85,0.12)] transition-[border-color,box-shadow,background-color] duration-200"
+                  />
                 </div>
 
-                {/* Monthly budget */}
-                <div>
-                  <label className="text-white/90 text-base md:text-xl font-black block mb-3">Monthly budget?</label>
-                  <div className="flex flex-wrap gap-2">
-                    {/* Hyphen labels by brand rule (no dashes in copy). The API route
-                        (app/api/booking/route.ts budgetMap) translates these back to the
-                        original en dash Notion select option names, so the CRM select
-                        never grows new options. Change both together or leads break. */}
-                    {["$3-10k / mo", "$10-20k / mo", "$20k+ / mo"].map(opt => (
-                      <button key={opt} type="button" onClick={() => setQuiz(p => ({ ...p, budget: opt }))}
-                        className={`px-4 py-2 rounded-full text-sm font-bold border transition-[background-color,border-color,color,transform] duration-200 active:scale-[0.98] ${
-                          quiz.budget === opt
-                            ? "bg-[#FF2D55] border-[#FF2D55] text-white scale-105"
-                            : "bg-white/10 border-white/30 text-white/80 hover:border-[#FF2D55]/60 hover:text-white"
-                        }`}>
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <Magnetic className="w-full"><LiquidMetalButton label="Continue to contact →" onClick={() => { if (quiz.projectType && quiz.goal && quiz.budget) setStep(1) }} className="w-full justify-center" /></Magnetic>
-                {!(quiz.projectType && quiz.goal && quiz.budget) && <p className="text-white/60 text-xs text-center">Select all options to continue</p>}
+                <Magnetic className="w-full"><LiquidMetalButton label="Continue to contact →" onClick={() => { if (quiz.projectType && quiz.goal.trim()) setStep(1) }} className="w-full justify-center" /></Magnetic>
+                {!(quiz.projectType && quiz.goal.trim()) && <p className="text-white/60 text-xs text-center">Choose a project type and add a short context note</p>}
               </m.div>
             )}
 
@@ -191,7 +165,7 @@ function BookingFlow() {
                 ))}
                 <div className="flex gap-3 pt-2">
                   <button type="button" onClick={() => setStep(0)} className="px-5 py-3 rounded-xl border border-white/30 text-white/75 text-sm hover:border-white/50 hover:text-white transition-colors">← Back</button>
-                  <Magnetic className="flex-1"><LiquidMetalButton label={submitting ? "Sending..." : "Continue to Schedule →"} onClick={handleContactContinue} className="w-full justify-center" /></Magnetic>
+                  <Magnetic className="flex-1"><LiquidMetalButton label={submitting ? "Sending..." : "Send & choose time →"} onClick={handleContactContinue} className="w-full justify-center" /></Magnetic>
                 </div>
                 {!(contact.name && contact.email) && <p className="text-white/60 text-xs text-center">Name and email required</p>}
               </m.div>
@@ -212,7 +186,6 @@ function BookingFlow() {
                         email: contact.email,
                         a1: quiz.projectType,
                         a2: quiz.goal,
-                        a3: quiz.budget,
                         duration: "60",
                       }}
                       onFail={() => setEmbedFailed(true)}
@@ -241,7 +214,7 @@ function BookingFlow() {
                 )}
                 <p className="text-white/70 text-sm pt-2">Confirmation will be sent to <span className="text-white font-semibold">{contact.email}</span></p>
                 <p className="text-white/60 text-xs">We&apos;ll review your answers and come fully prepared.</p>
-                <button type="button" onClick={() => { setStep(0); setQuiz({ projectType: "", goal: "", budget: "" }); setContact({ name: "", email: "", phone: "" }); setCalBookingUrl(""); setEmbedFailed(false) }}
+                <button type="button" onClick={() => { setStep(0); setQuiz({ projectType: "", goal: "" }); setContact({ name: "", email: "", phone: "" }); setCalBookingUrl(""); setEmbedFailed(false) }}
                   className="text-[#FF2D55]/60 text-sm hover:text-[#FF2D55] transition-colors mt-4 block mx-auto">Start over</button>
               </m.div>
             )}

@@ -14,6 +14,7 @@
  */
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import ThemeToggle from "@/components/ui/toggle-theme"
 import { AxWordmark } from "@/components/ui/ax-wordmark"
 import { NAV_LINKS } from "@/components/home/data"
@@ -40,12 +41,12 @@ export function SiteNav() {
   }, [])
 
   return (
-    <nav className={`ai-nav ${scrolled ? "is-scrolled" : "is-top"} fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-4 md:py-5 backdrop-blur-md border-b ai-border`}>
-      <a href="#" className="flex items-center flex-shrink-0">
+    <nav aria-label="Primary" className={`ai-nav ${scrolled ? "is-scrolled" : "is-top"} fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-3 sm:px-4 md:px-10 py-4 md:py-5 backdrop-blur-md border-b ai-border`}>
+      <Link href="/" aria-label="AX Media home" className="flex items-center flex-shrink-0">
         {/* Inline wordmark in the real document fonts, themed via currentColor */}
-        <AxWordmark className="ax-wordmark h-8 md:h-11 w-auto text-[#050507] dark:text-white" />
-      </a>
-      <div className="hidden md:flex items-center gap-1">
+        <AxWordmark className="h-9 md:h-12" />
+      </Link>
+      <div className="hidden lg:flex items-center gap-1">
         {NAV_LINKS.map((item) => (
           <a key={item.label} href={item.href}
             onClick={(e) => { e.preventDefault(); if (item.href === "#booking") openBooking(); else scrollToId(item.href.slice(1)) }}
@@ -69,12 +70,13 @@ export function SiteNav() {
         <button
           type="button"
           onClick={openBooking}
-          className="group relative px-4 md:px-6 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-bold tracking-wider uppercase overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-95 border-2 border-[#FF2D55] dark:border-[#FF2D55]/60 hover:border-[#FF2D55] text-[#FF2D55] dark:text-white"
+          className="group relative px-3 sm:px-4 md:px-6 py-2 md:py-2.5 rounded-full text-[11px] md:text-sm font-bold tracking-wider uppercase overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-95 border-2 border-[#FF2D55] dark:border-[#FF2D55]/60 hover:border-[#FF2D55] text-[#FF2D55] dark:text-white"
         >
           <span className="absolute inset-0 bg-[#FF2D55]/20 dark:bg-[#FF2D55]/15 group-hover:bg-[#FF2D55]/30 transition-colors duration-300" />
           <span className="relative z-10 flex items-center gap-1.5 md:gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#FF2D55] group-hover:animate-ping" />
-            Book a Call
+            <span className="hidden min-[430px]:inline">Book a Call</span>
+            <span className="min-[430px]:hidden">Book</span>
           </span>
         </button>
       </div>

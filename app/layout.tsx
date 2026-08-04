@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: "%s | AX Media",
   },
   description:
-    "AI growth agency for Web3, Founders & Brands. We build lead gen systems, content automation & AI ops pipelines that compound: leads on autopilot, a content engine that runs while you sleep, and sales ops that never stop.",
+    "AI growth agency for Web3, Founders & Brands. We build go-to-market systems, content automation, custom business platforms, client portals, and AI-enabled operations workflows.",
   metadataBase: new URL("https://aimedia.global"),
   alternates: { canonical: "https://aimedia.global" },
   keywords: [
@@ -25,6 +25,9 @@ export const metadata: Metadata = {
     "AI growth systems",
     "content automation",
     "AI ops pipeline",
+    "custom business platforms",
+    "client portals",
+    "internal operations systems",
     "go-to-market agency",
     "founder marketing",
     "AI agency",
@@ -36,7 +39,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "AX Media · AI Growth Agency | Web3, Founders & Brands",
     description:
-      "AI growth agency for Web3, Founders & Brands. Lead gen systems, content automation, AI ops pipelines that compound: leads on autopilot and a content engine that runs while you sleep.",
+      "AI growth agency for Web3, Founders & Brands. Go-to-market systems, content automation, custom business platforms, client portals, and AI-enabled operations workflows.",
     url: "https://aimedia.global",
     siteName: "AX Media",
     type: "website",
@@ -56,7 +59,7 @@ export const metadata: Metadata = {
     creator: "@ai.mediaco",
     title: "AX Media · AI Growth Agency",
     description:
-      "We build AI systems: lead gen · content · ops automation that compound. Leads on autopilot, content that runs while you sleep. For Web3, Founders & Brands.",
+      "We build AI systems: go-to-market, content, custom platforms, client portals, and operations workflows. For Web3, Founders & Brands.",
     images: ["/og-ax-media.png"],
   },
   robots: {
@@ -93,7 +96,7 @@ const jsonLd = {
   url: "https://aimedia.global",
   logo: "https://aimedia.global/og-ax-media.png",
   description:
-    "AI growth agency building lead gen systems, content automation, and AI ops pipelines for Web3 projects, founders, and brands.",
+    "AI growth agency building go-to-market systems, content automation, custom business platforms, client portals, and AI-enabled operations workflows.",
   foundingDate: "2024",
   areaServed: "Worldwide",
   sameAs: [
@@ -105,7 +108,7 @@ const jsonLd = {
     itemListElement: [
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Go-to-Market Engine", description: "AI-powered lead generation that fills your pipeline on autopilot with qualified buyers." } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Content System", description: "A content engine that runs while you sleep, auto-published across all channels." } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI Ops Pipeline", description: "Sales and ops on autopilot, with automated follow-up that never stops." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Custom Business Platforms", description: "Client portals, internal operations systems, and AI-enabled workflow platforms built around the business." } },
     ],
   },
 };

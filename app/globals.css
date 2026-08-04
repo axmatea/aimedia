@@ -321,16 +321,26 @@ html:not(.dark) {
   --line-2: color-mix(in oklch, black 14%, transparent);
 }
 
-/* Tighten perceived mark-to-wordmark spacing from the exported logo asset. */
+/* Canonical prepared brand mark. The source PNG is transparent and already
+   contains the intentional tapered red strike; do not redraw it in CSS. */
 .ax-wordmark {
-  max-width: clamp(132px, 16vw, 190px);
-  object-fit: contain;
-  object-position: left center;
-  filter: contrast(1.08) saturate(1.08);
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  aspect-ratio: 1022 / 549;
+  overflow: hidden;
+  filter: drop-shadow(0 0 18px rgba(255,45,85,0.12));
 }
-
-.dark .ax-wordmark {
-  filter: contrast(1.12) saturate(1.12) drop-shadow(0 0 18px rgba(255,45,85,0.16));
+.ax-wordmark > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+html:not(.dark) .ax-wordmark {
+  padding: 0.18rem 0.28rem;
+  border-radius: 0.45rem;
+  background: #050507;
 }
 
 /* ── Marquee ── */
@@ -346,35 +356,507 @@ html:not(.dark) {
 @media (hover: hover) {
   .marquee-shell:hover .animate-marquee { animation-play-state: paused; }
 }
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+    transform: none;
+  }
+}
 
-/* ── Agent radial orchestrator (pure CSS choreography) ── */
-@keyframes orbit { to { transform: rotate(360deg); } }
-.orbit-rotor   { animation: orbit 90s linear infinite; }
-.orbit-counter { animation: orbit 90s linear infinite reverse; }
-@keyframes beam-travel {
-  from { stroke-dashoffset: 12; }
-  to   { stroke-dashoffset: -100; }
+/* ── Responsive orchestrator map ─────────────────────────────────────────── */
+.agent-system {
+  width: 100%;
+  max-width: 680px;
+  min-width: 0;
+  margin-inline: auto;
 }
-.agent-beam { animation: beam-travel var(--beam-dur, 2.8s) ease-in-out infinite; }
-@keyframes agent-rx {
-  0%, 62% { box-shadow: 0 0 0 0 transparent; }
-  80%     { box-shadow: 0 0 20px 2px var(--agent-glow, transparent); }
-  100%    { box-shadow: 0 0 0 0 transparent; }
+.agent-system-kicker {
+  margin-bottom: 1rem;
+  color: rgba(255,255,255,0.48);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.18em;
+  text-align: center;
+  text-transform: uppercase;
 }
-.agent-rx { animation: agent-rx var(--beam-dur, 2.8s) ease-in-out infinite; }
-.orbit-ring-drift { animation: orbit 180s linear infinite reverse; }
-.agent-node { transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
-@media (hover: hover) and (pointer: fine) {
-  .agent-node:hover { transform: scale(1.1); }
+.agent-orbit-stage {
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  min-width: 0;
+  aspect-ratio: 1;
+  margin-inline: auto;
 }
-[data-paused] .orbit-rotor,
-[data-paused] .orbit-ring-drift,
-[data-paused] .orbit-counter,
-[data-paused] .agent-beam,
-[data-paused] .agent-rx { animation-play-state: paused; }
-/* Lime agent needs darker accents on the light theme */
-html:not(.dark) [data-lime-stroke] { stroke: #4a7a00 !important; }
-html:not(.dark) .agent-rx[data-lime-glow] { --agent-glow: rgba(74, 122, 0, 0.35) !important; }
+.agent-orbit-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.agent-orbit-ring-outer {
+  width: 82%;
+  height: 82%;
+  border-style: dashed;
+}
+.agent-orbit-ring-inner {
+  width: 43%;
+  height: 43%;
+  border-color: rgba(255,45,85,0.12);
+}
+.agent-orbit-rotor {
+  position: absolute;
+  inset: 0;
+  animation: agent-orbit-spin 76s linear infinite;
+  transform-origin: 50% 50%;
+}
+.agent-connections {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.agent-connection-base { opacity: 0.25; }
+.agent-connection-flow {
+  opacity: 0.72;
+  stroke-dasharray: 0.08 0.92;
+  animation: agent-signal-flow 2.8s linear infinite;
+}
+.agent-orbit-node {
+  position: absolute;
+  z-index: 2;
+  width: clamp(112px, 21vw, 162px);
+  transform: translate(-50%, -50%);
+}
+.agent-node-counter {
+  animation: agent-orbit-counter 76s linear infinite;
+  transform-origin: 50% 50%;
+}
+.agent-node {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-height: 4.25rem;
+  padding: 0.72rem 0.78rem;
+  border: 1px solid color-mix(in srgb, var(--agent-color) 28%, transparent);
+  border-radius: 1rem;
+  background: rgba(10,10,15,0.9);
+  box-shadow: 0 16px 42px -30px color-mix(in srgb, var(--agent-color) 70%, transparent);
+  backdrop-filter: blur(12px);
+}
+.agent-node-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 2.25rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.75rem;
+  color: var(--agent-color);
+  background: color-mix(in srgb, var(--agent-color) 12%, transparent);
+}
+.agent-node-copy {
+  min-width: 0;
+}
+.agent-node-copy strong,
+.agent-node-copy small {
+  display: block;
+}
+.agent-node-copy strong {
+  color: rgba(255,255,255,0.94);
+  font-size: 0.74rem;
+  line-height: 1.15;
+}
+.agent-node-copy small {
+  margin-top: 0.24rem;
+  color: rgba(255,255,255,0.58);
+  font-size: 0.6rem;
+  line-height: 1.25;
+}
+.agent-orchestrator {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: clamp(104px, 18vw, 138px);
+  aspect-ratio: 1;
+  padding: 0.75rem;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 50%;
+  color: white;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 35% 28%, #A45CFF 0%, #7B2FFF 32%, #FF2D55 100%);
+  box-shadow: 0 24px 80px -28px rgba(255,45,85,0.78);
+}
+.agent-orchestrator svg {
+  width: clamp(1.7rem, 4vw, 2.25rem);
+  height: clamp(1.7rem, 4vw, 2.25rem);
+}
+.agent-orchestrator strong {
+  margin-top: 0.3rem;
+  font-size: clamp(0.64rem, 1.4vw, 0.78rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.agent-orchestrator span {
+  margin-top: 0.16rem;
+  color: rgba(255,255,255,0.72);
+  font-size: clamp(0.5rem, 1.1vw, 0.6rem);
+  line-height: 1.2;
+}
+.agent-system-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  color: rgba(255,255,255,0.58);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  text-align: center;
+}
+.agent-status-dot {
+  flex: 0 0 0.45rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #C8FF60;
+  box-shadow: 0 0 12px rgba(200,255,96,0.42);
+}
+@keyframes agent-orbit-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes agent-orbit-counter {
+  to { transform: rotate(-360deg); }
+}
+@keyframes agent-signal-flow {
+  to { stroke-dashoffset: -1; }
+}
+html:not(.dark) .agent-system-kicker,
+html:not(.dark) .agent-system-footer { color: rgba(5,5,7,0.54); }
+html:not(.dark) .agent-orbit-ring { border-color: rgba(5,5,7,0.1); }
+html:not(.dark) .agent-node {
+  background: rgba(255,255,255,0.82);
+  border-color: color-mix(in srgb, var(--agent-color) 34%, transparent);
+}
+html:not(.dark) .agent-node-copy strong { color: rgba(5,5,7,0.9); }
+html:not(.dark) .agent-node-copy small { color: rgba(5,5,7,0.58); }
+
+@media (max-width: 767px) {
+  .agent-orbit-stage {
+    display: block;
+    width: min(100%, 390px);
+    max-width: 390px;
+    aspect-ratio: 1;
+    padding: 0;
+  }
+  .agent-orbit-node {
+    position: absolute;
+    width: clamp(82px, 25vw, 96px);
+    transform: translate(-50%, -50%);
+  }
+  .agent-node {
+    flex-direction: column;
+    gap: 0.28rem;
+    min-height: 4.35rem;
+    padding: 0.48rem 0.3rem;
+    border-radius: 0.85rem;
+    text-align: center;
+  }
+  .agent-node-icon {
+    flex-basis: 1.8rem;
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 0.6rem;
+  }
+  .agent-node-icon svg { width: 1rem; height: 1rem; }
+  .agent-node-copy strong { font-size: 0.62rem; }
+  .agent-node-copy small { display: none; }
+  .agent-orchestrator {
+    top: 50%;
+    width: clamp(5.9rem, 29vw, 6.7rem);
+    transform: translate(-50%, -50%);
+  }
+  .agent-orchestrator span { max-width: 5rem; }
+  .agent-system-footer { max-width: 19rem; margin-inline: auto; line-height: 1.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agent-orbit-rotor,
+  .agent-node-counter,
+  .agent-connection-flow {
+    animation: none;
+  }
+}
+
+/* ── Business platform: premium operating-system architecture ───────────── */
+.platform-os {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  overflow: hidden;
+  padding: clamp(0.9rem, 2vw, 1.25rem);
+  border: 1px solid rgba(255,255,255,0.11);
+  border-radius: 1.5rem;
+  color: white;
+  background:
+    linear-gradient(140deg, rgba(255,255,255,0.055), transparent 32%),
+    #09090d;
+  box-shadow: 0 34px 100px -58px rgba(255,45,85,0.74);
+}
+.platform-os-glow {
+  position: absolute;
+  z-index: -1;
+  top: -12rem;
+  right: -10rem;
+  width: 28rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255,45,85,0.12);
+  filter: blur(90px);
+  pointer-events: none;
+}
+.platform-os-header,
+.platform-os-title-row,
+.platform-os-activity-head,
+.platform-os-activity-row,
+.platform-os-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.platform-os-header {
+  gap: 1rem;
+  padding: 0.2rem 0.25rem 1rem;
+}
+.platform-os-kicker,
+.platform-os-title-row p,
+.platform-os-activity-head,
+.platform-module-copy small {
+  font-family: var(--font-mono);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.platform-os-kicker {
+  color: rgba(255,255,255,0.48);
+  font-size: 0.58rem;
+}
+.platform-os-heading {
+  display: block;
+  margin-top: 0.18rem;
+  color: rgba(255,255,255,0.94);
+  font-size: clamp(0.95rem, 2vw, 1.12rem);
+  font-weight: 720;
+  letter-spacing: -0.02em;
+}
+.platform-os-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: rgba(255,255,255,0.58);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+}
+.platform-os-status > span,
+.platform-os-activity-head i,
+.platform-os-footer i {
+  display: inline-block;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+}
+.platform-os-status > span {
+  background: #C8FF60;
+  box-shadow: 0 0 12px rgba(200,255,96,0.52);
+}
+.platform-os-shell {
+  display: grid;
+  grid-template-columns: 8.2rem minmax(0, 1fr);
+  min-height: 27rem;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 1.15rem;
+  background: rgba(2,2,5,0.72);
+}
+.platform-os-nav {
+  padding: 1rem 0.7rem;
+  border-right: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.018);
+}
+.platform-os-mark {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  margin: 0 0.45rem 1.2rem;
+  border: 1px solid rgba(255,45,85,0.38);
+  border-radius: 0.68rem;
+  color: #FF2D55;
+  background: rgba(255,45,85,0.1);
+}
+.platform-os-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.4rem;
+  margin-top: 0.28rem;
+  padding: 0 0.55rem;
+  border: 1px solid transparent;
+  border-radius: 0.65rem;
+  color: rgba(255,255,255,0.45);
+  font-size: 0.63rem;
+  font-weight: 650;
+}
+.platform-os-nav-item.is-active {
+  border-color: rgba(255,45,85,0.22);
+  color: rgba(255,255,255,0.92);
+  background: rgba(255,45,85,0.08);
+}
+.platform-os-main {
+  min-width: 0;
+  padding: clamp(0.9rem, 2.5vw, 1.45rem);
+}
+.platform-os-title-row {
+  gap: 1rem;
+}
+.platform-os-title-row p {
+  color: #FF718C;
+  font-size: 0.56rem;
+}
+.platform-os-title-row strong {
+  display: block;
+  margin-top: 0.25rem;
+  color: rgba(255,255,255,0.9);
+  font-size: clamp(0.76rem, 1.5vw, 0.92rem);
+}
+.platform-os-human {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  padding: 0.42rem 0.58rem;
+  border: 1px solid rgba(200,255,96,0.18);
+  border-radius: 99px;
+  color: rgba(220,255,157,0.78);
+  background: rgba(200,255,96,0.055);
+  font-size: 0.57rem;
+  font-weight: 650;
+}
+.platform-module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.72rem 1.4rem;
+  margin-top: 1.2rem;
+}
+.platform-module-wrap { position: relative; min-width: 0; }
+.platform-module {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.68rem;
+  min-height: 5rem;
+  padding: 0.72rem;
+  border: 1px solid color-mix(in srgb, var(--module-color) 22%, rgba(255,255,255,0.06));
+  border-radius: 0.9rem;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--module-color) 8%, transparent), rgba(255,255,255,0.018));
+}
+.platform-module-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 2.2rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 1px solid color-mix(in srgb, var(--module-color) 32%, transparent);
+  border-radius: 0.68rem;
+  color: var(--module-color);
+  background: color-mix(in srgb, var(--module-color) 9%, transparent);
+}
+.platform-module-copy { min-width: 0; }
+.platform-module-copy small,
+.platform-module-copy strong,
+.platform-module-copy > span { display: block; }
+.platform-module-copy small { color: color-mix(in srgb, var(--module-color) 82%, white); font-size: 0.48rem; }
+.platform-module-copy strong { margin-top: 0.23rem; color: rgba(255,255,255,0.9); font-size: 0.68rem; }
+.platform-module-copy > span { margin-top: 0.16rem; overflow: hidden; color: rgba(255,255,255,0.48); font-size: 0.55rem; text-overflow: ellipsis; white-space: nowrap; }
+.platform-module-check { margin-left: auto; flex: 0 0 auto; color: rgba(255,255,255,0.3); }
+.platform-module-arrow {
+  position: absolute;
+  z-index: 2;
+  right: -1.08rem;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 0.8rem;
+  color: rgba(255,45,85,0.72);
+  transform: translateY(-50%);
+}
+.platform-module-wrap:nth-child(2) .platform-module-arrow { display: none; }
+.platform-module-wrap:nth-child(3) .platform-module-arrow { color: rgba(200,255,96,0.62); }
+.platform-os-activity {
+  margin-top: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 0.85rem;
+  background: rgba(255,255,255,0.018);
+}
+.platform-os-activity-head {
+  padding: 0.58rem 0.72rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.42);
+  font-size: 0.5rem;
+}
+.platform-os-activity-head span:last-child { display: inline-flex; align-items: center; gap: 0.35rem; }
+.platform-os-activity-head i { background: #C8FF60; }
+.platform-os-activity-row {
+  min-height: 2.05rem;
+  padding: 0 0.72rem;
+  border-bottom: 1px solid rgba(255,255,255,0.045);
+  color: rgba(255,255,255,0.62);
+  font-size: 0.58rem;
+}
+.platform-os-activity-row:last-child { border-bottom: 0; }
+.platform-os-activity-row > span { display: flex; align-items: center; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.platform-os-activity-row i { flex: 0 0 0.3rem; width: 0.3rem; height: 0.3rem; margin-right: 0.48rem; border-radius: 50%; background: #FF2D55; }
+.platform-os-activity-row time { margin-left: 0.5rem; color: rgba(255,255,255,0.3); font-family: var(--font-mono); }
+.platform-os-footer {
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  padding: 0.9rem 0.25rem 0.1rem;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.56rem;
+}
+.platform-os-footer span { display: inline-flex; align-items: center; gap: 0.38rem; }
+
+@media (max-width: 520px) {
+  .platform-os { border-radius: 1.25rem; }
+  .platform-os-header { align-items: flex-start; }
+  .platform-os-status { margin-top: 0.1rem; font-size: 0.5rem; }
+  .platform-os-shell { grid-template-columns: 3.25rem minmax(0, 1fr); min-height: 0; }
+  .platform-os-nav { padding: 0.75rem 0.48rem; }
+  .platform-os-mark { width: 1.85rem; height: 1.85rem; margin: 0 0.2rem 0.75rem; }
+  .platform-os-nav-item { justify-content: center; min-height: 2.2rem; padding: 0; }
+  .platform-os-nav-item span { display: none; }
+  .platform-os-title-row { align-items: flex-start; flex-direction: column; gap: 0.55rem; }
+  .platform-module-grid { grid-template-columns: 1fr; gap: 0.62rem; }
+  .platform-module { min-height: 4.45rem; }
+  .platform-module-arrow {
+    left: 50%;
+    right: auto;
+    top: auto;
+    bottom: -0.58rem;
+    transform: translateX(-50%) rotate(90deg);
+  }
+  .platform-module-wrap:nth-child(2) .platform-module-arrow { display: grid; }
+  .platform-module-wrap:nth-child(4) .platform-module-arrow { display: none; }
+  .platform-os-footer { justify-content: flex-start; }
+}
 
 /* ── Traceable graph map: Graphify-inspired source → decision → output view ── */
 .trace-map-section {
@@ -1258,6 +1740,19 @@ html:not(.dark) .ambient-image { display: none; }
   animation-delay: calc(var(--i, 0) * -0.7s);
 }
 
+/* Content System: keep the interactive portraits, but remove ambient loops
+   that competed with the copy and made the card feel busy. */
+.service-02 .creator-float,
+.service-02 .ugc-ping {
+  animation: none;
+}
+.service-02 .ax-dataviz > div {
+  box-shadow: 0 28px 80px -52px rgba(255,45,85,0.62);
+}
+.service-section .ax-dataviz {
+  min-width: 0;
+}
+
 /* ── Map → booking transition bridge ── */
 .ai-booking-bridge { background: linear-gradient(to bottom, transparent, #050507); }
 html:not(.dark) .ai-booking-bridge { background: linear-gradient(to bottom, #F5F4F0, #050507); }
@@ -1610,18 +2105,12 @@ html.lenis, html.lenis body { height: auto; }
    or long. Values approximate the desktop render; the mobile overrides below
    cover the stacked single-column layouts. lenisScrollTo also re-checks the
    landing position after the glide as a safety net. */
-#built-for { contain-intrinsic-size: 0 1150px; }
 .ai-panel { contain-intrinsic-size: 0 900px; }
-.trace-map-section { contain-intrinsic-size: 0 980px; }
 #services section { contain-intrinsic-size: 0 960px; }
-#proof { contain-intrinsic-size: 0 900px; }
 #global-reach { contain-intrinsic-size: 0 900px; }
 @media (max-width: 767px) {
-  #built-for { contain-intrinsic-size: 0 1450px; }
-  .ai-panel { contain-intrinsic-size: 0 1250px; }
-  .trace-map-section { contain-intrinsic-size: 0 1650px; }
+  .ai-panel { contain-intrinsic-size: 0 1180px; }
   #services section { contain-intrinsic-size: 0 1250px; }
-  #proof { contain-intrinsic-size: 0 1900px; }
   #global-reach { contain-intrinsic-size: 0 950px; }
 }
 
@@ -1659,8 +2148,8 @@ input, textarea, [contenteditable="true"], [contenteditable=""] {
 
 /* ── Standalone / safe-area (installed PWA) ──────────────────────────────
    With viewportFit: cover the layout extends under the notch and the home
-   indicator. Pad the fixed nav (and, via the tab bar layer below, the page
-   bottom) so no content or control sits under system UI. max(env, fallback)
+   indicator. Pad the fixed nav so no content or control sits under system UI.
+   max(env, fallback)
    collapses to the plain fallback in a normal browser tab (insets are 0
    there), so nothing shifts outside standalone mode. */
 .ai-nav {
@@ -1784,89 +2273,8 @@ html {
   overscroll-behavior-y: none;
 }
 
-/* Reserve space for the mobile app tab bar (AppTabBar, hidden lg+) so the
-   footer and any bottom content clear the fixed bar plus the home indicator.
-   Bar surface ≈ 3.25rem + its own safe-area padding. */
-@media (max-width: 1023px) {
-  .ai-app-root {
-    padding-bottom: calc(3.25rem + max(env(safe-area-inset-bottom, 0px), 0.5rem));
-  }
-}
-
-/* Material scrim under the mobile tab bar. Today the page runs edge to edge
-   beneath a floating pill, so the last line of content and the bar's rounded
-   corners collide at the viewport bottom and the chrome reads as a card lying
-   on the page. Installed apps veil the strip above their tab bar so content
-   dissolves into the chrome instead of sliding behind a hard edge, which is
-   what gives the bar its sense of depth and makes it read as a layer above the
-   content rather than in it.
-
-   Pure CSS on a pseudo-element inside the existing <nav>, so it inherits the
-   bar's entrance fade, its translate, and its hidden/inert state for free: no
-   new element, no new JS, no per-frame work. pointer-events: none means it can
-   never steal a tap, and z-index -1 keeps it under the bar surface while still
-   painting above the page, because the fixed z-40 nav is its own stacking
-   context. Phones only, since the nav itself is lg:hidden. */
-.app-tabbar-shell::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -3.25rem;
-  bottom: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: linear-gradient(
-    to top,
-    rgba(5, 5, 7, 0.92) 0%,
-    rgba(5, 5, 7, 0.66) 44%,
-    rgba(5, 5, 7, 0) 100%
-  );
-}
-html:not(.dark) .app-tabbar-shell::before {
-  background: linear-gradient(
-    to top,
-    rgba(245, 244, 240, 0.94) 0%,
-    rgba(245, 244, 240, 0.7) 44%,
-    rgba(245, 244, 240, 0) 100%
-  );
-}
-
-/* Primary action in the mobile tab bar (the Book tab). It sat at the same
-   optical depth as the two navigation tabs: a flat 15% brand tint behind a
-   hairline border, so the one tab that starts a conversation read as a
-   slightly redder sibling rather than the bar's primary action.
-
-   Installed apps give their primary tab real material: a vertical fill so the
-   surface catches light from above, a 1px inner top highlight that reads as a
-   bevel, and a soft colored glow that lifts it off the blurred bar. Pressing it
-   sinks the glow and dims the bevel, so the button feels physically pushed in
-   rather than merely scaled down.
-
-   Dark shell only (the app is forced dark) and paint-only: no layout, no JS,
-   no per-frame work. Text stays white over a mostly dark surface, so the
-   contrast that the flat tint gave us is preserved. The transition lives on the
-   element's utility classes, so prefers-reduced-motion keeps disabling it. */
-.app-tab-cta {
-  border-color: rgba(255, 45, 85, 0.78);
-  background-image: linear-gradient(
-    to bottom,
-    rgba(255, 45, 85, 0.34),
-    rgba(255, 45, 85, 0.11)
-  );
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 6px 20px -10px rgba(255, 45, 85, 0.85);
-}
-.app-tab-cta:active {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 2px 10px -8px rgba(255, 45, 85, 0.6);
-}
-
 /* ── Footer rail (app-style About / Legal rows on phones) ────────────────
-   The footer is the last surface before the mobile tab bar, and its contact
-   and legal links were a single wrapped line of 12px text: roughly a 14px
+   The contact and legal links were a single wrapped line of 12px text: roughly a 14px
    hit area, well under the 44px minimum an installed app gives these rows,
    and visually a desktop footer squeezed onto a phone.
 
@@ -1921,7 +2329,7 @@ html:not(.dark) .app-tabbar-shell::before {
 
 /* App-grade touch niceties: kill the grey iOS tap-highlight flash everywhere.
    Tactile feedback is carried intentionally by the active:scale states on the
-   nav, tab bar, and primary buttons instead. Text selection is unchanged and
+   nav and primary buttons instead. Text selection is unchanged and
    still governed by the rules above: off site-wide as an editorial surface,
    and re-enabled only where intended (form fields via input/textarea, and the
    legal / privacy / cookies pages via their select-text roots). color-scheme
@@ -1942,6 +2350,28 @@ html {
 
 .hero-section {
   contain: paint !important;
+}
+.hero-robot-shell {
+  top: 0;
+  right: clamp(-2.5rem, -1.6vw, -1rem);
+  bottom: 0;
+  width: min(72vw, 1080px);
+  height: 100%;
+  transform: translate3d(1.5%, 0, 0);
+  transform-origin: bottom center;
+  contain: layout paint;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* On very wide displays the visual stays large without scaling beyond its
+   viewport-height stage. This preserves the full head instead of pushing the
+   top of the Spline canvas outside the hero. */
+@media (min-width: 1800px) {
+  .hero-robot-shell {
+    right: clamp(-3rem, -1.5vw, -1.5rem);
+    width: min(58vw, 1120px);
+  }
 }
 
 /* Spline canvas: GPU layer, no layout thrashing */
@@ -1971,15 +2401,6 @@ canvas {
 .hero-spline-live.is-ready {
   opacity: 1;
   transform: translate3d(0, 0, 0) scale(1);
-  animation: robotLiveFloat 5.2s ease-in-out 600ms infinite alternate;
-}
-@keyframes robotLiveFloat {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  100% {
-    transform: translate3d(0, 1%, 0) scale(1.008);
-  }
 }
 /* Reduced motion: no float, no live settle. The scene never mounts under
    reduced motion, so the hero stays a clean dark background with the text as
@@ -2052,107 +2473,110 @@ html:not(.dark) .ai-switch-track[data-state=checked]   { background-color: rgba(
 html:not(.dark) .ai-switch-track[data-state=unchecked] { background-color: rgba(0,0,0,0.12) !important; }
 html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
 
-/* Mobile robot positioning: keep the live animated Spline centered and bounded.
-   It sits behind the hero copy, not as a giant right-side crop. */
+/* Mobile/tablet robot: a taller stage preserves the leg silhouette while the
+   figure remains large enough to carry the composition. */
 @media (max-width: 1023px) {
   .hero-section {
     isolation: isolate;
   }
 
   .hero-robot-shell {
-    contain: layout paint;
-    transform: translate3d(-50%, 0, 0) !important;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
-
-  /* v6.2: robot reads closer/bigger on phones. Width may exceed the viewport
-     (112vw) but the shell is centered with translate3d(-50%) inside the
-     overflow-hidden hero, and html/body overflow-x is clipped, so no
-     horizontal scroll can appear at 390/430px widths. */
-  .robot-mobile {
-    top: 5svh !important;
-    left: 50% !important;
-    right: auto !important;
-    bottom: auto !important;
-    width: min(112vw, 640px) !important;
-    height: 70svh !important;
-    opacity: .95;
-    z-index: 2 !important;
+    top: 3svh;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    width: min(108vw, 680px);
+    height: 82svh;
+    opacity: 0.94;
+    transform: translate3d(-50%, 0, 0);
+    transform-origin: top center;
     will-change: auto;
   }
 
-  .robot-mobile .hero-spline-stage {
-    overflow: visible !important;
+  .hero-robot-shell .hero-spline-stage {
+    overflow: visible;
   }
 
-  .robot-mobile .hero-spline-live {
-    display: block !important;
+  .hero-robot-shell .hero-spline-live {
+    display: block;
   }
 
-  .robot-mobile .ai-hero-fade-x {
-    width: 64% !important;
+  .hero-robot-shell .ai-hero-fade-x {
+    width: 62%;
   }
 
-  .robot-mobile .ai-hero-fade-y {
-    height: 42svh !important;
+  .hero-robot-shell .ai-hero-fade-y {
+    height: 34svh;
   }
 }
 
 @media (max-width: 420px) {
-  .robot-mobile {
-    top: 6svh !important;
-    left: 50% !important;
-    right: auto !important;
-    width: 112vw !important;
-    height: 68svh !important;
-    opacity: .92;
+  .hero-robot-shell {
+    top: 4svh;
+    width: 106vw;
+    height: 80svh;
+    opacity: 0.93;
   }
 }
 
-/* Global reach: make the mobile world map read as a full hero visual, not a
-   tiny strip floating in empty space. */
+/* Global reach: stable labels on large screens, compact city chips on phones. */
+.global-world-map-shell,
 .global-world-map {
   margin-inline: auto;
+}
+.global-city-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.25rem;
+  padding: 0.18rem 0.5rem;
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 999px;
+  color: rgba(255,255,255,0.9);
+  background: rgba(5,5,7,0.82);
+  font-size: 0.63rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+.global-city-list {
+  display: none;
 }
 
 @media (max-width: 767px) {
   .global-world-map {
-    /* Full-bleed to the viewport edges but never WIDER than the viewport, so no
-       horizontal overflow can appear. Keep the true 2:1 aspect: the dotted image
-       (object-cover) and the animated overlay (preserveAspectRatio meet) then
-       frame identically, so no squish, no warped dots, no misaligned beams. */
-    width: 100vw !important;
-    max-width: none;
-    aspect-ratio: 2 / 1 !important;
-    height: auto !important;
-    margin-left: 50%;
-    transform: translateX(-50%);
-    border-radius: 0;
+    display: none;
   }
 
-  /* Drop the 1.16 zoom that cropped and warped the map on phones. With a real
-     2:1 box the image and overlay already fill the frame with no crop. */
-  .global-world-map > img,
-  .global-world-map > svg {
-    transform: none;
-  }
-
-  /* Ten city pills overlap heavily at phone width (Europe cluster, Dubai twice),
-     so hide the labels and keep the glowing endpoints plus the beam lines. */
   .global-world-map foreignObject {
     display: none;
   }
+
+  .global-city-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.45rem;
+    margin-top: 2rem;
+  }
+  .global-city-list span {
+    padding: 0.34rem 0.62rem;
+    border: 1px solid var(--line-2);
+    border-radius: 999px;
+    color: rgba(255,255,255,0.68);
+    font-size: 0.64rem;
+    font-weight: 650;
+  }
+  html:not(.dark) .global-city-list span { color: rgba(5,5,7,0.62); }
 }
 
 /* ── Keyboard focus: one brand ring for the whole app ───────────────────────
    Until now nothing owned :focus-visible outside a few shadcn primitives, so
-   tabbing through the nav, tab bar, FAQ rows and footer fell back to whatever
+   tabbing through the nav, FAQ rows and footer fell back to whatever
    ring the browser felt like drawing, and on the blurred dark surfaces that
    ring is easy to lose. An installed app has exactly one focus look, so this
    declares it once in brand red, offset far enough to read as a deliberate
    halo rather than a border. Outlines inherit the element's border-radius, so
-   pills stay pills and the 44px tab-bar rows stay rounded.
+   pills stay pills and the 44px footer rows stay rounded.
 
    Everything is wrapped in :where() (specificity 0) on purpose: any component
    that already ships its own focus treatment (shadcn Button's outline-none +
@@ -2167,13 +2591,11 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
 /* Inside the two fixed app-shell bars the ring is drawn just inside the tap
    target instead of around it, so it can never be clipped by the bar edge or
    spill over the blurred surface into the page behind it. */
-:where(.ai-nav, .app-tabbar-shell) :where(a, button, [role="button"]):focus-visible {
+:where(.ai-nav) :where(a, button, [role="button"]):focus-visible {
   outline-offset: -3px;
 }
 
-/* Keyboard focus should never land under the sticky top nav or behind the
-   bottom tab bar when the browser scrolls the focused control into view. */
+/* Keyboard focus should never land under the sticky top nav. */
 :where(a, button, summary, [role="button"], input, textarea, select):focus-visible {
   scroll-margin-top: 6rem;
-  scroll-margin-bottom: 7rem;
 }

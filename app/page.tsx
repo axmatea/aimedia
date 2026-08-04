@@ -6,17 +6,14 @@
  * hydration JS. Interactivity lives in explicit client islands:
  *
  *   SiteNav                     theme toggle, Lenis glides, booking triggers
- *   HeroVisual/HeroRotator/     Spline robot + Lightning, rotating audience
- *   HeroCtas                    line, hero buttons
+ *   HeroVisual/HeroCtas         Spline robot + Lightning, hero buttons
  *   Spotlight                   pointer-follow hero glow (lg+)
  *   Reveal                      whileInView fadeUp wrapper; children stay
  *                               server-rendered (children-as-props pattern)
- *   GlowCard / CountUp /        hover glow, count-up numbers, logo marquee
- *   LogoCloud(InfiniteSlider)
+ *   CountUp / LogoCloud         service metrics and the integration strip
  *   lazy-islands                AgentRadial, LeadFunnel, N8nWorkflowBlock,
  *                               AIUGCCreators, WorldMap (ssr:false, unchanged)
- *   BookingSection/Dialog/      the whole booking stack + sticky mobile pill
- *   BookingButton/AppTabBar
+ *   BookingSection/Dialog/      the whole booking stack
  *
  * Rule for future edits: static content stays OUT of "use client" files; a
  * new widget gets its own island (or lives in lazy-islands if it should stay
@@ -27,105 +24,25 @@ import { Spotlight } from "@/components/ui/spotlight"
 import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import { CountUp } from "@/components/ui/count-up"
-import { ProofSection } from "@/components/ui/proof-section"
-import { AppTabBar } from "@/components/home/app-tabbar"
-import { SERVE_ICONS } from "@/components/ui/serve-icons"
 import { AxWordmark } from "@/components/ui/ax-wordmark"
+import { SERVE_ICONS } from "@/components/ui/serve-icons"
 
 import { Disp, Tag, AmbientImage } from "@/components/home/shared"
 import { BookingSection, BookingDialog } from "@/components/home/booking"
 import { SiteNav } from "@/components/home/nav"
-import { HeroVisual, HeroRotator, HeroCtas } from "@/components/home/hero-islands"
+import { HeroVisual, HeroCtas } from "@/components/home/hero-islands"
 import { Reveal } from "@/components/home/reveal"
 import {
   N8nWorkflowBlock, AIUGCCreators, AgentRadial, LeadFunnel, WorldMap,
 } from "@/components/home/lazy-islands"
 import {
-  TICKER, WHO_WE_SERVE, STACK_LOGOS, FEATURED_LOGOS, MAP_DOTS,
-  SERVICES, CASE_STUDIES, TRACE_SYSTEM_NODES, TRACE_DELIVERABLES,
-  TRACE_SYSTEM_EDGES, TRACE_CONFIDENCE_TAGS, FAQS,
+  STACK_LOGOS, FEATURED_LOGOS, MAP_DOTS, SERVICES, FAQS, TICKER, WHO_WE_SERVE,
 } from "@/components/home/data"
-
-// Server-rendered section: only the two Reveal wrappers hydrate.
-function TraceableSystemMap() {
-  return (
-    <section id="trace-map" className="trace-map-section">
-      <div className="trace-map-layout">
-        <Reveal className="trace-map-copy">
-          <Tag>Traceable systems</Tag>
-          <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
-            MAP THE WORK.<br />SHIP THE<br /><span style={{ color: "var(--red)" }}>SYSTEM.</span>
-          </Disp>
-          <p className="ai-muted text-sm md:text-base leading-relaxed mt-6 max-w-md">
-            We build AI operations as visible maps: sources, decisions, owners, and review gates connected before anything touches a customer. Every node on this map is work we deliver, not a diagram.
-          </p>
-          <p className="trace-stack-heading">What ships</p>
-          <div className="trace-deliverable-stack" role="group" aria-label="What each engine delivers">
-            {TRACE_DELIVERABLES.map((row) => (
-              <div key={row.label} className="trace-deliverable-row">
-                <span>{row.label}</span>
-                <p>{row.detail}</p>
-              </div>
-            ))}
-          </div>
-          <p className="trace-stack-heading">How it stays traceable</p>
-          <div className="trace-confidence-stack" role="group" aria-label="Confidence labels">
-            {TRACE_CONFIDENCE_TAGS.map((tag) => (
-              <div key={tag.label} className="trace-confidence-row">
-                <span>{tag.label}</span>
-                <p>{tag.detail}</p>
-              </div>
-            ))}
-          </div>
-        </Reveal>
-
-        <Reveal delay={0.1} className="trace-map-canvas" role="img" ariaLabel="AX Media traceable AI system map">
-          <svg className="trace-map-svg" viewBox="0 0 720 420" preserveAspectRatio="none" aria-hidden>
-            <defs>
-              <filter id="traceGlow" x="-30%" y="-30%" width="160%" height="160%">
-                <feGaussianBlur stdDeviation="3.5" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-            {TRACE_SYSTEM_EDGES.map((edge) => (
-              <path
-                key={edge.id}
-                className={`trace-edge trace-edge-${edge.tone}`}
-                d={edge.d}
-                style={{ "--edge-delay": edge.delay } as React.CSSProperties}
-              />
-            ))}
-          </svg>
-
-          <div className="trace-map-grid" aria-hidden />
-          {TRACE_SYSTEM_NODES.map((node, index) => (
-            <article
-              key={node.id}
-              className={`trace-node trace-node-${node.tone}`}
-              style={{ "--x": node.x, "--y": node.y, "--node-index": index } as React.CSSProperties}
-            >
-              <span>{node.label}</span>
-              <p>{node.detail}</p>
-              <span className="trace-node-ships">
-                {node.ships.map((item) => (
-                  <em key={item}>{item}</em>
-                ))}
-              </span>
-            </article>
-          ))}
-        </Reveal>
-      </div>
-    </section>
-  )
-}
 
 // ── Page ────────────────────────────────────────────────────────────────────
 export default function Home() {
   return (
-    <main className="w-full ai-page ai-app-root overflow-hidden grain">
+    <main className="w-full ai-page grain">
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <SiteNav />
@@ -149,20 +66,23 @@ export default function Home() {
             markup here is pixel-identical, and the LCP paragraph no longer waits
             for any hydration. */}
         <div className="relative z-10 max-w-[1440px] mx-auto w-full">
-          <div>
-            <div className="overflow-hidden py-[0.04em] -my-[0.04em]">
-              <div>
+          <h1>
+            <span className="block overflow-hidden py-[0.04em] -my-[0.04em]">
+              <span className="block">
                 <Disp className="block ai-text" style={{ fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>WE BUILD</Disp>
-              </div>
-            </div>
-            <div className="overflow-hidden py-[0.04em] -my-[0.04em]">
-              <div>
+              </span>
+            </span>
+            <span className="block overflow-hidden py-[0.04em] -my-[0.04em]">
+              <span className="block">
                 <Disp className="block" style={{ color: "var(--red)", fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>AI SYSTEMS</Disp>
-              </div>
-            </div>
-            {/* Rotating audience line: the only headline part that hydrates */}
-            <HeroRotator />
-          </div>
+              </span>
+            </span>
+            <span className="block overflow-hidden" style={{ height: "var(--fs-mega)" }}>
+              <Disp className="block ai-muted" style={{ fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>
+                FOR BUILDERS.
+              </Disp>
+            </span>
+          </h1>
 
           <div className="mt-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 lg:max-w-[55%]">
             <p className="ai-muted text-sm md:text-base max-w-sm leading-relaxed">
@@ -174,57 +94,60 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Pink marquee ─────────────────────────────────────────────────── */}
-      <div className="marquee-shell marquee-mask py-5 overflow-hidden bg-[#FF2D55]" aria-hidden>
-        <div>
-        <div className="flex animate-marquee whitespace-nowrap">
-          {/* Ink-on-red (was white-on-red): white text on #FF2D55 sits at ~3.6:1
-              and fails WCAG AA for this size; near-black ink clears 5.5:1. */}
-          {[...TICKER, ...TICKER].map((item, i) => (
-            <span key={i} className="text-[#050507] font-bold text-sm uppercase tracking-[0.2em] mx-6 flex items-center gap-6">
-              {item} <span className="w-1.5 h-1.5 rounded-full bg-[#050507]/40 flex-shrink-0" />
+      {/* Fast capability signal directly after the hero. The content is
+          duplicated only to create a seamless marquee loop. */}
+      <section className="marquee-shell marquee-mask overflow-hidden bg-[#FF2D55] py-4 md:py-5" aria-label="AI Media capabilities">
+        <div className="animate-marquee flex w-max whitespace-nowrap">
+          {[...TICKER, ...TICKER].map((item, index) => (
+            <span
+              key={`${item}-${index}`}
+              className="mx-5 flex items-center gap-5 text-xs font-bold uppercase tracking-[0.2em] text-[#050507] md:mx-6 md:gap-6 md:text-sm"
+              aria-hidden={index >= TICKER.length}
+            >
+              {item}
+              <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#050507]/45" aria-hidden />
             </span>
           ))}
         </div>
-        </div>
-      </div>
+      </section>
 
-      {/* 02 CREDIBILITY */}
-      <div className="ai-page py-12 px-6">
+      {/* Integration proof belongs high in the story: the offer, then the
+          systems it can plug into, then the orchestrated AI team. */}
+      <section className="ai-page py-12 md:py-16 px-5 md:px-10" aria-labelledby="stack-heading">
         <div className="max-w-6xl mx-auto">
-          <Reveal className="text-center mb-10">
-            <p className="ai-muted text-xs uppercase tracking-[0.3em] font-bold">
-              Our systems run on
+          <Reveal className="text-center mb-8 md:mb-10">
+            <p id="stack-heading" className="ai-muted text-xs uppercase tracking-[0.3em] font-bold">
+              Built to work with your stack
             </p>
           </Reveal>
           <LogoCloud logos={[...STACK_LOGOS, ...FEATURED_LOGOS]} />
         </div>
-      </div>
+      </section>
 
-      {/* 03 FOR WHO */}
-      <section id="built-for" className="ai-page py-20 px-6 overflow-hidden" style={{ contain: "layout paint" }}>
-        <div className="max-w-6xl mx-auto">
-          <Reveal className="flex items-end justify-between mb-12 gap-4 flex-wrap">
+      {/* Cursor-reactive audience cards: a clear bridge between capability
+          proof and the operating system that powers it. */}
+      <section id="built-for" className="ai-page py-20 md:py-28 px-5 md:px-10 overflow-hidden scroll-mt-24" style={{ contain: "layout paint" }}>
+        <div className="max-w-7xl mx-auto">
+          <Reveal className="flex items-end justify-between mb-10 md:mb-14 gap-6 flex-wrap">
             <div>
               <Tag>Who we build for</Tag>
               <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
-                BUILT FOR<br />EVERY AMBITIOUS<br /><span style={{ color: "var(--red)" }}>PROJECT.</span>
+                BUILT FOR<br />AMBITIOUS<br /><span style={{ color: "var(--red)" }}>OPERATORS.</span>
               </Disp>
             </div>
-            <p className="ai-muted text-sm max-w-xs leading-relaxed">
-              From early-stage founders to Web3 protocols, we build AI systems that scale with your ambitions.
+            <p className="ai-muted text-sm md:text-base max-w-sm leading-relaxed">
+              From focused founders to global teams, we build systems around the way the business needs to move.
             </p>
           </Reveal>
-          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-            {WHO_WE_SERVE.map((w, i) => (
-              <Reveal key={w.label} delay={i * 0.07}
-                className="w-[calc(50%-8px)] sm:w-[200px] md:w-[210px]">
-                <GlowCard glowColor={w.glowColor} customSize className="w-full h-full min-h-[220px] sm:min-h-[280px]">
-                  <div className="flex flex-col justify-between h-full py-3">
-                    <span style={{ color: w.color }}>{SERVE_ICONS[w.icon]()}</span>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+            {WHO_WE_SERVE.map((audience, index) => (
+              <Reveal key={audience.label} delay={index * 0.055}>
+                <GlowCard glowColor={audience.glowColor} customSize className="w-full h-full min-h-[190px] sm:min-h-[230px] md:min-h-[260px]">
+                  <div className="flex flex-col justify-between h-full py-2 sm:py-3">
+                    <span style={{ color: audience.color }}>{SERVE_ICONS[audience.icon]()}</span>
                     <div>
-                      <Disp className="text-white text-3xl block mb-2 leading-tight">{w.label}</Disp>
-                      <p className="text-white/70 text-sm font-medium uppercase tracking-wider leading-tight">{w.sub}</p>
+                      <Disp className="text-white text-2xl sm:text-3xl md:text-4xl block mb-2">{audience.label}</Disp>
+                      <p className="text-white/65 text-[10px] sm:text-xs font-medium uppercase tracking-[0.12em] leading-snug">{audience.sub}</p>
                     </div>
                   </div>
                 </GlowCard>
@@ -235,10 +158,10 @@ export default function Home() {
       </section>
 
       {/* AI Team Never Sleeps */}
-      <section id="ai-team" className="ai-panel ax-panel-melt py-20 px-6 relative overflow-hidden" style={{ contain: "layout paint" }}>
+      <section id="ai-team" className="ai-panel ax-panel-melt ai-team-section py-20 md:py-28 px-5 md:px-10 relative overflow-hidden" style={{ contain: "layout paint" }}>
         {/* Ambient atmosphere: community-sphere render, dimmed + radially masked behind the agent radial */}
         <AmbientImage src="/generated/outcomes/blur/outcome-web3-blur.webp" className="ambient-ai-team" />
-        <div className="relative z-[1] max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+        <div className="relative z-[1] max-w-7xl mx-auto grid lg:grid-cols-[minmax(260px,0.72fr)_minmax(0,1.28fr)] gap-12 lg:gap-16 items-center">
           <div className="relative z-10">
             <Tag>The Intelligence</Tag>
             <Reveal duration={0.6} easeDefault className="mt-6">
@@ -246,8 +169,8 @@ export default function Home() {
                 YOUR AI TEAM<br />NEVER<br /><span style={{ color: "var(--red)" }}>SLEEPS.</span>
               </Disp>
             </Reveal>
-            <p className="ai-muted text-sm leading-relaxed mt-6 mb-8 max-w-sm">
-              Autonomous agents that run lead gen, create content, and monitor data. 24/7, without errors or delays.
+            <p className="ai-muted text-sm md:text-base leading-relaxed mt-6 mb-8 max-w-md">
+              Specialized agents coordinate lead generation, content, analytics, outreach, and strategy around one orchestrator, with human review where it matters.
             </p>
             <div className="flex flex-col gap-3">
               {["Deploys in 7 days", "You own the code", "Production-grade infra", "No vendor lock-in"].map((f) => (
@@ -258,26 +181,17 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <div className="flex items-center justify-center py-8">
+          <div className="flex items-center justify-center py-4 md:py-8 min-w-0">
             <AgentRadial />
           </div>
         </div>
       </section>
 
-      {/* Traceable Graph System */}
-      <TraceableSystemMap />
-
-      {/* Flow bridge: light theme melts paper into the dark services block;
-          dark theme gets a faint ambient render bleed instead of a hard seam. */}
-      <div aria-hidden className="ax-flow-bridge ax-bridge-into-dark relative h-24 md:h-36 -mb-px">
-        <AmbientImage src="/generated/outcomes/blur/outcome-web3-blur.webp" className="ax-ambient-bleed" />
-      </div>
-
       {/* 04 SOLUTION: Services */}
       <div id="services" className="scroll-mt-24">
         {SERVICES.map((svc, i) => (
-          <section key={svc.id} className="py-24 px-6 relative overflow-hidden" style={{ background: svc.bg, contain: "layout paint" }}>
-            <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center relative z-10">
+          <section id={`service-${svc.id}`} key={svc.id} className={`service-section service-${svc.id} py-20 md:py-28 px-5 md:px-10 relative overflow-hidden scroll-mt-24`} style={{ background: svc.bg, contain: "layout paint" }}>
+            <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14 lg:gap-20 items-center relative z-10">
               <div className={i % 2 === 1 ? "md:order-last" : ""}>
                 <div className="flex items-center gap-3 mb-6">
                   <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 rounded-full border"
@@ -288,8 +202,8 @@ export default function Home() {
                 </div>
                 <Disp className="whitespace-pre-line block mb-4" style={{ color: "#fff", fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>{svc.name}</Disp>
                 <p className="text-base md:text-lg leading-snug mb-3 font-semibold" style={{ color: "var(--red)" }}>{svc.tagline}</p>
-                <p className="text-sm md:text-base leading-relaxed mb-8" style={{ color: "rgba(255,255,255,0.7)" }}>{svc.body}</p>
-                <div className="flex gap-8 mb-6">
+                <p className="text-[15px] md:text-base leading-relaxed mb-8 max-w-xl" style={{ color: "rgba(255,255,255,0.76)" }}>{svc.body}</p>
+                <div className="grid grid-cols-2 gap-5 md:gap-8 mb-7 max-w-lg">
                   {svc.metrics.map((met) => (
                     <div key={met.label}>
                       <Disp className="text-2xl" style={{ color: "#fff" }}><CountUp value={met.value} /></Disp>
@@ -360,17 +274,8 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Flow bridge out of the dark services block. No ambient bleed here:
-          the proof section already runs its own scroll-linked ambient imagery. */}
-      <div aria-hidden className="ax-flow-bridge ax-bridge-out-of-dark relative h-24 md:h-36 -mb-px" />
-
-      {/* 06 PROOF: Outcomes we engineer (anonymized until real case studies confirmed) */}
-      <ProofSection items={CASE_STUDIES} />
-
       {/* 07 SCALE: World Map */}
       <section id="global-reach" className="ai-page py-20 px-6 relative overflow-hidden scroll-mt-20" style={{ contain: "layout paint" }}>
-        {/* Ambient atmosphere: demand-rings render behind the heading, fully faded out before the map */}
-        <AmbientImage src="/generated/outcomes/blur/outcome-local-blur.webp" className="ambient-global" />
         <div className="relative z-[1] max-w-6xl mx-auto">
           <Reveal className="text-center mb-10">
             <Tag>Global reach</Tag>
@@ -386,7 +291,7 @@ export default function Home() {
               ))}
             </div>
           </Reveal>
-          <WorldMap dots={MAP_DOTS} lineColor="#FF2D55" showLabels />
+          <WorldMap dots={MAP_DOTS} lineColor="#FF2D55" showLabels loop={false} />
         </div>
       </section>
 
@@ -428,22 +333,15 @@ export default function Home() {
       {/* Native <dialog> booking modal, opened by the sticky nav CTA + Contact link */}
       <BookingDialog />
 
-      {/* Mobile-only app-style bottom tab bar (Services / Work / Book): appears
-          after the hero, hides around the booking section and while the dialog
-          is open. Replaces the old floating booking pill. */}
-      <AppTabBar />
-
       {/* ── Footer ───────────────────────────────────────────────────────── */}
       <footer className="ai-page py-10 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            {/* Inline wordmark in the real document fonts, themed via currentColor.
-                Same component as the nav, so parity is automatic. */}
-            <AxWordmark className="ax-wordmark h-8 w-auto text-[#050507] dark:text-white" />
+            {/* Same canonical prepared mark as the header. */}
+            <AxWordmark className="h-9" />
             <span className="ai-muted text-xs">© 2026 AX Media · aimedia.global</span>
           </div>
-          {/* Bottom rail. On phones this row sits directly above the app tab
-              bar, so below md the links become real 44px rows in a 2-up grid,
+          {/* On phones the links become real 44px rows in a 2-up grid,
               the way an installed app lists its About / Legal entries, instead
               of a squeezed line of 12px text. From md up it collapses back to
               the inline link row the desktop footer has always had. Layout and

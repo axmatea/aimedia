@@ -2,7 +2,7 @@
 import { useRef, useState, useMemo, useEffect } from "react";
 // m + AnimatePresence from motion/react: the app provides LazyMotion(domAnimation),
 // so m.* elements animate identically to motion.* without the eager full bundle.
-import { m, AnimatePresence } from "motion/react";
+import { m, AnimatePresence, useReducedMotion } from "motion/react";
 import DottedMap from "dotted-map";
 import { useTheme } from "next-themes";
 
@@ -12,6 +12,17 @@ import { useTheme } from "next-themes";
 // only depends on the theme color, so compute it once per theme, lazily, and
 // only when the map is actually approaching the viewport.
 const svgCache = new Map<string, string>();
+const LABEL_OFFSETS: Record<string, { x: number; y: number }> = {
+  "New York": { x: -50, y: -34 },
+  "Los Angeles": { x: -56, y: 8 },
+  London: { x: -62, y: -34 },
+  Paris: { x: 8, y: 2 },
+  Moscow: { x: 10, y: -34 },
+  Dubai: { x: 8, y: 2 },
+  Singapore: { x: -48, y: 8 },
+  Tokyo: { x: 8, y: -30 },
+  "São Paulo": { x: -48, y: -32 },
+};
 function buildMapSVG(dark: boolean): string {
   const key = dark ? "dark" : "light";
   const hit = svgCache.get(key);
@@ -48,6 +59,7 @@ export function WorldMap({
   const wrapRef = useRef<HTMLDivElement>(null);
   const [hoveredLocation] = useState<string | null>(null);
   const { resolvedTheme } = useTheme();
+  const reduceMotion = useReducedMotion();
 
   // Defer the expensive grid computation until the section is near view, then
   // run it in an idle callback so it never lands mid-scroll-frame. The outer
@@ -102,6 +114,18 @@ export function WorldMap({
     [ready, resolvedTheme]
   );
 
+  const locations = useMemo(() => {
+    const unique = new Map<string, { lat: number; lng: number; label: string }>();
+    for (const dot of dots) {
+      for (const point of [dot.start, dot.end]) {
+        if (point.label && !unique.has(point.label)) {
+          unique.set(point.label, { lat: point.lat, lng: point.lng, label: point.label });
+        }
+      }
+    }
+    return [...unique.values()];
+  }, [dots]);
+
   const projectPoint = (lat: number, lng: number) => ({
     x: (lng + 180) * (800 / 360),
     y: (90 - lat) * (400 / 180),
@@ -119,7 +143,8 @@ export function WorldMap({
   const fullCycleDuration = totalAnimationTime + pauseTime;
 
   return (
-    <div ref={wrapRef} className="global-world-map w-full aspect-[2/1] rounded-2xl relative overflow-hidden">
+    <div ref={wrapRef} className="global-world-map-shell">
+      <div className="global-world-map w-full aspect-[2/1] rounded-2xl relative overflow-hidden">
       {svgMap && (
         /* eslint-disable-next-line @next/next/no-img-element */
         <img
@@ -170,16 +195,16 @@ export function WorldMap({
                 stroke="url(#path-gradient)"
                 strokeWidth="1.75"
                 filter="url(#glow)"
-                initial={{ pathLength: 0 }}
-                animate={loop ? { pathLength: [0, 0, 1, 1, 0] } : { pathLength: 1 }}
-                transition={loop ? {
+                initial={reduceMotion ? false : { pathLength: 0 }}
+                animate={reduceMotion ? { pathLength: 1 } : loop ? { pathLength: [0, 0, 1, 1, 0] } : { pathLength: 1 }}
+                transition={reduceMotion ? { duration: 0 } : loop ? {
                   duration: fullCycleDuration,
                   times: [0, startTime, endTime, resetTime, 1],
                   ease: "easeInOut",
                   repeat: Infinity,
                 } : { duration: animationDuration, delay: i * staggerDelay }}
               />
-              {loop && (
+              {loop && !reduceMotion && (
                 <m.circle r="5" fill={lineColor} filter="url(#glowStrong)"
                   initial={{ offsetDistance: "0%", opacity: 0 }}
                   animate={{ offsetDistance: [null, "0%", "100%", "100%", "100%"], opacity: [0, 0, 1, 0, 0] }}
@@ -191,29 +216,24 @@ export function WorldMap({
           );
         })}
 
-        {dots.map((dot, i) => {
-          const s = projectPoint(dot.start.lat, dot.start.lng);
-          const e = projectPoint(dot.end.lat, dot.end.lng);
+        {locations.map((location) => {
+          const pt = projectPoint(location.lat, location.lng);
+          const offset = LABEL_OFFSETS[location.label] ?? { x: -48, y: -30 };
           return (
-            <g key={`pts-${i}`}>
-              {[{ pt: s, label: dot.start.label }, { pt: e, label: dot.end.label }].map(({ pt, label }, j) => (
-                <g key={j}>
-                  <circle cx={pt.x} cy={pt.y} r="3.2" fill={lineColor} filter="url(#glowStrong)" />
-                  <circle cx={pt.x} cy={pt.y} r="3" fill={lineColor} opacity="0.5">
-                    <animate attributeName="r" from="3" to="11" dur="2s" begin={`${j * 0.5}s`} repeatCount="indefinite" />
-                    <animate attributeName="opacity" from="0.6" to="0" dur="2s" begin={`${j * 0.5}s`} repeatCount="indefinite" />
-                  </circle>
-                  {showLabels && label && (
-                    <foreignObject x={pt.x - 48} y={pt.y - 30} width="96" height="22">
-                      <div className="flex items-center justify-center h-full">
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/85 text-white border border-white/20 whitespace-nowrap">
-                          {label}
-                        </span>
-                      </div>
-                    </foreignObject>
-                  )}
-                </g>
-              ))}
+            <g key={location.label}>
+              <circle cx={pt.x} cy={pt.y} r="3.4" fill={lineColor} filter="url(#glowStrong)" />
+              {!reduceMotion && (
+                <circle cx={pt.x} cy={pt.y} r="6" fill="none" stroke={lineColor} strokeWidth="0.8" opacity="0.35" />
+              )}
+              {showLabels && (
+                <foreignObject x={pt.x + offset.x} y={pt.y + offset.y} width="104" height="24">
+                  <div className="flex items-center h-full">
+                    <span className="global-city-label">
+                      {location.label}
+                    </span>
+                  </div>
+                </foreignObject>
+              )}
             </g>
           );
         })}
@@ -230,6 +250,13 @@ export function WorldMap({
           </m.div>
         )}
       </AnimatePresence>
+      </div>
+
+      {showLabels && (
+        <div className="global-city-list" aria-label="Client cities">
+          {locations.map((location) => <span key={location.label}>{location.label}</span>)}
+        </div>
+      )}
     </div>
   );
 }

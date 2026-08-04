@@ -4,6 +4,7 @@
 
 # local state + reports (gitignored locally, but the CLI uploads them anyway)
 docs/audit
+docs/screenshots
 .lighthouseci
 data
 _assets-archive

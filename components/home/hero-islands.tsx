@@ -8,7 +8,6 @@
  * - HeroVisual: Lightning WebGL ambient (lg+ only) + the self-hosted Spline
  *   robot. Both were already lazy, ssr:false chunks; the matchMedia gate that
  *   skips mounting Lightning on phones moves here unchanged.
- * - HeroRotator: the rotating audience line (interval + AnimatePresence).
  * - HeroCtas: the two hero buttons (booking dialog trigger + Lenis glide).
  *
  * Note on the former entrance animations: the pre-v7.2 hero wrapped the badge,
@@ -18,11 +17,8 @@
  */
 
 import { useState, useEffect } from "react"
-import { m, AnimatePresence } from "motion/react"
 import dynamic from "next/dynamic"
 import { LiquidMetalButton } from "@/components/ui/liquid-metal-button"
-import { Disp } from "@/components/home/shared"
-import { HERO_AUDIENCES } from "@/components/home/data"
 import { scrollToId, openBooking } from "@/components/home/actions"
 
 const Lightning = dynamic(
@@ -58,8 +54,7 @@ export function HeroVisual() {
 
       {/* Robot */}
       <div
-        className="hero-robot-shell robot-mobile absolute right-0 top-0 w-[100%] h-[55svh] lg:bottom-0 lg:w-[65%] lg:h-auto pointer-events-none block z-[2]"
-        style={{ transform: "scale(1.35) translate3d(0, -8%, 0)", transformOrigin: "top center", willChange: "transform" }}
+        className="hero-robot-shell absolute pointer-events-none block z-[2]"
       >
         {/* No static poster: while the Spline runtime boots, the hero right side
             shows only the dark ambient background (gradient + red bloom + Lightning).
@@ -76,40 +71,12 @@ export function HeroVisual() {
   )
 }
 
-// ── HeroRotator: the third headline line, cycling through audiences ─────────
-export function HeroRotator() {
-  const [audienceIdx, setAudienceIdx] = useState(0)
-
-  useEffect(() => {
-    const t = setInterval(() => setAudienceIdx((i) => (i + 1) % HERO_AUDIENCES.length), 2600)
-    return () => clearInterval(t)
-  }, [])
-
-  return (
-    <div className="overflow-hidden" style={{ height: "var(--fs-mega)" }}>
-      <AnimatePresence mode="wait" initial={false}>
-        <m.div
-          key={audienceIdx}
-          initial={false}
-          animate={{ y: "0%", opacity: 1 }}
-          exit={{ y: "-100%", opacity: 0 }}
-          transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <Disp className="block ai-muted" style={{ fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>
-            FOR {HERO_AUDIENCES[audienceIdx]}
-          </Disp>
-        </m.div>
-      </AnimatePresence>
-    </div>
-  )
-}
-
 // ── HeroCtas: primary booking trigger + services glide ──────────────────────
 export function HeroCtas() {
   return (
-    <div className="flex gap-3 flex-shrink-0">
-      <LiquidMetalButton label="Start a Project" onClick={openBooking} />
-      <button type="button" onClick={() => scrollToId("services")} className="px-8 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-sm font-semibold rounded-full transition-[border-color,color,transform] active:scale-[0.97] motion-reduce:active:scale-100 [@media(hover:hover)]:hover:border-[#FF2D55] [@media(hover:hover)]:hover:text-[#FF2D55]">
+    <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-3 flex-shrink-0 w-full sm:w-auto sm:min-w-[360px]">
+      <LiquidMetalButton label="Start a Project" onClick={openBooking} className="w-full justify-center" />
+      <button type="button" onClick={() => scrollToId("services")} className="w-full px-7 md:px-8 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-sm font-semibold rounded-full transition-[border-color,color,transform] active:scale-[0.97] motion-reduce:active:scale-100 [@media(hover:hover)]:hover:border-[#FF2D55] [@media(hover:hover)]:hover:text-[#FF2D55]">
         See Services →
       </button>
     </div>

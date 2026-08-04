@@ -19,7 +19,7 @@ export function Reveal({
   children,
   className,
   delay = 0,
-  duration = 0.9,
+  duration = 0.65,
   easeDefault = false,
   role,
   ariaLabel,
@@ -34,7 +34,7 @@ export function Reveal({
 }) {
   return (
     <m.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={VP}
       transition={easeDefault ? { duration, delay } : { duration, delay, ease: EASE_SWIFT }}

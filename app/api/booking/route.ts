@@ -179,7 +179,7 @@ export async function POST(req: NextRequest) {
       from: FROM_EMAIL,
       to: OWNER_EMAIL.trim(),
       replyTo: email,
-      subject: `🔥 New Lead: ${name} (${budget})`,
+      subject: `New project request: ${name}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0a0a0f;color:#fff;padding:32px;border-radius:12px;">
           <h2 style="color:#FF2D55;margin:0 0 24px;">New Booking Request</h2>
@@ -187,9 +187,8 @@ export async function POST(req: NextRequest) {
             <tr><td style="padding:10px 0;color:#aaa;width:140px;">Name</td><td style="padding:10px 0;font-weight:bold;">${name}</td></tr>
             <tr><td style="padding:10px 0;color:#aaa;">Email</td><td style="padding:10px 0;"><a href="mailto:${email}" style="color:#FF2D55;">${email}</a></td></tr>
             <tr><td style="padding:10px 0;color:#aaa;">Phone</td><td style="padding:10px 0;">${phone || "not provided"}</td></tr>
-            <tr><td style="padding:10px 0;color:#aaa;border-top:1px solid #222;">Project Type</td><td style="padding:10px 0;border-top:1px solid #222;">${projectType}</td></tr>
-            <tr><td style="padding:10px 0;color:#aaa;">Primary Goal</td><td style="padding:10px 0;">${goal}</td></tr>
-            <tr><td style="padding:10px 0;color:#aaa;">Monthly Budget</td><td style="padding:10px 0;color:#FF2D55;font-weight:bold;">${budget}</td></tr>
+            <tr><td style="padding:10px 0;color:#aaa;border-top:1px solid #222;">Project Type</td><td style="padding:10px 0;border-top:1px solid #222;">${projectType || "not provided"}</td></tr>
+            <tr><td style="padding:10px 0;color:#aaa;vertical-align:top;">Context</td><td style="padding:10px 0;line-height:1.5;">${goal || "not provided"}</td></tr>
           </table>
           <div style="margin-top:24px;padding:16px;background:#111;border-radius:8px;border-left:3px solid #FF2D55;">
             <p style="margin:0;color:#aaa;font-size:13px;">Cal.com booking was opened for this lead. 3-step follow-up sequence is scheduled.</p>
@@ -353,12 +352,8 @@ export async function POST(req: NextRequest) {
                   <td style="padding:14px 0;border-bottom:1px solid #111122;color:#ddd;font-size:14px;font-weight:600;padding-top:16px;">${projectType || "-"}</td>
                 </tr>
                 <tr>
-                  <td style="padding:14px 0;border-bottom:1px solid #111122;color:#333;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;vertical-align:top;">Goal</td>
-                  <td style="padding:14px 0;border-bottom:1px solid #111122;color:#ddd;font-size:14px;font-weight:600;">${goal || "-"}</td>
-                </tr>
-                <tr>
-                  <td style="padding:14px 0 16px;color:#333;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;vertical-align:top;">Budget</td>
-                  <td style="padding:14px 0 16px;color:#FF2D55;font-size:15px;font-weight:800;">${budget || "-"}</td>
+                  <td style="padding:14px 0 16px;color:#333;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;vertical-align:top;">Context</td>
+                  <td style="padding:14px 0 16px;color:#ddd;font-size:14px;font-weight:600;line-height:1.5;">${goal || "-"}</td>
                 </tr>
               </table>
             </td>
@@ -374,7 +369,7 @@ export async function POST(req: NextRequest) {
           <tr>
             <td style="padding:28px 32px;">
               <p style="color:#ccc;font-size:15px;font-weight:600;margin:0 0 6px;">Haven't booked your call yet?</p>
-              <p style="color:#555;font-size:13px;margin:0 0 20px;line-height:1.5;">Lock in your slot now. Slots fill fast and we only take a limited number of new clients each month.</p>
+              <p style="color:#555;font-size:13px;margin:0 0 20px;line-height:1.5;">Choose a time so we can review the task, clarify scope, and prepare the right next step.</p>
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="border-radius:8px;background:#FF2D55;">
