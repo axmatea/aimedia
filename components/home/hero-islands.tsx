@@ -8,7 +8,8 @@
  * - HeroVisual: Lightning WebGL ambient (lg+ only) + the self-hosted Spline
  *   robot. Both were already lazy, ssr:false chunks; the matchMedia gate that
  *   skips mounting Lightning on phones moves here unchanged.
- * - HeroCtas: the two hero buttons (booking dialog trigger + Lenis glide).
+ * - HeroRotator: the stable rotating audience line.
+ * - HeroCtas: booking + isolated Animated Experience route.
  *
  * Note on the former entrance animations: the pre-v7.2 hero wrapped the badge,
  * headline, and subcopy in m.div wrappers with initial={false}, which renders
@@ -18,8 +19,12 @@
 
 import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
+import Link from "next/link"
+import { AnimatePresence, m, useReducedMotion } from "motion/react"
 import { LiquidMetalButton } from "@/components/ui/liquid-metal-button"
-import { scrollToId, openBooking } from "@/components/home/actions"
+import { Disp } from "@/components/home/shared"
+import { HERO_AUDIENCES } from "@/components/home/data"
+import { openBooking } from "@/components/home/actions"
 
 const Lightning = dynamic(
   () => import("@/components/ui/lightning").then((mod) => mod.Lightning),
@@ -71,14 +76,56 @@ export function HeroVisual() {
   )
 }
 
-// ── HeroCtas: primary booking trigger + services glide ──────────────────────
+// ── HeroRotator: concise audiences, one stable line on every viewport ───────
+export function HeroRotator() {
+  const [audienceIndex, setAudienceIndex] = useState(0)
+  const reducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    if (reducedMotion) return
+    const timer = window.setInterval(
+      () => setAudienceIndex((current) => (current + 1) % HERO_AUDIENCES.length),
+      2800,
+    )
+    return () => window.clearInterval(timer)
+  }, [reducedMotion])
+
+  return (
+    <>
+      <span className="sr-only">For founders, builders, Web3 teams, and modern businesses</span>
+      <div className="hero-audience-rotator overflow-hidden" aria-hidden="true">
+        <div>
+        <AnimatePresence mode="wait" initial={false}>
+          <m.div
+            key={audienceIndex}
+            initial={reducedMotion ? false : { y: "88%", opacity: 0 }}
+            animate={{ y: "0%", opacity: 1 }}
+            exit={reducedMotion ? undefined : { y: "-88%", opacity: 0 }}
+            transition={{ duration: 0.46, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <Disp className="hero-audience-line block ai-muted">
+              FOR {HERO_AUDIENCES[audienceIndex]}
+            </Disp>
+          </m.div>
+        </AnimatePresence>
+        </div>
+      </div>
+    </>
+  )
+}
+
+// ── HeroCtas: commercial action + opt-in animated route ────────────────────
 export function HeroCtas() {
   return (
-    <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-3 flex-shrink-0 w-full sm:w-auto sm:min-w-[360px]">
-      <LiquidMetalButton label="Start a Project" onClick={openBooking} className="w-full justify-center" />
-      <button type="button" onClick={() => scrollToId("services")} className="w-full px-7 md:px-8 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-sm font-semibold rounded-full transition-[border-color,color,transform] active:scale-[0.97] motion-reduce:active:scale-100 [@media(hover:hover)]:hover:border-[#FF2D55] [@media(hover:hover)]:hover:text-[#FF2D55]">
-        See Services →
-      </button>
+    <div className="grid grid-cols-1 min-[500px]:grid-cols-2 gap-3 flex-shrink-0 w-full sm:w-auto sm:min-w-[440px]">
+      <LiquidMetalButton label="Book a Strategy Call" onClick={openBooking} className="w-full justify-center" />
+      <Link
+        href="/animated"
+        prefetch={false}
+        className="w-full px-6 md:px-7 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-center text-sm font-semibold rounded-full transition-[border-color,color,transform] active:scale-[0.97] motion-reduce:active:scale-100 [@media(hover:hover)]:hover:border-[#FF2D55] [@media(hover:hover)]:hover:text-[#FF2D55]"
+      >
+        Enter Animated Experience
+      </Link>
     </div>
   )
 }

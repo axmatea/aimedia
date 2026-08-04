@@ -2351,6 +2351,20 @@ html {
 .hero-section {
   contain: paint !important;
 }
+.hero-audience-rotator {
+  --hero-audience-size: var(--fs-mega);
+  height: var(--hero-audience-size);
+}
+.hero-audience-line {
+  white-space: nowrap;
+  font-size: var(--hero-audience-size);
+  line-height: var(--lh-mega);
+}
+@media (max-width: 640px) {
+  .hero-audience-rotator {
+    --hero-audience-size: clamp(2.05rem, 9.2vw, 2.6rem);
+  }
+}
 .hero-robot-shell {
   top: 0;
   right: clamp(-2.5rem, -1.6vw, -1rem);

@@ -17,9 +17,16 @@ export const VP = { once: true, margin: "0px 0px -40px 0px" } as const
 export const EASE_SWIFT: [number, number, number, number] = [0.2, 0.8, 0.2, 1]
 
 // ── Data ────────────────────────────────────────────────────────────────────
-export const HERO_AUDIENCES = ["WEB3.", "FOUNDERS.", "AGENCIES.", "BRANDS.", "BUILDERS."]
+export const HERO_AUDIENCES = ["FOUNDERS.", "BUILDERS.", "WEB3 TEAMS.", "MODERN BUSINESSES."]
 
-export const TICKER = ["GO-TO-MARKET","LEAD GENERATION","CONTENT AT SCALE","AI AUTOMATION","COMMUNITY GROWTH","SOCIAL MEDIA","BUSINESS DEVELOPMENT","NFT LAUNCHES","DAO TOOLING","WEB3 NATIVE"]
+export const TICKER = [
+  "AI AGENTS + ORCHESTRATION",
+  "WORKFLOW AUTOMATION",
+  "CLIENT PLATFORMS",
+  "GO-TO-MARKET SYSTEMS",
+  "CONTENT SYSTEMS",
+  "AI INTEGRATIONS",
+]
 
 // Monochrome animated stroke icons, single red accent each. Distinction is shape + label, not hue.
 export const WHO_WE_SERVE = [
@@ -93,6 +100,39 @@ export const SERVICES = [
     tools: ["Custom Platforms", "Client Portals", "Internal Ops", "AI Workflows"],
   },
 ]
+
+// Truth-safe architecture studies. These describe systems we design and build,
+// not named client engagements or claimed performance results.
+export const SELECTED_SYSTEMS = [
+  {
+    index: "01",
+    name: "PIPELINE ORCHESTRATION",
+    label: "Go-to-market system",
+    detail: "Signals, enrichment, outreach, approvals, and CRM state coordinated inside one owned workflow.",
+    stages: ["Signals", "Research", "Outreach", "Review", "CRM"],
+  },
+  {
+    index: "02",
+    name: "CONTENT OPERATING SYSTEM",
+    label: "Content system",
+    detail: "Positioning, scripts, production, human review, and distribution connected across channels.",
+    stages: ["Strategy", "Create", "Approve", "Publish", "Learn"],
+  },
+  {
+    index: "03",
+    name: "CLIENT OPERATIONS PLATFORM",
+    label: "Business platform",
+    detail: "A custom operating layer for intake, delivery, approvals, reporting, and internal workflows.",
+    stages: ["Intake", "Scope", "Deliver", "Approve", "Report"],
+  },
+] as const
+
+export const PROCESS_STEPS = [
+  { index: "01", label: "ANALYZE", detail: "Map the work, systems, constraints, and highest-leverage gap." },
+  { index: "02", label: "DEFINE", detail: "Set the scope, ownership, review gates, and success criteria." },
+  { index: "03", label: "BUILD", detail: "Design, integrate, and implement the system in your stack." },
+  { index: "04", label: "VALIDATE", detail: "Test the workflow, document it, and hand over an operating system you own." },
+] as const
 
 // Outcome renders: brand imagery (2000x1343 webp, optimized, lazy, below the
 // fold). Cards without `image` fall back to the abstract OutcomeVisual, so
@@ -186,8 +226,9 @@ export const FAQS = [
 ]
 
 export const NAV_LINKS = [
-  { label: "Services", href: "#services" },
-  { label: "System", href: "#ai-team" },
-  { label: "Platforms", href: "#service-03" },
-  { label: "Contact", href: "#booking" },
+  { label: "Systems", href: "#services" },
+  { label: "Selected Systems", href: "#selected-systems" },
+  { label: "Process", href: "#process" },
+  { label: "FAQ", href: "#faq" },
+  { label: "Animated Experience", href: "/animated" },
 ]

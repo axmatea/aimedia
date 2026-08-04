@@ -75,3 +75,9 @@ next-env.d.ts
 /public/hero-keyvisual.png
 /public/logo-gen/
 /public/logo-preview-gen.html
+
+# Local high-quality masters and QA frames for cinematic experiments;
+# only optimized web encodes under public/animated are site source.
+/artifacts/transition-lab/
+/artifacts/animated-experience/
+/artifacts/animated-experience/

@@ -9,6 +9,7 @@ docs/screenshots
 data
 _assets-archive
 tsconfig.tsbuildinfo
+artifacts
 
 # outreach + email ops: local-only, contain prospect contact details
 scripts/outreach

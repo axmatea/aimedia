@@ -30,13 +30,14 @@ import { SERVE_ICONS } from "@/components/ui/serve-icons"
 import { Disp, Tag, AmbientImage } from "@/components/home/shared"
 import { BookingSection, BookingDialog } from "@/components/home/booking"
 import { SiteNav } from "@/components/home/nav"
-import { HeroVisual, HeroCtas } from "@/components/home/hero-islands"
+import { HeroVisual, HeroCtas, HeroRotator } from "@/components/home/hero-islands"
 import { Reveal } from "@/components/home/reveal"
 import {
   N8nWorkflowBlock, AIUGCCreators, AgentRadial, LeadFunnel, WorldMap,
 } from "@/components/home/lazy-islands"
 import {
   STACK_LOGOS, FEATURED_LOGOS, MAP_DOTS, SERVICES, FAQS, TICKER, WHO_WE_SERVE,
+  SELECTED_SYSTEMS, PROCESS_STEPS,
 } from "@/components/home/data"
 
 // ── Page ────────────────────────────────────────────────────────────────────
@@ -77,11 +78,7 @@ export default function Home() {
                 <Disp className="block" style={{ color: "var(--red)", fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>AI SYSTEMS</Disp>
               </span>
             </span>
-            <span className="block overflow-hidden" style={{ height: "var(--fs-mega)" }}>
-              <Disp className="block ai-muted" style={{ fontSize: "var(--fs-mega)", lineHeight: "var(--lh-mega)" }}>
-                FOR BUILDERS.
-              </Disp>
-            </span>
+            <HeroRotator />
           </h1>
 
           <div className="mt-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 lg:max-w-[55%]">
@@ -273,6 +270,75 @@ export default function Home() {
           </section>
         ))}
       </div>
+
+      {/* Selected system architectures. These are transparent capability
+          studies, not disguised client case studies or invented outcomes. */}
+      <section id="selected-systems" className="ai-page py-20 md:py-28 px-5 md:px-10 scroll-mt-24" style={{ contain: "layout paint" }}>
+        <div className="max-w-7xl mx-auto">
+          <Reveal className="flex items-end justify-between mb-10 md:mb-14 gap-6 flex-wrap">
+            <div>
+              <Tag>Selected systems</Tag>
+              <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
+                DESIGNED AROUND<br /><span style={{ color: "var(--red)" }}>REAL WORK.</span>
+              </Disp>
+            </div>
+            <p className="ai-muted text-sm md:text-base max-w-md leading-relaxed">
+              Three system architectures that show how fragmented work becomes one coordinated operating layer.
+            </p>
+          </Reveal>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            {SELECTED_SYSTEMS.map((system, systemIndex) => (
+              <Reveal key={system.index} delay={systemIndex * 0.06} className="h-full">
+                <article className="ai-card group relative h-full min-h-[330px] overflow-hidden rounded-3xl border ai-border p-6 md:p-7">
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#FF2D55]/80 to-transparent" aria-hidden />
+                  <div className="mb-10 flex items-center justify-between gap-4">
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#FF2D55]">Architecture study {system.index}</span>
+                    <span className="ai-muted text-[10px] font-bold uppercase tracking-[0.18em]">{system.label}</span>
+                  </div>
+                  <div className="mb-8 flex items-center gap-1.5" aria-hidden>
+                    {system.stages.map((stage, stageIndex) => (
+                      <div key={stage} className="flex min-w-0 flex-1 items-center gap-1.5">
+                        <span className={`h-2.5 w-2.5 flex-shrink-0 rounded-full border ${stageIndex === system.stages.length - 1 ? "border-[#FF2D55] bg-[#FF2D55] shadow-[0_0_16px_rgba(255,45,85,0.7)]" : "border-white/25 bg-white/[0.05]"}`} />
+                        {stageIndex < system.stages.length - 1 && <span className="h-px min-w-0 flex-1 bg-white/15" />}
+                      </div>
+                    ))}
+                  </div>
+                  <Disp className="ai-text mb-4 block text-3xl md:text-4xl">{system.name}</Disp>
+                  <p className="ai-muted text-sm leading-relaxed">{system.detail}</p>
+                  <div className="mt-6 flex flex-wrap gap-2">
+                    {system.stages.map((stage) => (
+                      <span key={stage} className="rounded-full border ai-border px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white/55">{stage}</span>
+                    ))}
+                  </div>
+                </article>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* A concise process band keeps the commercial homepage clear while
+          giving the navigation a truthful, useful destination. */}
+      <section id="process" className="ai-panel py-20 md:py-24 px-5 md:px-10 scroll-mt-24" style={{ contain: "layout paint" }}>
+        <div className="max-w-7xl mx-auto">
+          <Reveal className="mb-10 md:mb-12">
+            <Tag>Process</Tag>
+            <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
+              FROM CONTEXT<br /><span style={{ color: "var(--red)" }}>TO SYSTEM.</span>
+            </Disp>
+          </Reveal>
+          <div className="grid gap-px overflow-hidden rounded-3xl border ai-border bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+            {PROCESS_STEPS.map((step) => (
+              <article key={step.index} className="ai-card min-h-[230px] p-6 md:p-7">
+                <span className="font-mono text-[10px] font-bold tracking-[0.2em] text-[#FF2D55]">{step.index}</span>
+                <Disp className="ai-text mt-14 block text-3xl">{step.label}</Disp>
+                <p className="ai-muted mt-3 text-sm leading-relaxed">{step.detail}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* 07 SCALE: World Map */}
       <section id="global-reach" className="ai-page py-20 px-6 relative overflow-hidden scroll-mt-20" style={{ contain: "layout paint" }}>
