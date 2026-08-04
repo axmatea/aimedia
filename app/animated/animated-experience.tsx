@@ -304,12 +304,14 @@ export function AnimatedExperience() {
 
       <section ref={registerScene(0)} id="scene-entity" className={`${styles.scene} ${styles.videoScene}`} aria-labelledby="entity-title">
         <div className={styles.stickyStage}>
-          <Image src={MEDIA.entity.poster} alt="" fill priority sizes="100vw" className={styles.poster} aria-hidden />
+          <Image src={MEDIA.entity.poster} alt="" width={1600} height={900} priority sizes="100vw" className={styles.poster} aria-hidden />
           {motionPreferenceReady && !reducedMotion && !videoFailed[0] && (
             <video
               ref={entityVideoRef}
               className={`${styles.sceneVideo} ${videoReady[0] ? styles.mediaReady : ""}`}
               poster={MEDIA.entity.poster}
+              width={1280}
+              height={720}
               preload="auto"
               muted
               playsInline
@@ -341,12 +343,14 @@ export function AnimatedExperience() {
 
       <section ref={registerScene(1)} id="scene-core" className={`${styles.scene} ${styles.videoScene}`} aria-labelledby="core-title">
         <div className={styles.stickyStage}>
-          <Image src={MEDIA.core.poster} alt="" fill sizes="100vw" className={styles.poster} aria-hidden />
+          <Image src={MEDIA.core.poster} alt="" width={1600} height={900} sizes="100vw" className={styles.poster} aria-hidden />
           {motionPreferenceReady && !reducedMotion && !videoFailed[1] && (
             <video
               ref={coreVideoRef}
               className={`${styles.sceneVideo} ${videoReady[1] ? styles.mediaReady : ""}`}
               poster={MEDIA.core.poster}
+              width={1280}
+              height={720}
               preload="none"
               muted
               playsInline
@@ -375,7 +379,7 @@ export function AnimatedExperience() {
 
       <section ref={registerScene(2)} id="scene-orchestration" className={`${styles.scene} ${styles.htmlScene}`} aria-labelledby="orchestration-title">
         <div className={styles.stickyStage}>
-          <Image src={MEDIA.orchestration} alt="" fill sizes="100vw" className={`${styles.poster} ${styles.posterDim}`} aria-hidden />
+          <Image src={MEDIA.orchestration} alt="" width={1600} height={900} sizes="100vw" className={`${styles.poster} ${styles.posterDim}`} aria-hidden />
           <SceneAtmosphere />
           <div className={`${styles.sceneCopy} ${styles.compactCopy}`}>
             <p className={styles.eyebrow}>03 · Orchestration System</p>
@@ -388,12 +392,14 @@ export function AnimatedExperience() {
 
       <section ref={registerScene(3)} id="scene-workflow" className={`${styles.scene} ${styles.htmlScene}`} aria-labelledby="workflow-title">
         <div className={styles.stickyStage}>
-          <Image src={reducedMotion ? MEDIA.workflow : MEDIA.workflowTransition.poster} alt="" fill sizes="100vw" className={`${styles.poster} ${styles.posterDimmer}`} aria-hidden />
+          <Image src={reducedMotion ? MEDIA.workflow : MEDIA.workflowTransition.poster} alt="" width={1600} height={900} sizes="100vw" className={`${styles.poster} ${styles.posterDimmer}`} aria-hidden />
           {motionPreferenceReady && !reducedMotion && !videoFailed[2] && (
             <video
               ref={workflowVideoRef}
               className={`${styles.sceneVideo} ${styles.workflowVideo} ${videoReady[2] ? styles.mediaReady : ""}`}
               poster={MEDIA.workflowTransition.poster}
+              width={1280}
+              height={720}
               preload="none"
               muted
               playsInline
