@@ -95,9 +95,8 @@ export function SiteNav() {
           <span className="absolute inset-0 bg-[#FF2D55]/20 dark:bg-[#FF2D55]/15 group-hover:bg-[#FF2D55]/30 transition-colors duration-300" />
           <span className="relative z-10 flex items-center gap-1.5 md:gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#FF2D55] group-hover:animate-ping" />
-            <span className="hidden min-[520px]:inline">Book a Strategy Call</span>
-            <span className="min-[430px]:hidden">Book</span>
-            <span className="hidden min-[430px]:inline min-[520px]:hidden">Strategy Call</span>
+            <span className="hidden min-[520px]:inline">Book a Call</span>
+            <span className="min-[520px]:hidden">Book a Call</span>
           </span>
         </button>
         <button
@@ -144,7 +143,7 @@ export function SiteNav() {
             onClick={() => { setMenuOpen(false); openBooking() }}
             className="mt-1 flex min-h-11 items-center justify-center rounded-xl bg-[#FF2D55] px-4 text-sm font-bold text-white"
           >
-            Book a Strategy Call
+            Book a Call
           </button>
         </div>
       </div>

@@ -23,8 +23,6 @@ export function AgentRadial() {
 
   return (
     <div className="agent-system" role="img" aria-label="One orchestrator coordinating five specialized AI agents">
-      <p className="agent-system-kicker">AI infrastructure · illustrative architecture</p>
-
       <div className="agent-orbit-stage">
         <div className="agent-orbit-ring agent-orbit-ring-outer" aria-hidden />
         <div className="agent-orbit-ring agent-orbit-ring-inner" aria-hidden />
@@ -103,13 +101,8 @@ export function AgentRadial() {
         <div className="agent-orchestrator">
           <Bot aria-hidden />
           <strong>Orchestrator</strong>
-          <span>Routes · reviews · coordinates</span>
+          <span>Coordinates specialist work</span>
         </div>
-      </div>
-
-      <div className="agent-system-footer">
-        <span className="agent-status-dot" aria-hidden />
-        Five specialized agents, one accountable operating layer
       </div>
     </div>
   )

@@ -10,7 +10,7 @@
  *   Spotlight                   pointer-follow hero glow (lg+)
  *   Reveal                      whileInView fadeUp wrapper; children stay
  *                               server-rendered (children-as-props pattern)
- *   CountUp / LogoCloud         service metrics and the integration strip
+ *   LogoCloud                   the integration strip
  *   lazy-islands                AgentRadial, LeadFunnel, N8nWorkflowBlock,
  *                               AIUGCCreators, WorldMap (ssr:false, unchanged)
  *   BookingSection/Dialog/      the whole booking stack
@@ -23,7 +23,6 @@
 import { Spotlight } from "@/components/ui/spotlight"
 import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
-import { CountUp } from "@/components/ui/count-up"
 import { AxWordmark } from "@/components/ui/ax-wordmark"
 import { SERVE_ICONS } from "@/components/ui/serve-icons"
 
@@ -37,7 +36,6 @@ import {
 } from "@/components/home/lazy-islands"
 import {
   STACK_LOGOS, FEATURED_LOGOS, MAP_DOTS, SERVICES, FAQS, TICKER, WHO_WE_SERVE,
-  SELECTED_SYSTEMS, PROCESS_STEPS,
 } from "@/components/home/data"
 
 // ── Page ────────────────────────────────────────────────────────────────────
@@ -81,10 +79,7 @@ export default function Home() {
             <HeroRotator />
           </h1>
 
-          <div className="mt-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 lg:max-w-[55%]">
-            <p className="ai-muted text-sm md:text-base max-w-sm leading-relaxed">
-              You imagine it. We make it real. Systems for go-to-market, content, and ops, shipped.
-            </p>
+          <div className="mt-10 flex items-start lg:max-w-[55%]">
             <HeroCtas />
           </div>
 
@@ -114,16 +109,17 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <Reveal className="text-center mb-8 md:mb-10">
             <p id="stack-heading" className="ai-muted text-xs uppercase tracking-[0.3em] font-bold">
-              Built to work with your stack
+              Connects with the tools you already use
             </p>
           </Reveal>
           <LogoCloud logos={[...STACK_LOGOS, ...FEATURED_LOGOS]} />
         </div>
       </section>
 
-      {/* Cursor-reactive audience cards: a clear bridge between capability
-          proof and the operating system that powers it. */}
-      <section id="built-for" className="ai-page py-20 md:py-28 px-5 md:px-10 overflow-hidden scroll-mt-24" style={{ contain: "layout paint" }}>
+      {/* Production-proven audience section. It restores the missing bridge
+          between capability proof and the orchestration story without
+          reintroducing the rejected case-study or process bands. */}
+      <section id="built-for" className="ai-page pt-20 pb-12 md:pt-24 md:pb-16 px-5 md:px-10 overflow-hidden scroll-mt-24" style={{ contain: "layout paint" }}>
         <div className="max-w-7xl mx-auto">
           <Reveal className="flex items-end justify-between mb-10 md:mb-14 gap-6 flex-wrap">
             <div>
@@ -155,7 +151,7 @@ export default function Home() {
       </section>
 
       {/* AI Team Never Sleeps */}
-      <section id="ai-team" className="ai-panel ax-panel-melt ai-team-section py-20 md:py-28 px-5 md:px-10 relative overflow-hidden" style={{ contain: "layout paint" }}>
+      <section id="ai-team" className="ai-panel ax-panel-melt ai-team-section pt-16 pb-20 md:pt-20 md:pb-28 px-5 md:px-10 relative overflow-hidden" style={{ contain: "layout paint" }}>
         {/* Ambient atmosphere: community-sphere render, dimmed + radially masked behind the agent radial */}
         <AmbientImage src="/generated/outcomes/blur/outcome-web3-blur.webp" className="ambient-ai-team" />
         <div className="relative z-[1] max-w-7xl mx-auto grid lg:grid-cols-[minmax(260px,0.72fr)_minmax(0,1.28fr)] gap-12 lg:gap-16 items-center">
@@ -167,16 +163,8 @@ export default function Home() {
               </Disp>
             </Reveal>
             <p className="ai-muted text-sm md:text-base leading-relaxed mt-6 mb-8 max-w-md">
-              Specialized agents coordinate lead generation, content, analytics, outreach, and strategy around one orchestrator, with human review where it matters.
+              One orchestrator coordinates specialized agents across research, strategy, content, and delivery.
             </p>
-            <div className="flex flex-col gap-3">
-              {["Deploys in 7 days", "You own the code", "Production-grade infra", "No vendor lock-in"].map((f) => (
-                <div key={f} className="flex items-center gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF2D55] flex-shrink-0" />
-                  <span className="ai-muted text-sm">{f}</span>
-                </div>
-              ))}
-            </div>
           </div>
           <div className="flex items-center justify-center py-4 md:py-8 min-w-0">
             <AgentRadial />
@@ -200,14 +188,6 @@ export default function Home() {
                 <Disp className="whitespace-pre-line block mb-4" style={{ color: "#fff", fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>{svc.name}</Disp>
                 <p className="text-base md:text-lg leading-snug mb-3 font-semibold" style={{ color: "var(--red)" }}>{svc.tagline}</p>
                 <p className="text-[15px] md:text-base leading-relaxed mb-8 max-w-xl" style={{ color: "rgba(255,255,255,0.76)" }}>{svc.body}</p>
-                <div className="grid grid-cols-2 gap-5 md:gap-8 mb-7 max-w-lg">
-                  {svc.metrics.map((met) => (
-                    <div key={met.label}>
-                      <Disp className="text-2xl" style={{ color: "#fff" }}><CountUp value={met.value} /></Disp>
-                      <p className="text-[10px] font-medium mt-0.5" style={{ color: "rgba(255,255,255,0.7)" }}>{met.label}</p>
-                    </div>
-                  ))}
-                </div>
                 <div className="flex gap-2 flex-wrap">
                   {svc.tools.map((tool) => (
                     <span key={tool} className="px-3 py-1 text-xs font-medium rounded-full border"
@@ -227,35 +207,10 @@ export default function Home() {
                 ) : (
                   <div className="rounded-3xl overflow-hidden border border-white/8 bg-[#0C0C0F] p-8 space-y-6">
                     <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-white/55 text-[10px] font-mono uppercase tracking-widest">AI UGC Creators · Demo</p>
-                        <p className="text-white/55 text-[9px] font-mono uppercase tracking-widest">Tap a creator</p>
-                      </div>
-                      <p className="text-white/70 font-bold text-sm mb-1">Your AI content team</p>
-                      <p className="text-white/70 text-xs leading-relaxed">AI-generated personas that post, engage, and grow your audience automatically, 24/7.</p>
+                      <p className="text-white/55 text-[10px] font-mono uppercase tracking-widest">Content workflow</p>
+                      <p className="text-white/70 text-xs leading-relaxed mt-2">Research, production, review, and distribution in one flow.</p>
                     </div>
                     <AIUGCCreators />
-                    <div className="space-y-2 pt-2">
-                      {/* Brand hues lightened to clear 4.5:1 on the dark card
-                          (#E1306C and #0A66C2 both failed WCAG AA here). */}
-                      {[
-                        { platform: "Instagram", posts: "3 posts/day", color: "#F26D9C" },
-                        { platform: "LinkedIn", posts: "2 posts/day", color: "#5EA9F0" },
-                        { platform: "TikTok", posts: "5 videos/week", color: "#fff" },
-                        { platform: "X / Twitter", posts: "8 tweets/day", color: "#fff" },
-                      ].map((p, pi) => (
-                        <div key={p.platform} className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.03] border border-white/5">
-                          <span className="text-xs font-bold" style={{ color: p.color }}>{p.platform}</span>
-                          <span className="text-[10px] font-mono text-white/65 inline-flex items-center gap-1.5">
-                            {p.posts}
-                            <span className="relative inline-flex h-1.5 w-1.5" style={{ ["--i" as string]: pi }} aria-hidden>
-                              <span className="ugc-ping absolute inline-flex h-full w-full rounded-full bg-white/35" />
-                              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white/30" />
-                            </span>
-                          </span>
-                        </div>
-                      ))}
-                    </div>
                   </div>
                 )}
               </div>
@@ -271,75 +226,6 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Selected system architectures. These are transparent capability
-          studies, not disguised client case studies or invented outcomes. */}
-      <section id="selected-systems" className="ai-page py-20 md:py-28 px-5 md:px-10 scroll-mt-24" style={{ contain: "layout paint" }}>
-        <div className="max-w-7xl mx-auto">
-          <Reveal className="flex items-end justify-between mb-10 md:mb-14 gap-6 flex-wrap">
-            <div>
-              <Tag>Selected systems</Tag>
-              <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
-                DESIGNED AROUND<br /><span style={{ color: "var(--red)" }}>REAL WORK.</span>
-              </Disp>
-            </div>
-            <p className="ai-muted text-sm md:text-base max-w-md leading-relaxed">
-              Three system architectures that show how fragmented work becomes one coordinated operating layer.
-            </p>
-          </Reveal>
-
-          <div className="grid gap-4 lg:grid-cols-3">
-            {SELECTED_SYSTEMS.map((system, systemIndex) => (
-              <Reveal key={system.index} delay={systemIndex * 0.06} className="h-full">
-                <article className="ai-card group relative h-full min-h-[330px] overflow-hidden rounded-3xl border ai-border p-6 md:p-7">
-                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#FF2D55]/80 to-transparent" aria-hidden />
-                  <div className="mb-10 flex items-center justify-between gap-4">
-                    <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#FF2D55]">Architecture study {system.index}</span>
-                    <span className="ai-muted text-[10px] font-bold uppercase tracking-[0.18em]">{system.label}</span>
-                  </div>
-                  <div className="mb-8 flex items-center gap-1.5" aria-hidden>
-                    {system.stages.map((stage, stageIndex) => (
-                      <div key={stage} className="flex min-w-0 flex-1 items-center gap-1.5">
-                        <span className={`h-2.5 w-2.5 flex-shrink-0 rounded-full border ${stageIndex === system.stages.length - 1 ? "border-[#FF2D55] bg-[#FF2D55] shadow-[0_0_16px_rgba(255,45,85,0.7)]" : "border-white/25 bg-white/[0.05]"}`} />
-                        {stageIndex < system.stages.length - 1 && <span className="h-px min-w-0 flex-1 bg-white/15" />}
-                      </div>
-                    ))}
-                  </div>
-                  <Disp className="ai-text mb-4 block text-3xl md:text-4xl">{system.name}</Disp>
-                  <p className="ai-muted text-sm leading-relaxed">{system.detail}</p>
-                  <div className="mt-6 flex flex-wrap gap-2">
-                    {system.stages.map((stage) => (
-                      <span key={stage} className="rounded-full border ai-border px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white/55">{stage}</span>
-                    ))}
-                  </div>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* A concise process band keeps the commercial homepage clear while
-          giving the navigation a truthful, useful destination. */}
-      <section id="process" className="ai-panel py-20 md:py-24 px-5 md:px-10 scroll-mt-24" style={{ contain: "layout paint" }}>
-        <div className="max-w-7xl mx-auto">
-          <Reveal className="mb-10 md:mb-12">
-            <Tag>Process</Tag>
-            <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
-              FROM CONTEXT<br /><span style={{ color: "var(--red)" }}>TO SYSTEM.</span>
-            </Disp>
-          </Reveal>
-          <div className="grid gap-px overflow-hidden rounded-3xl border ai-border bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
-            {PROCESS_STEPS.map((step) => (
-              <article key={step.index} className="ai-card min-h-[230px] p-6 md:p-7">
-                <span className="font-mono text-[10px] font-bold tracking-[0.2em] text-[#FF2D55]">{step.index}</span>
-                <Disp className="ai-text mt-14 block text-3xl">{step.label}</Disp>
-                <p className="ai-muted mt-3 text-sm leading-relaxed">{step.detail}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* 07 SCALE: World Map */}
       <section id="global-reach" className="ai-page py-20 px-6 relative overflow-hidden scroll-mt-20" style={{ contain: "layout paint" }}>
         <div className="relative z-[1] max-w-6xl mx-auto">
@@ -349,13 +235,8 @@ export default function Home() {
               BUILT FOR CLIENTS<br /><span style={{ color: "var(--red)" }}>WORLDWIDE.</span>
             </Disp>
             <p className="ai-muted text-sm mt-4 max-w-md mx-auto">
-              From New York to Dubai, London to Tokyo: our systems are built to run 24/7 across every timezone.
+              From New York to Dubai, London to Tokyo: we design systems for distributed teams and international delivery.
             </p>
-            <div className="flex flex-wrap justify-center gap-2.5 mt-6">
-              {["24/7 across every timezone", "Reports in under 30 seconds", "Systems you fully own"].map((chip) => (
-                <span key={chip} className="ai-card text-[11px] font-medium px-3.5 py-1.5 rounded-full border ai-border">{chip}</span>
-              ))}
-            </div>
           </Reveal>
           <WorldMap dots={MAP_DOTS} lineColor="#FF2D55" showLabels loop={false} />
         </div>

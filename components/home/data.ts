@@ -17,7 +17,7 @@ export const VP = { once: true, margin: "0px 0px -40px 0px" } as const
 export const EASE_SWIFT: [number, number, number, number] = [0.2, 0.8, 0.2, 1]
 
 // ── Data ────────────────────────────────────────────────────────────────────
-export const HERO_AUDIENCES = ["FOUNDERS.", "BUILDERS.", "WEB3 TEAMS.", "MODERN BUSINESSES."]
+export const HERO_AUDIENCES = ["FOUNDERS", "BUILDERS", "WEB3", "BUSINESSES"]
 
 export const TICKER = [
   "AI AGENTS + ORCHESTRATION",
@@ -76,27 +76,27 @@ export const MAP_DOTS = [
 // goes back in only when it is traceable to a named engagement.
 export const SERVICES = [
   {
-    id: "01", name: "GO-TO-MARKET\nENGINE", tag: "GROWTH",
+    id: "01", name: "GO-TO-MARKET\nENGINE", tag: "GO-TO-MARKET",
     bg: "#050507",
-    tagline: "Find and convert your ideal customers, on autopilot.",
-    body: "AI maps ideal buyers, enriches CRM, and runs multi-channel outreach at scale. Zero spray-and-pray.",
-    metrics: [{ label: "Outreach touches / week, by design", value: "1,000s" }, { label: "Pipeline runtime", value: "24/7" }],
-    tools: ["Ideal Buyer Lists", "Outreach on Autopilot", "Booked Meetings", "CRM Always Current"],
+    tagline: "Turn buyer signals into a reviewed, traceable pipeline.",
+    body: "AI researches accounts, enriches context, prepares outreach, and coordinates CRM state. Human approval stays in the loop before consequential actions.",
+    metrics: [{ label: "Approval model", value: "HUMAN" }, { label: "System location", value: "YOUR STACK" }],
+    tools: ["Buyer Research", "Context Enrichment", "Approval Gates", "CRM Coordination"],
   },
   {
-    id: "02", name: "CONTENT\nSYSTEM", tag: "CONTENT",
+    id: "02", name: "CONTENT\nSYSTEM", tag: "CONTENT SYSTEM",
     bg: "linear-gradient(180deg,#050507 0%,#0A0A0F 16%,#0A0A0F 84%,#050507 100%)",
-    tagline: "Built to ship hundreds of content pieces a month.",
-    body: "AI posts to Instagram, LinkedIn, X, TikTok. On-brand, at scale. Scripts, thumbnails, emails, generated automatically.",
-    metrics: [{ label: "Content capacity / month, by design", value: "100s" }, { label: "Channels posting daily", value: "4" }],
-    tools: ["Content Engine", "Daily Posting", "Full Creative Dept", "Audience Growth"],
+    tagline: "One governed workflow from positioning to distribution.",
+    body: "Research, briefs, scripts, creative production, review, and publishing stay connected across the channels your team actually uses.",
+    metrics: [{ label: "Review model", value: "HUMAN" }, { label: "Distribution", value: "MULTI-CHANNEL" }],
+    tools: ["Content Research", "Production Workflow", "Review Queue", "Distribution"],
   },
   {
-    id: "03", name: "BUSINESS\nPLATFORMS", tag: "PLATFORMS + AI OPS",
+    id: "03", name: "BUSINESS\nPLATFORMS", tag: "CLIENT DELIVERY",
     bg: "#050507",
     tagline: "Custom software for the way your business actually runs.",
     body: "We build custom business platforms, client portals, internal operations systems, and AI-enabled workflows that connect teams, data, approvals, and client delivery in one operating layer.",
-    metrics: [{ label: "Ownership", value: "100%" }, { label: "Operations visibility", value: "24/7" }],
+    metrics: [{ label: "Ownership", value: "YOURS" }, { label: "System model", value: "CONNECTED" }],
     tools: ["Custom Platforms", "Client Portals", "Internal Ops", "AI Workflows"],
   },
 ]
@@ -110,6 +110,7 @@ export const SELECTED_SYSTEMS = [
     label: "Go-to-market system",
     detail: "Signals, enrichment, outreach, approvals, and CRM state coordinated inside one owned workflow.",
     stages: ["Signals", "Research", "Outreach", "Review", "CRM"],
+    href: "/systems/qualified-pipeline",
   },
   {
     index: "02",
@@ -117,6 +118,7 @@ export const SELECTED_SYSTEMS = [
     label: "Content system",
     detail: "Positioning, scripts, production, human review, and distribution connected across channels.",
     stages: ["Strategy", "Create", "Approve", "Publish", "Learn"],
+    href: null,
   },
   {
     index: "03",
@@ -124,6 +126,7 @@ export const SELECTED_SYSTEMS = [
     label: "Business platform",
     detail: "A custom operating layer for intake, delivery, approvals, reporting, and internal workflows.",
     stages: ["Intake", "Scope", "Deliver", "Approve", "Report"],
+    href: "/systems/client-platforms",
   },
 ] as const
 
@@ -145,25 +148,25 @@ export const PROCESS_STEPS = [
 // named results and real numbers are shared under NDA on the call.
 export const CASE_STUDIES = [
   {
-    project: "Content Agency", tag: "Content Agency", result: "Booked calls compound week over week. No new headcount.", color: "#0A0A0F", accent: "#FF2D55",
+    project: "Content Agency", tag: "Content Agency", result: "A coordinated operating model for planning, production, approval, and distribution.", color: "#0A0A0F", accent: "#FF2D55",
     image: "/generated/outcomes/outcome-content.webp",
     imageAlt: "Content pieces fanning out from a single engine along glowing red distribution lines",
     imageCaption: "One engine, every channel",
   },
   {
-    project: "SaaS", tag: "SaaS", result: "A revenue pipeline that runs itself from day one.", color: "#0A0A0F", accent: "#FF2D55",
+    project: "SaaS", tag: "SaaS", result: "A reviewed path from buyer signals to CRM-ready next actions.", color: "#0A0A0F", accent: "#FF2D55",
     image: "/generated/outcomes/outcome-saas.webp",
     imageAlt: "Glass pipeline chambers moving a stream of red signal through each revenue stage",
     imageCaption: "Pipeline running end to end",
   },
   {
-    project: "Local Business", tag: "Local Business", result: "Lower acquisition cost, the whole funnel on autopilot.", color: "#050507", accent: "#FF2D55",
+    project: "Local Business", tag: "Local Business", result: "A connected intake, follow-up, and reporting workflow built around the team.", color: "#050507", accent: "#FF2D55",
     image: "/generated/outcomes/outcome-local.webp",
     imageAlt: "Neon rings of demand radiating from a location pin over a dark city map",
     imageCaption: "Demand radiating from one point",
   },
   {
-    project: "Web3", tag: "Web3", result: "A qualified audience contacted and warmed before launch day.", color: "#050507", accent: "#FF2D55",
+    project: "Web3", tag: "Web3", result: "Research, community context, and launch operations coordinated with human review.", color: "#050507", accent: "#FF2D55",
     image: "/generated/outcomes/outcome-web3.webp",
     imageAlt: "A luminous sphere of connected community nodes orbiting one bright core",
     imageCaption: "Community mapped before launch",
@@ -178,15 +181,15 @@ export const TRACE_SYSTEM_NODES = [
   { id: "context", label: "Context graph", detail: "Accounts, offers, objections, and channel history linked before action.", ships: ["Account research", "Offer map"], x: "31%", y: "55%", tone: "inferred" },
   { id: "core", label: "AX operator core", detail: "Routes work to lead gen, content, and ops automations with review gates.", ships: ["Review gates", "Owner routing"], x: "50%", y: "34%", tone: "core" },
   { id: "content", label: "Content engine", detail: "Turns approved positioning into scheduled posts, scripts, and assets.", ships: ["Daily posting", "Creative dept"], x: "70%", y: "20%", tone: "output" },
-  { id: "pipeline", label: "Pipeline engine", detail: "Runs outreach, drafts follow-ups, books meetings, and keeps CRM state current.", ships: ["Booked meetings", "CRM sync"], x: "78%", y: "54%", tone: "output" },
-  { id: "proof", label: "Proof loop", detail: "Every result routes back into reporting, decisions, and next experiments.", ships: ["24/7 follow-up", "Live reporting"], x: "52%", y: "78%", tone: "review" },
+  { id: "pipeline", label: "Pipeline engine", detail: "Prepares outreach, coordinates follow-up state, and keeps CRM context current.", ships: ["Approval-ready outreach", "CRM sync"], x: "78%", y: "54%", tone: "output" },
+  { id: "proof", label: "Proof loop", detail: "Every verified result routes back into reporting, decisions, and next experiments.", ships: ["Follow-up state", "Operational reporting"], x: "52%", y: "78%", tone: "review" },
 ] as const
 
 // Copy-column scope stack: what each engine actually delivers when the map ships.
 export const TRACE_DELIVERABLES = [
-  { label: "GO-TO-MARKET ENGINE", detail: "Ideal buyer lists, outreach automation, booked meetings, and a CRM that stays current on its own." },
+  { label: "GO-TO-MARKET ENGINE", detail: "Buyer research, approval-ready outreach, follow-up state, and coordinated CRM context." },
   { label: "CONTENT SYSTEM", detail: "A content engine posting daily across your channels, with a full creative department behind it." },
-  { label: "AI OPS PIPELINE", detail: "Lead pipeline, sales funnel, and 24/7 follow-up wired into one system you own." },
+  { label: "AI OPS PIPELINE", detail: "Lead state, review gates, follow-up logic, and reporting wired into one system you own." },
 ] as const
 
 export const TRACE_SYSTEM_EDGES = [
@@ -227,8 +230,7 @@ export const FAQS = [
 
 export const NAV_LINKS = [
   { label: "Systems", href: "#services" },
-  { label: "Selected Systems", href: "#selected-systems" },
-  { label: "Process", href: "#process" },
+  { label: "AI Team", href: "#ai-team" },
   { label: "FAQ", href: "#faq" },
   { label: "Animated Experience", href: "/animated" },
 ]

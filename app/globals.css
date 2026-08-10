@@ -704,6 +704,7 @@ html:not(.dark) .agent-node-copy small { color: rgba(5,5,7,0.58); }
 .platform-os-nav-item {
   display: flex;
   align-items: center;
+  width: 100%;
   gap: 0.55rem;
   min-height: 2.4rem;
   margin-top: 0.28rem;
@@ -713,6 +714,14 @@ html:not(.dark) .agent-node-copy small { color: rgba(5,5,7,0.58); }
   color: rgba(255,255,255,0.45);
   font-size: 0.63rem;
   font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+  transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+.platform-os-nav-item:hover { color: rgba(255,255,255,0.82); }
+.platform-os-nav-item:focus-visible {
+  outline: 2px solid rgba(255,45,85,0.82);
+  outline-offset: 2px;
 }
 .platform-os-nav-item.is-active {
   border-color: rgba(255,45,85,0.22);
@@ -721,6 +730,7 @@ html:not(.dark) .agent-node-copy small { color: rgba(5,5,7,0.58); }
 }
 .platform-os-main {
   min-width: 0;
+  min-height: 27rem;
   padding: clamp(0.9rem, 2.5vw, 1.45rem);
 }
 .platform-os-title-row {
@@ -834,28 +844,43 @@ html:not(.dark) .agent-node-copy small { color: rgba(5,5,7,0.58); }
 }
 .platform-os-footer span { display: inline-flex; align-items: center; gap: 0.38rem; }
 
-@media (max-width: 520px) {
-  .platform-os { border-radius: 1.25rem; }
-  .platform-os-header { align-items: flex-start; }
-  .platform-os-status { margin-top: 0.1rem; font-size: 0.5rem; }
-  .platform-os-shell { grid-template-columns: 3.25rem minmax(0, 1fr); min-height: 0; }
-  .platform-os-nav { padding: 0.75rem 0.48rem; }
-  .platform-os-mark { width: 1.85rem; height: 1.85rem; margin: 0 0.2rem 0.75rem; }
-  .platform-os-nav-item { justify-content: center; min-height: 2.2rem; padding: 0; }
-  .platform-os-nav-item span { display: none; }
-  .platform-os-title-row { align-items: flex-start; flex-direction: column; gap: 0.55rem; }
-  .platform-module-grid { grid-template-columns: 1fr; gap: 0.62rem; }
-  .platform-module { min-height: 4.45rem; }
-  .platform-module-arrow {
-    left: 50%;
-    right: auto;
-    top: auto;
-    bottom: -0.58rem;
-    transform: translateX(-50%) rotate(90deg);
+@media (max-width: 1023px) {
+  .platform-os { padding: 0.65rem; border-radius: 1.25rem; }
+  .platform-os-header { align-items: flex-start; padding: 0.15rem 0.2rem 0.75rem; }
+  .platform-os-status { display: none; }
+  .platform-os-kicker { font-size: 0.5rem; }
+  .platform-os-heading { font-size: 0.92rem; }
+  .platform-os-shell { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  .platform-os-nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.25rem;
+    padding: 0.45rem;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
   }
-  .platform-module-wrap:nth-child(2) .platform-module-arrow { display: grid; }
-  .platform-module-wrap:nth-child(4) .platform-module-arrow { display: none; }
-  .platform-os-footer { justify-content: flex-start; }
+  .platform-os-mark { display: none; }
+  .platform-os-nav-item { justify-content: center; gap: 0.32rem; min-height: 2.75rem; margin-top: 0; padding: 0 0.2rem; text-align: center; }
+  .platform-os-nav-item span { display: inline; font-size: 0.62rem; }
+  .platform-os-nav-item svg { width: 0.78rem; }
+  .platform-os-main { min-height: 24.5rem; padding: 0.85rem 0.7rem; }
+  .platform-os-title-row { align-items: flex-start; flex-direction: column; gap: 0.45rem; }
+  .platform-os-title-row strong { max-width: 18rem; font-size: 0.78rem; line-height: 1.35; }
+  .platform-os-human { padding: 0.34rem 0.48rem; font-size: 0.52rem; }
+  .platform-module-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.45rem; margin-top: 0.8rem; }
+  .platform-module { align-items: flex-start; flex-direction: column; gap: 0.45rem; min-height: 7.2rem; padding: 0.62rem; }
+  .platform-module-icon { width: 1.85rem; height: 1.85rem; flex-basis: 1.85rem; border-radius: 0.55rem; }
+  .platform-module-copy small { font-size: 0.43rem; }
+  .platform-module-copy strong { font-size: 0.62rem; line-height: 1.2; }
+  .platform-module-copy > span { overflow: visible; font-size: 0.52rem; line-height: 1.3; text-overflow: clip; white-space: normal; }
+  .platform-module-check,
+  .platform-module-arrow { display: none !important; }
+  .platform-os-activity { margin-top: 0.7rem; }
+  .platform-os-activity-head { padding: 0.5rem 0.58rem; }
+  .platform-os-activity-head span:last-child { display: none; }
+  .platform-os-activity-row { min-height: 2.15rem; padding: 0 0.58rem; font-size: 0.52rem; }
+  .platform-os-activity-row > span { white-space: normal; line-height: 1.2; }
+  .platform-os-footer { justify-content: flex-start; gap: 0.45rem 0.7rem; padding: 0.7rem 0.2rem 0; font-size: 0.5rem; }
 }
 
 /* ── Traceable graph map: Graphify-inspired source → decision → output view ── */
@@ -2365,6 +2390,25 @@ html {
     --hero-audience-size: clamp(2.05rem, 9.2vw, 2.6rem);
   }
 }
+.hero-robot-poster {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  overflow: hidden;
+  opacity: 1;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  transition: opacity 520ms var(--ease-swift);
+}
+.hero-robot-poster.is-hidden { opacity: 0; }
+.hero-robot-poster img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
 .hero-robot-shell {
   top: 0;
   right: clamp(-2.5rem, -1.6vw, -1rem);
@@ -2422,6 +2466,7 @@ canvas {
    (same specificity, source order decides), so it must stay below the
    .hero-spline-live block. */
 @media (prefers-reduced-motion: reduce) {
+  .hero-robot-poster { transition: none; }
   .hero-spline-live,
   .hero-spline-live.is-ready { animation: none; }
   .hero-spline-live { transition: none; }

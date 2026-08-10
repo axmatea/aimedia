@@ -1,127 +1,206 @@
 "use client"
 
-import { m, useReducedMotion } from "motion/react"
+import { useRef, useState, type KeyboardEvent } from "react"
+import { AnimatePresence, m, useReducedMotion } from "motion/react"
 import {
   ArrowRight,
   Bot,
   Check,
   Database,
+  FileCheck2,
+  MessageSquareText,
   PanelsTopLeft,
+  Search,
   ShieldCheck,
-  Sparkles,
-  UserRound,
   Workflow,
 } from "lucide-react"
 
-const MODULES = [
-  { icon: UserRound, eyebrow: "01 · INTAKE", title: "Request Intake", detail: "Briefs, files, and context", color: "#A78BFA" },
-  { icon: Bot, eyebrow: "02 · ROUTING", title: "AI Routing", detail: "Classify, enrich, assign", color: "#FF2D55" },
-  { icon: ShieldCheck, eyebrow: "03 · CONTROL", title: "Human Review", detail: "Approval gates and owners", color: "#C8FF60" },
-  { icon: PanelsTopLeft, eyebrow: "04 · DELIVERY", title: "Client Portal", detail: "Status, decisions, outputs", color: "#5EE7E7" },
-]
+const PLATFORM_TABS = [
+  {
+    id: "portal",
+    label: "Portal",
+    icon: PanelsTopLeft,
+    kicker: "CLIENT WORKSPACE",
+    title: "One shared view from request to delivery",
+    modules: [
+      { icon: FileCheck2, eyebrow: "01 · INTAKE", title: "Request Intake", detail: "Briefs, files, and context" },
+      { icon: Workflow, eyebrow: "02 · DELIVERY", title: "Delivery Board", detail: "Owners, status, and next steps" },
+      { icon: ShieldCheck, eyebrow: "03 · REVIEW", title: "Approval Queue", detail: "Decisions stay human-controlled" },
+      { icon: PanelsTopLeft, eyebrow: "04 · HISTORY", title: "Client View", detail: "Outputs and decisions in one place" },
+    ],
+    activity: [
+      ["New brief ready for triage", "Intake"],
+      ["Deliverable waiting for approval", "Review"],
+      ["Decision added to project history", "Recorded"],
+    ],
+    footer: ["Shared project state", "Approval gates", "Owned workspace"],
+  },
+  {
+    id: "chat",
+    label: "AI Chat",
+    icon: MessageSquareText,
+    kicker: "GROUNDED ASSISTANT",
+    title: "Ask the operation, then act with approval",
+    modules: [
+      { icon: Database, eyebrow: "01 · CONTEXT", title: "Source Context", detail: "Approved workspace knowledge" },
+      { icon: Search, eyebrow: "02 · RETRIEVAL", title: "Evidence Search", detail: "Relevant records and history" },
+      { icon: Bot, eyebrow: "03 · RESPONSE", title: "Grounded Answer", detail: "Source-aware output" },
+      { icon: ShieldCheck, eyebrow: "04 · ACTION", title: "Approval Gate", detail: "Review before consequential work" },
+    ],
+    activity: [
+      ["Answer grounded in workspace context", "Ready"],
+      ["Requested action held for approval", "Review"],
+      ["Conversation linked to project record", "Saved"],
+    ],
+    footer: ["Grounded context", "Permission aware", "Human-controlled actions"],
+  },
+  {
+    id: "data",
+    label: "Data Layer",
+    icon: Database,
+    kicker: "CONNECTED RECORDS",
+    title: "A traceable data layer behind every workflow",
+    modules: [
+      { icon: Database, eyebrow: "01 · RECORDS", title: "Core Records", detail: "Clients, projects, and decisions" },
+      { icon: Workflow, eyebrow: "02 · EVENTS", title: "Workflow Events", detail: "State changes captured once" },
+      { icon: ShieldCheck, eyebrow: "03 · ACCESS", title: "Permission Layer", detail: "Scoped views by role" },
+      { icon: PanelsTopLeft, eyebrow: "04 · OUTPUT", title: "Reporting View", detail: "Operational truth without rework" },
+    ],
+    activity: [
+      ["Project state synchronized", "Current"],
+      ["Approval event written to history", "Verified"],
+      ["Client view refreshed from source", "Synced"],
+    ],
+    footer: ["Single source of truth", "Auditable history", "Scoped access"],
+  },
+] as const
 
-const ACTIVITY = [
-  ["New request routed to delivery", "Now"],
-  ["Scope approved by project owner", "12m"],
-  ["Client workspace synchronized", "38m"],
-]
+type PlatformTabId = (typeof PLATFORM_TABS)[number]["id"]
 
 export function N8nWorkflowBlock() {
   const reduceMotion = useReducedMotion()
+  const [activeId, setActiveId] = useState<PlatformTabId>("portal")
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const active = PLATFORM_TABS.find((tab) => tab.id === activeId) ?? PLATFORM_TABS[0]
+
+  const handleTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return
+    event.preventDefault()
+
+    const lastIndex = PLATFORM_TABS.length - 1
+    const nextIndex = event.key === "Home"
+      ? 0
+      : event.key === "End"
+        ? lastIndex
+        : event.key === "ArrowLeft" || event.key === "ArrowUp"
+          ? (index - 1 + PLATFORM_TABS.length) % PLATFORM_TABS.length
+          : (index + 1) % PLATFORM_TABS.length
+
+    const nextTab = PLATFORM_TABS[nextIndex]
+    setActiveId(nextTab.id)
+    tabRefs.current[nextIndex]?.focus()
+  }
 
   return (
-    <div className="platform-os" aria-label="Illustrative custom business platform architecture">
+    <div className="platform-os" aria-label="Interactive client delivery platform">
       <div className="platform-os-glow" aria-hidden />
 
       <header className="platform-os-header">
         <div>
-          <p className="platform-os-kicker">AX · BUSINESS OS</p>
+          <p className="platform-os-kicker">CLIENT DELIVERY</p>
           <p className="platform-os-heading">Client Delivery Platform</p>
         </div>
-        <div className="platform-os-status"><span aria-hidden />Architecture demo</div>
       </header>
 
       <div className="platform-os-shell">
-        <aside className="platform-os-nav" aria-label="Platform areas">
-          <div className="platform-os-mark"><Sparkles size={17} aria-hidden /></div>
-          {[
-            [PanelsTopLeft, "Portal"],
-            [Workflow, "Operations"],
-            [Bot, "AI workflows"],
-            [Database, "Data layer"],
-          ].map(([Icon, label], index) => (
-            <div key={String(label)} className={`platform-os-nav-item ${index === 1 ? "is-active" : ""}`}>
-              <Icon size={15} aria-hidden />
-              <span>{String(label)}</span>
-            </div>
-          ))}
-        </aside>
-
-        <div className="platform-os-main">
-          <div className="platform-os-title-row">
-            <div>
-              <p>CONNECTED WORKFLOW</p>
-              <strong>One operating layer from request to delivery</strong>
-            </div>
-            <span className="platform-os-human"><ShieldCheck size={13} aria-hidden /> Human-controlled</span>
-          </div>
-
-          <div className="platform-module-grid">
-            {MODULES.map((module, index) => {
-              const Icon = module.icon
-              return (
-                <div className="platform-module-wrap" key={module.title}>
-                  <m.div
-                    className="platform-module"
-                    style={{ "--module-color": module.color } as React.CSSProperties}
-                    initial={reduceMotion ? false : { opacity: 0, y: 14 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.5 }}
-                    transition={{ duration: 0.42, delay: index * 0.08, ease: [0.2, 0.8, 0.2, 1] }}
-                  >
-                    <span className="platform-module-icon"><Icon size={18} aria-hidden /></span>
-                    <span className="platform-module-copy">
-                      <small>{module.eyebrow}</small>
-                      <strong>{module.title}</strong>
-                      <span>{module.detail}</span>
-                    </span>
-                    <Check className="platform-module-check" size={14} aria-hidden />
-                  </m.div>
-                  {index < MODULES.length - 1 && (
-                    <span className="platform-module-arrow" aria-hidden><ArrowRight size={14} /></span>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-
-          <div className="platform-os-activity">
-            <div className="platform-os-activity-head">
-              <span>OPERATIONS FEED</span>
-              <span><i aria-hidden /> Systems connected</span>
-            </div>
-            {ACTIVITY.map(([event, time], index) => (
-              <m.div
-                key={event}
-                className="platform-os-activity-row"
-                initial={reduceMotion ? false : { opacity: 0, x: -8 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.35, delay: 0.35 + index * 0.07 }}
+        <div className="platform-os-nav" role="tablist" aria-label="Client delivery platform layers">
+          {PLATFORM_TABS.map((tab, index) => {
+            const Icon = tab.icon
+            const selected = tab.id === activeId
+            return (
+              <button
+                key={tab.id}
+                ref={(node) => { tabRefs.current[index] = node }}
+                id={`platform-tab-${tab.id}`}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-controls={`platform-panel-${tab.id}`}
+                tabIndex={selected ? 0 : -1}
+                className={`platform-os-nav-item ${selected ? "is-active" : ""}`}
+                onClick={() => setActiveId(tab.id)}
+                onKeyDown={(event) => handleTabKeyDown(event, index)}
               >
-                <span><i aria-hidden />{event}</span>
-                <time>{time}</time>
-              </m.div>
-            ))}
-          </div>
+                <Icon size={15} aria-hidden />
+                <span>{tab.label}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        <div
+          className="platform-os-main"
+          id={`platform-panel-${active.id}`}
+          role="tabpanel"
+          aria-labelledby={`platform-tab-${active.id}`}
+          tabIndex={0}
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <m.div
+              key={active.id}
+              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduceMotion ? undefined : { opacity: 0, y: -6 }}
+              transition={{ duration: reduceMotion ? 0 : 0.24, ease: [0.2, 0.8, 0.2, 1] }}
+            >
+              <div className="platform-os-title-row">
+                <div>
+                  <p>{active.kicker}</p>
+                  <strong>{active.title}</strong>
+                </div>
+              </div>
+
+              <div className="platform-module-grid">
+                {active.modules.map((module, index) => {
+                  const Icon = module.icon
+                  return (
+                    <div className="platform-module-wrap" key={module.title}>
+                      <div
+                        className="platform-module"
+                        style={{ "--module-color": index === 1 ? "#FF2D55" : index === 2 ? "#C8FF60" : "#F5F4F0" } as React.CSSProperties}
+                      >
+                        <span className="platform-module-icon"><Icon size={18} aria-hidden /></span>
+                        <span className="platform-module-copy">
+                          <small>{module.eyebrow}</small>
+                          <strong>{module.title}</strong>
+                          <span>{module.detail}</span>
+                        </span>
+                        <Check className="platform-module-check" size={14} aria-hidden />
+                      </div>
+                      {index < active.modules.length - 1 && (
+                        <span className="platform-module-arrow" aria-hidden><ArrowRight size={14} /></span>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+
+              <div className="platform-os-activity">
+                <div className="platform-os-activity-head">
+                  <span>EXAMPLE WORKFLOW</span>
+                </div>
+                {active.activity.map(([event, state]) => (
+                  <div className="platform-os-activity-row" key={event}>
+                    <span><i aria-hidden />{event}</span>
+                    <time>{state}</time>
+                  </div>
+                ))}
+              </div>
+            </m.div>
+          </AnimatePresence>
         </div>
       </div>
 
-      <footer className="platform-os-footer">
-        <span><i className="bg-[#FF2D55]" aria-hidden />4 connected modules</span>
-        <span><i className="bg-[#C8FF60]" aria-hidden />Human review gates</span>
-        <span><i className="bg-[#5EE7E7]" aria-hidden />Shared data layer</span>
-      </footer>
     </div>
   )
 }

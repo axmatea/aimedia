@@ -7,18 +7,17 @@ type AICreator = {
   name: string
   niche: string
   image: string
-  followers: string
   /** Illustrative activity loop for the "now creating" line (demo personas). */
   creating: string[]
 }
 
 // 256px source for crisp rendering at 56px on 2-3x retina displays
 const CREATORS: AICreator[] = [
-  { id: 1, name: "Zara.AI", niche: "Lifestyle & Wellness", image: "/creators/zara.jpg", followers: "284K", creating: ["morning routine reel", "7-day wellness carousel", "story poll for launch week"] },
-  { id: 2, name: "Marcus.AI", niche: "Tech & Startups", image: "/creators/marcus.jpg", followers: "512K", creating: ["product teardown thread", "founder story script", "launch-day recap post"] },
-  { id: 3, name: "Aria.AI", niche: "Fashion & Beauty", image: "/creators/aria.jpg", followers: "1.2M", creating: ["lookbook carousel", "get-ready-with-me script", "trend react short"] },
-  { id: 4, name: "Dev.AI", niche: "Finance & Crypto", image: "/creators/dev.jpg", followers: "389K", creating: ["market recap thread", "explainer short: staking", "chart breakdown post"] },
-  { id: 5, name: "Luna.AI", niche: "Travel & Food", image: "/creators/luna.jpg", followers: "741K", creating: ["street food mini-vlog", "hidden gems carousel", "recipe hook variants"] },
+  { id: 1, name: "Zara.AI", niche: "Lifestyle & Wellness", image: "/creators/zara.jpg", creating: ["morning routine reel", "7-day wellness carousel", "story poll for launch week"] },
+  { id: 2, name: "Marcus.AI", niche: "Tech & Startups", image: "/creators/marcus.jpg", creating: ["product teardown thread", "founder story script", "launch-day recap post"] },
+  { id: 3, name: "Aria.AI", niche: "Fashion & Beauty", image: "/creators/aria.jpg", creating: ["lookbook carousel", "get-ready-with-me script", "trend react short"] },
+  { id: 4, name: "Dev.AI", niche: "Finance & Crypto", image: "/creators/dev.jpg", creating: ["market recap thread", "explainer short: staking", "chart breakdown post"] },
+  { id: 5, name: "Luna.AI", niche: "Travel & Food", image: "/creators/luna.jpg", creating: ["street food mini-vlog", "hidden gems carousel", "recipe hook variants"] },
 ]
 
 const TooltipItem = ({
@@ -52,7 +51,7 @@ const TooltipItem = ({
       >
         <p className="whitespace-nowrap text-xs font-bold text-white">{item.name}</p>
         <p className="whitespace-nowrap text-[10px] text-white/65 mt-0.5">{item.niche}</p>
-        <p className="whitespace-nowrap text-[10px] text-[#C8FF60] font-mono mt-1">{item.followers} followers</p>
+        <p className="whitespace-nowrap text-[10px] text-[#C8FF60] font-mono mt-1">Illustrative persona</p>
         <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-[#0C0C0F] border-r border-b border-white/10" />
       </motion.div>
       {/* Tap/click selects the creator: pulse ring + pinned "now creating" line */}
