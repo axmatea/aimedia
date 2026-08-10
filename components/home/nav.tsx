@@ -89,6 +89,7 @@ export function SiteNav() {
         <ThemeToggle />
         <button
           type="button"
+          aria-label="Book a Call"
           onClick={openBooking}
           className="group relative px-3 sm:px-4 md:px-6 py-2 md:py-2.5 rounded-full text-[11px] md:text-sm font-bold tracking-wider uppercase overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-95 border-2 border-[#FF2D55] dark:border-[#FF2D55]/60 hover:border-[#FF2D55] text-[#FF2D55] dark:text-white"
         >
@@ -96,7 +97,7 @@ export function SiteNav() {
           <span className="relative z-10 flex items-center gap-1.5 md:gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#FF2D55] group-hover:animate-ping" />
             <span className="hidden min-[520px]:inline">Book a Call</span>
-            <span className="min-[520px]:hidden">Book a Call</span>
+            <span className="min-[520px]:hidden">Book</span>
           </span>
         </button>
         <button

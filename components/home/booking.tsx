@@ -44,8 +44,7 @@ function BookingFlow() {
   return (
     <div ref={flowRef} className="relative z-10 mx-auto max-w-4xl">
       <div className="mb-7 text-center md:mb-10">
-        <span className="rounded-full border border-white/20 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-white/75">Book a Call</span>
-        <Disp className="mt-4 block text-white" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
+        <Disp className="block text-white" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
           CHOOSE A TIME.<br /><span style={{ color: "var(--red)" }}>TELL US WHAT YOU NEED.</span>
         </Disp>
         <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-white/70 md:text-base">

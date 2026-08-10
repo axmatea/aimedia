@@ -53,7 +53,7 @@ export function HeroVisual() {
 
   return (
     <>
-      <picture className={`hero-robot-poster ${robotReady ? "is-hidden" : ""}`}>
+      <picture className={`hero-robot-poster ${robotReady ? "is-hidden" : "is-loading"}`}>
         <source media="(max-width: 520px)" srcSet="/hero/robot-poster-mobile.webp" />
         <source media="(max-width: 1023px)" srcSet="/hero/robot-poster-tablet.webp" />
         <img
@@ -76,15 +76,13 @@ export function HeroVisual() {
 
       {/* Robot */}
       <div
-        className="hero-robot-shell absolute pointer-events-none block z-[2]"
+        className={`hero-robot-shell absolute pointer-events-none block z-[2] ${robotReady ? "is-ready" : "is-loading"}`}
       >
-        {/* No static poster: while the Spline runtime boots, the hero right side
-            shows only the dark ambient background (gradient + red bloom + Lightning).
-            The live scene fades and settles in over it when ready. */}
+        <div className="hero-robot-power" aria-hidden />
         {/* Scene + runtime wasm are self-hosted (public/spline/): no third-party
             fetches at runtime. Source of truth: Spline export kZDDjO5HuC9GJUM2.
             To update the scene, re-export and replace the files (see splite.tsx). */}
-        <SplineScene scene="/spline/robot.splinecode" className="w-full h-full dark:opacity-100 opacity-90 dark:mix-blend-normal mix-blend-normal lg:mix-blend-luminosity" onLoad={handleRobotReady} />
+        <SplineScene scene="/spline/robot.splinecode" className="w-full h-full dark:opacity-100 opacity-90 mix-blend-normal" onLoad={handleRobotReady} />
         <div className="ai-hero-fade-x absolute inset-y-0 left-0 w-[50%]" />
         <div className="ai-hero-fade-y absolute bottom-0 left-0 right-0 h-56" />
         <div className="ai-hero-fade-x absolute inset-y-0 right-0 w-[15%] rotate-180 block dark:hidden" />

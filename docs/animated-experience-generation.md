@@ -58,3 +58,30 @@ The third master was generated at `720p` after the available Higgsfield balance 
 - Web poster frames: `public/animated/posters/`
 
 High-quality masters and QA captures are intentionally ignored by Git and excluded from Vercel. Only optimized web assets are deployed.
+
+## External-to-internal bridge contract
+
+The bridge is intentionally isolated at `ANIMATED_MEDIA.entityThroughCore` in `app/animated/media.ts`. The current approved asset remains live. A future bridge can replace the two web encodes at the same paths without changing the scroll timeline or loading strategy.
+
+### Locked source frames
+
+- External master: `scene-01-entity-to-core-master.mp4`, 1920×1080, 24 fps, 145 frames, 6.041667 seconds.
+- Start reference: frame 144 at approximately 6.000 seconds. The entity is centered frontally; head and shoulders are stable; the chest core is centered at approximately 50% x / 69% y; the right shoulder is already separating into restrained graphite particles.
+- Internal master: `scene-02-core-to-orchestration-master.mp4`, 1920×1080, 24 fps, 145 frames, 6.041667 seconds.
+- End reference: frame 0 at 0.000 seconds. The same chest core is centered at approximately 50% x / 48% y in a close torso composition; black ceramic anatomy, right-shoulder particle state, red spine, exposure, and black background remain continuous.
+- Generate from exported lossless PNGs of those exact frames. Do not use screenshots, recompressed JPEGs, or approximate redraws as Higgsfield inputs.
+
+### Bridge motion
+
+- Master: 16:9, 1920×1080, 24 fps, 2.0 to 2.5 seconds, no audio.
+- Camera: one symmetrical 35mm-to-70mm dolly from the wider entity frame directly toward the center of the chest core. No lateral drift, roll, cut, rack-focus jump, or speed ramp.
+- Identity lock: preserve the exact unmarked obsidian faceplate, shoulder geometry, torso proportions, black ceramic and smoked titanium materials. Do not add fingers, armor, logos, text, or a second light source.
+- Core lock: the white-hot center stays on the same optical axis while moving from approximately 69% to 48% vertical position solely through the camera push. Keep the concentric red aperture circular and centered.
+- Lighting lock: deep neutral black background, cool metallic edge light, restrained AX red emissive light. Preserve the external master exposure at the start and resolve exactly to the internal master exposure at the end.
+- Particle continuity: continue the existing right-shoulder evaporation at low density. Particles travel outward and slightly backward; no explosion, smoke plume, debris crossing the face, or new particle source.
+
+### Reproducible generation prompt
+
+> Use the supplied exact start and end frames as hard continuity anchors. Create one uninterrupted, perfectly centered cinematic dolly toward the entity’s illuminated chest core. Preserve the identical entity anatomy, unmarked obsidian faceplate, black ceramic and smoked titanium surface design, shoulder geometry, red spine, exposure, and deep black studio. The camera advances smoothly on the core axis as the core grows from the wider chest position into the exact close aperture composition of the end frame. Continue only the existing sparse graphite evaporation from the entity’s right shoulder, drifting outward and backward with restrained motion. Controlled AX-red volumetric light, precise concentric aperture, premium photoreal detail, elegant easing, no cut, no lateral drift, no roll, no camera shake, no anatomy change, no new objects, no typography, no audio.
+
+Preferred model: Higgsfield Seedance 2.0 using both exact endpoint images, because endpoint identity and camera continuity are more important than unconstrained cinematic variation. Generate at least three candidates and accept only a candidate whose first and last decoded frames match the references without a visible exposure or geometry jump.

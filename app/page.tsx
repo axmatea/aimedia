@@ -26,7 +26,7 @@ import { GlowCard } from "@/components/ui/spotlight-card"
 import { AxWordmark } from "@/components/ui/ax-wordmark"
 import { SERVE_ICONS } from "@/components/ui/serve-icons"
 
-import { Disp, Tag, AmbientImage } from "@/components/home/shared"
+import { Disp, AmbientImage } from "@/components/home/shared"
 import { BookingSection, BookingDialog } from "@/components/home/booking"
 import { SiteNav } from "@/components/home/nav"
 import { HeroVisual, HeroCtas, HeroRotator } from "@/components/home/hero-islands"
@@ -123,8 +123,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <Reveal className="flex items-end justify-between mb-10 md:mb-14 gap-6 flex-wrap">
             <div>
-              <Tag>Who we build for</Tag>
-              <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
+              <Disp className="ai-text block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
                 BUILT FOR<br />AMBITIOUS<br /><span style={{ color: "var(--red)" }}>OPERATORS.</span>
               </Disp>
             </div>
@@ -156,8 +155,7 @@ export default function Home() {
         <AmbientImage src="/generated/outcomes/blur/outcome-web3-blur.webp" className="ambient-ai-team" />
         <div className="relative z-[1] max-w-7xl mx-auto grid lg:grid-cols-[minmax(260px,0.72fr)_minmax(0,1.28fr)] gap-12 lg:gap-16 items-center">
           <div className="relative z-10">
-            <Tag>The Intelligence</Tag>
-            <Reveal duration={0.6} easeDefault className="mt-6">
+            <Reveal duration={0.6} easeDefault>
               <Disp className="ai-text block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
                 YOUR AI TEAM<br />NEVER<br /><span style={{ color: "var(--red)" }}>SLEEPS.</span>
               </Disp>
@@ -176,15 +174,8 @@ export default function Home() {
       <div id="services" className="scroll-mt-24">
         {SERVICES.map((svc, i) => (
           <section id={`service-${svc.id}`} key={svc.id} className={`service-section service-${svc.id} py-20 md:py-28 px-5 md:px-10 relative overflow-hidden scroll-mt-24`} style={{ background: svc.bg, contain: "layout paint" }}>
-            <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14 lg:gap-20 items-center relative z-10">
-              <div className={i % 2 === 1 ? "md:order-last" : ""}>
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 rounded-full border"
-                    style={{ borderColor: "rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.7)" }}>
-                    {svc.tag}
-                  </span>
-                  <span className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.66)" }}>{svc.id}</span>
-                </div>
+            <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 md:gap-14 lg:gap-20 items-center relative z-10">
+              <div className={i % 2 === 1 ? "lg:order-last" : ""}>
                 <Disp className="whitespace-pre-line block mb-4" style={{ color: "#fff", fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>{svc.name}</Disp>
                 <p className="text-base md:text-lg leading-snug mb-3 font-semibold" style={{ color: "var(--red)" }}>{svc.tagline}</p>
                 <p className="text-[15px] md:text-base leading-relaxed mb-8 max-w-xl" style={{ color: "rgba(255,255,255,0.76)" }}>{svc.body}</p>
@@ -206,10 +197,7 @@ export default function Home() {
                   <N8nWorkflowBlock />
                 ) : (
                   <div className="rounded-3xl overflow-hidden border border-white/8 bg-[#0C0C0F] p-8 space-y-6">
-                    <div>
-                      <p className="text-white/55 text-[10px] font-mono uppercase tracking-widest">Content workflow</p>
-                      <p className="text-white/70 text-xs leading-relaxed mt-2">Research, production, review, and distribution in one flow.</p>
-                    </div>
+                    <p className="text-white/70 text-xs leading-relaxed">Research, production, review, and distribution in one flow.</p>
                     <AIUGCCreators />
                   </div>
                 )}
@@ -230,8 +218,7 @@ export default function Home() {
       <section id="global-reach" className="ai-page py-20 px-6 relative overflow-hidden scroll-mt-20" style={{ contain: "layout paint" }}>
         <div className="relative z-[1] max-w-6xl mx-auto">
           <Reveal className="text-center mb-10">
-            <Tag>Global reach</Tag>
-            <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
+            <Disp className="ai-text block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
               BUILT FOR CLIENTS<br /><span style={{ color: "var(--red)" }}>WORLDWIDE.</span>
             </Disp>
             <p className="ai-muted text-sm mt-4 max-w-md mx-auto">
@@ -247,8 +234,7 @@ export default function Home() {
       <section id="faq" className="ai-page py-20 px-6" style={{ contain: "layout paint", containIntrinsicSize: "0 620px" }}>
         <div className="max-w-3xl mx-auto">
           <Reveal className="text-center mb-10">
-            <Tag>FAQ</Tag>
-            <Disp className="ai-text mt-4 block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
+            <Disp className="ai-text block" style={{ fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>
               STRAIGHT<br /><span style={{ color: "var(--red)" }}>ANSWERS.</span>
             </Disp>
           </Reveal>

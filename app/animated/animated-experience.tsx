@@ -16,20 +16,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties } from "re
 import { AxWordmark } from "@/components/ui/ax-wordmark"
 
 import styles from "./animated-experience.module.css"
-
-const MEDIA = {
-  entityPoster: "/animated/posters/entity.webp",
-  orchestrationPoster: "/animated/posters/orchestration.webp",
-  workflowPoster: "/animated/posters/workflow.webp",
-  entityThroughCore: {
-    desktop: "/animated/video/desktop/entity-through-core.mp4",
-    mobile: "/animated/video/mobile/entity-through-core.mp4",
-  },
-  workflow: {
-    desktop: "/animated/video/desktop/orchestration-to-workflow.mp4",
-    mobile: "/animated/video/mobile/orchestration-to-workflow.mp4",
-  },
-} as const
+import { ANIMATED_MEDIA as MEDIA } from "./media"
 
 const AGENTS: Array<{ label: string; icon: LucideIcon; position: string }> = [
   { label: "Research", icon: Search, position: "15% 50%" },

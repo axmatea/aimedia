@@ -14,10 +14,6 @@ const FUNNEL_STAGES = [
 export function LeadFunnel() {
   return (
     <div className="rounded-3xl overflow-hidden border border-[#7B2FFF]/15 bg-[#0A0518] p-6 md:p-8">
-      <div className="mb-6">
-        <p className="text-white/70 text-[10px] font-mono uppercase tracking-widest">Pipeline flow</p>
-      </div>
-
       {/* Funnel stages */}
       <div className="space-y-3">
         {FUNNEL_STAGES.map((stage, i) => {
