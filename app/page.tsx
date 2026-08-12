@@ -12,7 +12,7 @@
  *                               server-rendered (children-as-props pattern)
  *   LogoCloud                   the integration strip
  *   lazy-islands                AgentRadial, LeadFunnel, N8nWorkflowBlock,
- *                               AIUGCCreators, WorldMap (ssr:false, unchanged)
+ *                               ContentDistribution, WorldMap (ssr:false)
  *   BookingSection/Dialog/      the whole booking stack
  *
  * Rule for future edits: static content stays OUT of "use client" files; a
@@ -32,7 +32,7 @@ import { SiteNav } from "@/components/home/nav"
 import { HeroVisual, HeroCtas, HeroRotator } from "@/components/home/hero-islands"
 import { Reveal } from "@/components/home/reveal"
 import {
-  N8nWorkflowBlock, AIUGCCreators, AgentRadial, LeadFunnel, WorldMap,
+  N8nWorkflowBlock, ContentDistribution, AgentRadial, LeadFunnel, WorldMap,
 } from "@/components/home/lazy-islands"
 import {
   STACK_LOGOS, FEATURED_LOGOS, MAP_DOTS, SERVICES, FAQS, TICKER, WHO_WE_SERVE,
@@ -196,10 +196,7 @@ export default function Home() {
                 ) : svc.id === "03" ? (
                   <N8nWorkflowBlock />
                 ) : (
-                  <div className="rounded-3xl overflow-hidden border border-white/8 bg-[#0C0C0F] p-8 space-y-6">
-                    <p className="text-white/70 text-xs leading-relaxed">Research, production, review, and distribution in one flow.</p>
-                    <AIUGCCreators />
-                  </div>
+                  <ContentDistribution />
                 )}
               </div>
 
