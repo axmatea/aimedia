@@ -15,9 +15,9 @@ export const N8nWorkflowBlock = dynamic(
   { ssr: false, loading: () => <div className="h-[460px] rounded-2xl animate-pulse bg-white/[0.02] border border-white/5" /> }
 )
 
-export const ContentDistribution = dynamic(
-  () => import("@/components/ui/content-distribution").then((mod) => mod.ContentDistribution),
-  { ssr: false, loading: () => <div className="h-[560px] rounded-2xl animate-pulse bg-white/[0.02] border border-white/5" /> }
+export const AIUGCCreators = dynamic(
+  () => import("@/components/ui/animated-tooltip").then((mod) => mod.AIUGCCreators),
+  { ssr: false, loading: () => <div className="h-[96px] rounded-xl bg-white/[0.02]" /> }
 )
 
 export const AgentRadial = dynamic(

@@ -178,8 +178,8 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
 
     // Every mount goes through requestIdleCallback with a hard ceiling so the
     // boot waits for a gap but can never stall forever. The ceiling differs by
-    // path: the gesture fast-path uses a tight 300ms (an engaged user gets the
-    // robot near-instantly), the no-gesture default uses a 500ms window so an
+    // path: the gesture fast-path uses a tight 240ms (an engaged user gets the
+    // robot near-instantly), the no-gesture default uses a 360ms window so an
     // idle visitor still sees the robot arrive fast, right after first paint.
     const scheduleIdle = (timeout: number) => {
       if (cancelled || idleId !== null) return
@@ -193,7 +193,7 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
     const INPUT_EVENTS: (keyof WindowEventMap)[] = ['pointerdown', 'mousemove', 'wheel', 'touchstart', 'keydown']
     const onFirstInput = () => {
       detachInput()
-      scheduleIdle(300)
+      scheduleIdle(240)
     }
     const detachInput = () => {
       for (const ev of INPUT_EVENTS) window.removeEventListener(ev, onFirstInput)
@@ -205,11 +205,11 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
     // No-gesture path (v7.3): the robot should read as a fast, intentional
     // arrival, not a late pop. This effect already runs post-hydration, after
     // the server-rendered hero headline (the LCP element) has painted, so a
-    // short 200ms beat here does not push LCP. It just lets hydration settle one
-    // frame, then boots the ~1.3 MB runtime on the next idle gap (500ms ceiling)
+    // short 120ms beat here does not push LCP. It just lets hydration settle one
+    // frame, then boots the ~1.3 MB runtime on the next idle gap (360ms ceiling)
     // so the boot never blocks the main thread on load. Any real gesture still
     // short-circuits this via the tighter fast path above.
-    timeouts.push(window.setTimeout(() => scheduleIdle(500), 200))
+    timeouts.push(window.setTimeout(() => scheduleIdle(360), 120))
 
     return () => {
       cancelled = true
@@ -326,7 +326,7 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
         window.setTimeout(() => {
           setSceneReady(true)
           onLoad?.(app)
-        }, 420)
+        }, 280)
       })
     })
   }, [onLoad])

@@ -25,13 +25,11 @@ const TooltipItem = ({
   index,
   active,
   onToggle,
-  compact,
 }: {
   item: AICreator
   index: number
   active: boolean
   onToggle: () => void
-  compact: boolean
 }) => {
   const reduceMotion = useReducedMotion()
   const x = useMotionValue(0)
@@ -79,7 +77,7 @@ const TooltipItem = ({
           width={56}
           height={56}
           loading="lazy"
-          className={`${compact ? "h-12 w-12" : "h-14 w-14"} rounded-full object-cover object-top border-2 transition duration-300 group-hover:z-30 group-hover:scale-110 group-hover:border-[#FF2D55]/60 ${
+          className={`h-14 w-14 rounded-full object-cover object-top border-2 transition duration-300 group-hover:z-30 group-hover:scale-110 group-hover:border-[#FF2D55]/60 ${
             active ? "z-30 scale-110 border-[#FF2D55]" : "border-white/10"
           }`}
         />
@@ -91,7 +89,7 @@ const TooltipItem = ({
   )
 }
 
-export function AIUGCCreators({ compact = false }: { compact?: boolean }) {
+export function AIUGCCreators() {
   const reduceMotion = useReducedMotion()
   // A tap selects a creator. No auto-cycle: the content section stays calm.
   const [selectedId, setSelectedId] = useState<number | null>(null)
@@ -104,7 +102,7 @@ export function AIUGCCreators({ compact = false }: { compact?: boolean }) {
 
   return (
     <div>
-      <div className={`flex items-center ${compact ? "-space-x-2.5" : "-space-x-3"}`}>
+      <div className="flex items-center -space-x-3">
         {CREATORS.map((item, index) => (
           <TooltipItem
             key={item.id}
@@ -112,14 +110,11 @@ export function AIUGCCreators({ compact = false }: { compact?: boolean }) {
             index={index}
             active={selectedId === item.id}
             onToggle={() => setSelectedId((cur) => (cur === item.id ? null : item.id))}
-            compact={compact}
           />
         ))}
-        {!compact && (
-          <div className="relative ml-2 h-14 w-14 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center">
-            <span className="text-white/50 text-lg font-light">+</span>
-          </div>
-        )}
+        <div className="relative ml-2 h-14 w-14 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center">
+          <span className="text-white/50 text-lg font-light">+</span>
+        </div>
       </div>
       {/* Live micro-line: auto-cycles the team, or pins to the tapped creator */}
       <div className="mt-4 flex items-center gap-2 min-h-[18px]" aria-live="off">

@@ -53,7 +53,7 @@ export function HeroVisual() {
 
   return (
     <>
-      <picture className={`hero-robot-poster ${robotReady ? "is-hidden" : "is-loading"}`}>
+      <picture className={`hero-robot-poster ${robotReady ? "is-hidden" : ""}`}>
         <source media="(max-width: 520px)" srcSet="/hero/robot-poster-mobile.webp" />
         <source media="(max-width: 1023px)" srcSet="/hero/robot-poster-tablet.webp" />
         <img
@@ -64,7 +64,7 @@ export function HeroVisual() {
           height="900"
           loading="eager"
           fetchPriority="high"
-          decoding="async"
+          decoding="sync"
         />
       </picture>
 
