@@ -48,10 +48,12 @@ export default function Home() {
 
       {/* 01 HOOK */}
       <section className="hero-section min-h-[100svh] relative overflow-hidden flex flex-col justify-end pb-16 pt-32 px-6 md:px-10">
-        <div className="hidden lg:block"><Spotlight size={500} /></div>
+        <div className="hidden dark:lg:block"><Spotlight size={500} /></div>
 
-        {/* Backgrounds: stronger red bloom, softer grid. Avoid visible line artifacts. */}
-        <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        {/* The cinematic bloom and point-grid belong to the dark composition.
+            Light mode stays deliberately clean so the robot reads as a single
+            object instead of sitting inside a foggy decorative layer. */}
+        <div className="absolute inset-0 pointer-events-none hidden dark:block" aria-hidden>
           <div className="absolute -top-16 right-0 w-[680px] h-[620px] bg-[#FF2D55]/12 rounded-full blur-[110px]" />
           <div className="absolute bottom-0 left-0 w-[520px] h-[380px] bg-[#7B2FFF]/8 rounded-full blur-[120px]" />
           <div className="absolute inset-0 opacity-35 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:88px_88px]" />
@@ -64,7 +66,7 @@ export default function Home() {
             ran with initial={false} (final state, no mount animation), so plain
             markup here is pixel-identical, and the LCP paragraph no longer waits
             for any hydration. */}
-        <div className="relative z-10 max-w-[1440px] mx-auto w-full">
+        <div className="hero-content relative z-10 max-w-[1440px] mx-auto w-full">
           <h1>
             <span className="block overflow-hidden py-[0.04em] -my-[0.04em]">
               <span className="block">
@@ -176,15 +178,8 @@ export default function Home() {
       <div id="services" className="scroll-mt-24">
         {SERVICES.map((svc, i) => (
           <section id={`service-${svc.id}`} key={svc.id} className={`service-section service-${svc.id} py-20 md:py-28 px-5 md:px-10 relative overflow-hidden scroll-mt-24`} style={{ background: svc.bg, contain: "layout paint" }}>
-            <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14 lg:gap-20 items-center relative z-10">
-              <div className={i % 2 === 1 ? "md:order-last" : ""}>
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 rounded-full border"
-                    style={{ borderColor: "rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.7)" }}>
-                    {svc.tag}
-                  </span>
-                  <span className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.66)" }}>{svc.id}</span>
-                </div>
+            <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 md:gap-14 lg:gap-20 items-center relative z-10">
+              <div className={i % 2 === 1 ? "lg:order-last" : ""}>
                 <Disp className="whitespace-pre-line block mb-4" style={{ color: "#fff", fontSize: "var(--fs-display)", lineHeight: "var(--lh-display)" }}>{svc.name}</Disp>
                 <p className="text-base md:text-lg leading-snug mb-3 font-semibold" style={{ color: "var(--red)" }}>{svc.tagline}</p>
                 <p className="text-[15px] md:text-base leading-relaxed mb-8 max-w-xl" style={{ color: "rgba(255,255,255,0.76)" }}>{svc.body}</p>
@@ -205,12 +200,46 @@ export default function Home() {
                 ) : svc.id === "03" ? (
                   <N8nWorkflowBlock />
                 ) : (
-                  <div className="rounded-3xl overflow-hidden border border-white/8 bg-[#0C0C0F] p-8 space-y-6">
+                  <div className="space-y-6 overflow-hidden rounded-3xl border border-white/8 bg-[#0C0C0F] p-5 sm:p-6 md:p-8">
                     <div>
-                      <p className="text-white/55 text-[10px] font-mono uppercase tracking-widest">Content workflow</p>
-                      <p className="text-white/70 text-xs leading-relaxed mt-2">Research, production, review, and distribution in one flow.</p>
+                      <div className="mb-2 flex items-center justify-between gap-4">
+                        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">AI content team · Demo</p>
+                        <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/45">Tap a creator</p>
+                      </div>
+                      <p className="mb-1 text-sm font-bold text-white/75">One system. Every channel.</p>
+                      <p className="max-w-md text-xs leading-relaxed text-white/60">
+                        One approved direction becomes channel-native content across a clear weekly cadence.
+                      </p>
                     </div>
+
                     <AIUGCCreators />
+
+                    <ul className="space-y-2 pt-1">
+                      {[
+                        { platform: "LinkedIn", cadence: "3 posts / week", color: "#5EA9F0" },
+                        { platform: "X", cadence: "5 posts / week", color: "#FFFFFF" },
+                        { platform: "Instagram", cadence: "3 posts / week", color: "#F26D9C" },
+                        { platform: "YouTube Shorts", cadence: "2 shorts / week", color: "#FF6B6B" },
+                      ].map((channel, index) => (
+                        <li
+                          key={channel.platform}
+                          className="flex min-h-10 items-center justify-between gap-4 rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2.5"
+                        >
+                          <span className="text-xs font-bold" style={{ color: channel.color }}>{channel.platform}</span>
+                          <span className="inline-flex items-center gap-2 font-mono text-[10px] text-white/60">
+                            {channel.cadence}
+                            <span className="relative inline-flex h-1.5 w-1.5" style={{ "--i": index } as React.CSSProperties} aria-hidden>
+                              <span className="ugc-ping absolute inline-flex h-full w-full rounded-full bg-white/35" />
+                              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white/30" />
+                            </span>
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <p className="border-t border-white/5 pt-4 font-mono text-[9px] text-white/45">
+                      Illustrative cadence · final mix follows the approved strategy
+                    </p>
                   </div>
                 )}
               </div>

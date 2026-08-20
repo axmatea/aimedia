@@ -1,6 +1,21 @@
 import type { Metadata } from "next"
+import { Geist, Inter } from "next/font/google"
 
 import { AnimatedExperience } from "./animated-experience"
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-inter",
+  display: "swap",
+})
+
+const geist = Geist({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-geist-scene",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
   title: "Animated Experience",
@@ -27,5 +42,5 @@ export const metadata: Metadata = {
 }
 
 export default function AnimatedPage() {
-  return <AnimatedExperience />
+  return <div className={`${inter.variable} ${geist.variable}`}><AnimatedExperience /></div>
 }

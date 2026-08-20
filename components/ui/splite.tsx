@@ -41,6 +41,15 @@ type SplineApp = Application & {
 // transition uniforms) and survives the runtime's own resize path.
 const MOBILE_DPR_CAP = 1.5
 
+function supportsWebGL() {
+  try {
+    const canvas = document.createElement('canvas')
+    return Boolean(canvas.getContext('webgl2') || canvas.getContext('webgl'))
+  } catch {
+    return false
+  }
+}
+
 // Possible head object names across common Spline robot scenes
 const HEAD_NAMES = ['Head', 'head', 'Robot_Head', 'robot_head', 'HEAD', 'Helmet', 'helmet', 'Skull', 'skull']
 
@@ -77,8 +86,9 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
   useEffect(() => {
     const finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const webGLAvailable = supportsWebGL()
 
-    const syncMotion = () => setMotionOk(!reducedMotionQuery.matches)
+    const syncMotion = () => setMotionOk(webGLAvailable && !reducedMotionQuery.matches)
     const syncInteractive = () => {
       interactiveRef.current = finePointerQuery.matches && !reducedMotionQuery.matches
     }

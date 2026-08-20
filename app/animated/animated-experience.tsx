@@ -14,6 +14,8 @@ import {
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react"
 
 import { AxWordmark } from "@/components/ui/ax-wordmark"
+import { AnimatedInquiryHero } from "@/components/animated/inquiry-hero"
+import { SystemContinuum } from "@/components/animated/system-continuum"
 
 import styles from "./animated-experience.module.css"
 
@@ -83,14 +85,12 @@ export function AnimatedExperience() {
   const pageVisibleRef = useRef(true)
   const workflowLoadRequestedRef = useRef(false)
   const assetStageRef = useRef(0)
-  const finalActiveRef = useRef(false)
 
   const [reducedMotion, setReducedMotion] = useState(false)
   const [motionPreferenceReady, setMotionPreferenceReady] = useState(false)
   const [mediaReady, setMediaReady] = useState([false, false])
   const [mediaFailed, setMediaFailed] = useState([false, false])
   const [assetStage, setAssetStage] = useState(0)
-  const [finalActive, setFinalActive] = useState(false)
 
   const paint = useCallback((progress: number) => {
     const stage = stageRef.current
@@ -118,11 +118,6 @@ export function AnimatedExperience() {
     stage.style.setProperty("--orbit-progress", orbit.toFixed(5))
     stage.style.setProperty("--action-progress", actionProgress.toFixed(5))
 
-    const nextFinalActive = progress >= 0.9
-    if (nextFinalActive !== finalActiveRef.current) {
-      finalActiveRef.current = nextFinalActive
-      setFinalActive(nextFinalActive)
-    }
   }, [])
 
   const seekVideos = useCallback((progress: number) => {
@@ -287,7 +282,7 @@ export function AnimatedExperience() {
           {assetStage >= 1 && <OrchestrationLayer />}
 
           <div className={`${styles.layer} ${styles.workflowLayer}`} aria-hidden>
-            {assetStage >= 2 && <Image src={MEDIA.workflowPoster} alt="" fill sizes="100vw" className={styles.media} />}
+            {assetStage >= 2 && <Image src={MEDIA.workflowPoster} alt="" fill loading="eager" sizes="100vw" className={styles.media} />}
             {motionPreferenceReady && !reducedMotion && !mediaFailed[1] && (
               <video
                 ref={workflowVideoRef}
@@ -308,12 +303,9 @@ export function AnimatedExperience() {
 
           <ActionField />
 
-          <div id="final-cta" className={`${styles.layer} ${styles.finalLayer}`} data-active={finalActive} aria-hidden={!finalActive}>
+          <div className={`${styles.layer} ${styles.finalLayer}`} aria-hidden>
             <div className={styles.finalMark} aria-hidden><span /><i /><span /></div>
-            <nav className={styles.finalActions} aria-label="Animated experience actions">
-              <Link href="/" tabIndex={finalActive ? undefined : -1}>Return to Standard Site</Link>
-              <Link href="/#booking" tabIndex={finalActive ? undefined : -1} className={styles.primaryAction}>Book a Call</Link>
-            </nav>
+            <div className={styles.finalStatus}><span>System online</span><small>Continue</small></div>
           </div>
 
           {!reducedMotion && motionPreferenceReady && !mediaReady[0] && !mediaFailed[0] && (
@@ -323,6 +315,10 @@ export function AnimatedExperience() {
           <div className={styles.scrollCue} aria-hidden><span>Scroll</span><i /></div>
         </div>
       </section>
+      <div className={styles.continuation} aria-label="The system becomes a working business environment">
+        <SystemContinuum />
+        <AnimatedInquiryHero continuous />
+      </div>
     </main>
   )
 }

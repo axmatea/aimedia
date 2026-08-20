@@ -18,6 +18,7 @@ import Link from "next/link"
 import { Menu, X } from "lucide-react"
 import ThemeToggle from "@/components/ui/toggle-theme"
 import { AxWordmark } from "@/components/ui/ax-wordmark"
+import { LiquidMetalButton } from "@/components/ui/liquid-metal-button"
 import { NAV_LINKS } from "@/components/home/data"
 import { scrollToId, openBooking } from "@/components/home/actions"
 
@@ -87,18 +88,7 @@ export function SiteNav() {
       </div>
       <div className="flex items-center gap-2 md:gap-4">
         <ThemeToggle />
-        <button
-          type="button"
-          onClick={openBooking}
-          className="group relative px-3 sm:px-4 md:px-6 py-2 md:py-2.5 rounded-full text-[11px] md:text-sm font-bold tracking-wider uppercase overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-95 border-2 border-[#FF2D55] dark:border-[#FF2D55]/60 hover:border-[#FF2D55] text-[#FF2D55] dark:text-white"
-        >
-          <span className="absolute inset-0 bg-[#FF2D55]/20 dark:bg-[#FF2D55]/15 group-hover:bg-[#FF2D55]/30 transition-colors duration-300" />
-          <span className="relative z-10 flex items-center gap-1.5 md:gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FF2D55] group-hover:animate-ping" />
-            <span className="hidden min-[520px]:inline">Book a Call</span>
-            <span className="min-[520px]:hidden">Book a Call</span>
-          </span>
-        </button>
+        <LiquidMetalButton label="Book a Call" onClick={openBooking} className="nav-booking-metal" />
         <button
           type="button"
           className="xl:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border ai-border ai-muted transition-colors hover:text-[#FF2D55]"
