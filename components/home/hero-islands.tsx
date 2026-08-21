@@ -136,7 +136,7 @@ export function HeroRotator() {
 export function HeroCtas() {
   return (
     <div className="grid grid-cols-1 min-[500px]:grid-cols-2 gap-3 flex-shrink-0 w-full sm:w-auto sm:min-w-[440px]">
-      <LiquidMetalButton label="Book a Call" onClick={openBooking} className="w-full justify-center" />
+      <LiquidMetalButton label="Book a Call" onClick={() => openBooking("hero")} className="w-full justify-center" />
       <Link
         href="/animated"
         prefetch={false}

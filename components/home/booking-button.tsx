@@ -19,7 +19,7 @@ export function BookingButton({
   className?: string
   magnetic?: boolean
 }) {
-  const button = <LiquidMetalButton label={label} onClick={openBooking} className={className} />
+  const button = <LiquidMetalButton label={label} onClick={() => openBooking("inline_button")} className={className} />
   if (magnetic) {
     return <Magnetic className="inline-block">{button}</Magnetic>
   }

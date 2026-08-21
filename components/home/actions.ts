@@ -6,8 +6,12 @@
  */
 
 import { lenisScrollTo } from "@/components/providers/SmoothScroll"
+import { trackFunnel } from "@/lib/conversion/track"
 
 export const scrollToId = (id: string) => lenisScrollTo(`#${id}`)
 
 // Opens the native <dialog> booking modal from anywhere (decoupled from component trees)
-export const openBooking = () => window.dispatchEvent(new Event("open-booking"))
+export const openBooking = (ctaLocation = "unknown") => {
+  trackFunnel("primary_cta_clicked")
+  window.dispatchEvent(new CustomEvent("open-booking", { detail: { ctaLocation } }))
+}

@@ -26,10 +26,27 @@ type CalFn = {
   loaded?: boolean
 }
 
+type CalEvent<T = Record<string, unknown>> = {
+  detail?: {
+    data?: T
+    type?: string
+    namespace?: string
+  }
+}
+
+export type CalBookingCompletion = {
+  uid?: string
+  title?: string
+  startTime?: string
+  endTime?: string
+  eventTypeId?: number | null
+  status?: string
+}
+
 const CAL_ORIGIN = "https://app.cal.com"
 const EMBED_SRC = `${CAL_ORIGIN}/embed/embed.js`
-const NAMESPACE = "call"
 const EMBED_TIMEOUT_MS = 4000
+let embedInstance = 0
 
 function getCal(): CalFn {
   const w = window as unknown as { Cal?: CalFn }
@@ -71,13 +88,19 @@ function getCal(): CalFn {
 
 export function CalInline({
   calLink,
+  namespace = "call",
   config,
   onFail,
+  onStarted,
+  onCompleted,
 }: {
   calLink: string
+  namespace?: string
   /** Prefill passed straight to the embed config (name, email, a1..a3, duration). */
   config: Record<string, string>
   onFail?: () => void
+  onStarted?: () => void
+  onCompleted?: (booking: CalBookingCompletion) => void
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [ready, setReady] = useState(false)
@@ -85,9 +108,13 @@ export function CalInline({
   // must boot exactly once per mount (prefill is frozen at step entry).
   const configRef = useRef(config)
   const onFailRef = useRef(onFail)
+  const onStartedRef = useRef(onStarted)
+  const onCompletedRef = useRef(onCompleted)
   useEffect(() => {
     configRef.current = config
     onFailRef.current = onFail
+    onStartedRef.current = onStarted
+    onCompletedRef.current = onCompleted
   })
 
   useEffect(() => {
@@ -95,8 +122,17 @@ export function CalInline({
     if (!el) return
 
     const cal = getCal()
-    cal("init", NAMESPACE, { origin: CAL_ORIGIN })
-    const ns = (window as unknown as { Cal: CalFn }).Cal.ns![NAMESPACE]
+    // A fresh namespace per effect run prevents Cal's queued bootstrap calls
+    // from colliding during React Strict Mode or a rapid close/reopen cycle.
+    const instanceNamespace = `${namespace}-${++embedInstance}`
+    cal("init", instanceNamespace, { origin: CAL_ORIGIN })
+    const ns = (window as unknown as { Cal: CalFn }).Cal.ns![instanceNamespace]
+    const handleStarted = () => onStartedRef.current?.()
+    const handleCompleted = (event: CalEvent<CalBookingCompletion>) => {
+      onCompletedRef.current?.(event.detail?.data || {})
+    }
+    ns("on", { action: "bookerViewed", callback: handleStarted })
+    ns("on", { action: "bookingSuccessfulV2", callback: handleCompleted })
     ns("inline", {
       elementOrSelector: el,
       calLink,
@@ -123,11 +159,13 @@ export function CalInline({
 
     return () => {
       window.clearInterval(poll)
+      ns("off", { action: "bookerViewed", callback: handleStarted })
+      ns("off", { action: "bookingSuccessfulV2", callback: handleCompleted })
       // Drop the embed DOM on unmount so a remount (or the second BookingFlow
       // instance) starts from a clean container instead of stacking iframes.
       el.replaceChildren()
     }
-  }, [calLink])
+  }, [calLink, namespace])
 
   return (
     <div className="relative w-full">

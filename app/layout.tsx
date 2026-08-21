@@ -3,6 +3,7 @@ import { Geist_Mono, Space_Grotesk, Bebas_Neue } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { LazyMotion, domAnimation } from "motion/react";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
+import { FunnelAnalytics } from "@/components/analytics/funnel-analytics";
 import "./globals.css";
 
 const bebas = Bebas_Neue({ weight: "400", variable: "--font-bebas", subsets: ["latin"], display: "swap", preload: true, adjustFontFallback: true });
@@ -130,6 +131,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <LazyMotion features={domAnimation}>
             <SmoothScroll />
             {children}
+            <FunnelAnalytics analyticsMode={process.env.VERCEL ? "auto" : "development"} />
           </LazyMotion>
         </ThemeProvider>
       </body>

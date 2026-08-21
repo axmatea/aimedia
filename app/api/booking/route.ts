@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import crypto from "node:crypto"
 import { Resend } from "resend"
+import { track } from "@vercel/analytics/server"
 import { scheduleFollowUps } from "@/lib/followups"
 
 function getResend() {
@@ -30,9 +31,16 @@ type LeadPayload = {
   name: string
   email: string
   phone: string
+  company?: string
   projectType?: string
   goal?: string
   budget?: string
+  source?: string
+  utmSource?: string
+  utmMedium?: string
+  utmCampaign?: string
+  landingPage?: string
+  conversionAction?: string
 }
 
 async function addNotionLead(data: LeadPayload): Promise<string | null> {
@@ -59,7 +67,7 @@ async function addNotionLead(data: LeadPayload): Promise<string | null> {
     Email:          { email: data.email },
     Phone:          { phone_number: data.phone || null },
     "Project Type": { rich_text: [{ text: { content: data.projectType || "" } }] },
-    Goal:           { rich_text: [{ text: { content: data.goal || "" } }] },
+    Goal:           { rich_text: [{ text: { content: [data.company && `Company: ${data.company}`, data.goal].filter(Boolean).join("\n") } }] },
     Status:         { select: { name: "New" } },
     Source:         { select: { name: "Website" } },
   }
@@ -128,8 +136,14 @@ async function postToSheetsWebhook(data: LeadPayload) {
     projectType: data.projectType || "",
     goal: data.goal || "",
     budget: data.budget || "",
+    company: data.company || "",
     status: "New",
-    source: "Website",
+    source: data.source || "Website",
+    utmSource: data.utmSource || "",
+    utmMedium: data.utmMedium || "",
+    utmCampaign: data.utmCampaign || "",
+    landingPage: data.landingPage || "/",
+    conversionAction: data.conversionAction || "project_inquiry",
   }
 
   const res = await fetch(url, {
@@ -148,7 +162,21 @@ async function postToSheetsWebhook(data: LeadPayload) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { name, email, phone, projectType, goal, budget } = body
+    const {
+      name,
+      email,
+      phone,
+      company,
+      projectType,
+      goal,
+      budget,
+      source,
+      utmSource,
+      utmMedium,
+      utmCampaign,
+      landingPage,
+      conversionAction,
+    } = body
 
     // Phone is optional (v7 booking polish): name + email are the only gate.
     if (!name || !email) {
@@ -159,7 +187,21 @@ export async function POST(req: NextRequest) {
     const contactedLink = buildContactedLink(email)
 
     // ── 1. Dual-write to CRM: Notion + Google Sheet ─────────────────────────
-    const leadData = { name, email, phone, projectType, goal, budget }
+    const leadData = {
+      name,
+      email,
+      phone,
+      company,
+      projectType,
+      goal,
+      budget,
+      source,
+      utmSource,
+      utmMedium,
+      utmCampaign,
+      landingPage,
+      conversionAction,
+    }
     const [notionResult, sheetsResult] = await Promise.allSettled([
       addNotionLead(leadData),
       postToSheetsWebhook(leadData),
@@ -430,6 +472,23 @@ export async function POST(req: NextRequest) {
         console.error("Notion follow-up update error:", err instanceof Error ? err.message : String(err))
       }
     }
+
+    await Promise.allSettled([
+      track("inquiry_submitted", {
+        source: source || "Website",
+        utm_campaign: utmCampaign || undefined,
+        landing_page: landingPage || "/",
+        conversion_action: conversionAction || "project_inquiry",
+      }),
+      company && goal
+        ? track("qualified_lead_created", {
+            source: source || "Website",
+            utm_campaign: utmCampaign || undefined,
+            landing_page: landingPage || "/",
+            conversion_action: conversionAction || "project_inquiry",
+          })
+        : Promise.resolve(),
+    ])
 
     return NextResponse.json({
       success: true,

@@ -6,6 +6,7 @@ import { ArrowUpRight, Moon, Sun } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
 import styles from "./inquiry-hero.module.css"
+import { trackFunnel } from "@/lib/conversion/track"
 
 const INQUIRY_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260601_110537_3a579fa0-7bbc-4d94-9d25-0e816c7840f5.mp4"
 
@@ -190,7 +191,13 @@ export function AnimatedInquiryHero({ continuous = false }: AnimatedInquiryHeroP
           </motion.p>
 
           <div className={styles.secondaryActions}>
-            <Link href="/#booking" className={styles.primaryCta}>Book a Call <ArrowUpRight aria-hidden /></Link>
+            <Link
+              href="/#booking"
+              className={styles.primaryCta}
+              onClick={() => trackFunnel("primary_cta_clicked")}
+            >
+              Book a Call <ArrowUpRight aria-hidden />
+            </Link>
             <a href="mailto:info@aimedia.global">info@aimedia.global</a>
           </div>
         </div>

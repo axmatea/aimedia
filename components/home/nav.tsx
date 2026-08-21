@@ -88,7 +88,7 @@ export function SiteNav() {
       </div>
       <div className="flex items-center gap-2 md:gap-4">
         <ThemeToggle />
-        <LiquidMetalButton label="Book a Call" onClick={openBooking} className="nav-booking-metal" />
+        <LiquidMetalButton label="Book a Call" onClick={() => openBooking("navigation")} className="nav-booking-metal" />
         <button
           type="button"
           className="xl:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border ai-border ai-muted transition-colors hover:text-[#FF2D55]"
@@ -130,7 +130,7 @@ export function SiteNav() {
           ))}
           <button
             type="button"
-            onClick={() => { setMenuOpen(false); openBooking() }}
+            onClick={() => { setMenuOpen(false); openBooking("mobile_navigation") }}
             className="mt-1 flex min-h-11 items-center justify-center rounded-xl bg-[#FF2D55] px-4 text-sm font-bold text-white"
           >
             Book a Call

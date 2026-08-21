@@ -7,10 +7,18 @@
  * "open-booking" / "booking-closed" window-event contract are unchanged.
  */
 
-import { useState, useEffect, useRef, memo } from "react"
+import { useState, useEffect, useRef, useMemo, memo } from "react"
 import dynamic from "next/dynamic"
 import { Disp } from "@/components/home/shared"
 import { CAL_LINK, CALENDLY_URL } from "@/components/home/data"
+import type { CalBookingCompletion } from "@/components/ui/cal-inline"
+import {
+  attributedCalUrl,
+  calAttributionConfig,
+  captureAttribution,
+  type FunnelAttribution,
+} from "@/lib/conversion/attribution"
+import { trackFunnel } from "@/lib/conversion/track"
 
 const ShaderAnimation = dynamic(
   () => import("@/components/ui/shader-animation").then((mod) => mod.ShaderAnimation),
@@ -24,10 +32,13 @@ const CalInline = dynamic(
 )
 
 // ── BookingFlow: calendar-first path, reused inline and in the modal ─────────
-function BookingFlow() {
+function BookingFlow({ surface }: { surface: "inline" | "dialog" }) {
   const [embedFailed, setEmbedFailed] = useState(false)
   const [calendarActive, setCalendarActive] = useState(false)
+  const [attribution] = useState<FunnelAttribution>(() => captureAttribution())
   const flowRef = useRef<HTMLDivElement>(null)
+  const startedTracked = useRef(false)
+  const completedUid = useRef("")
 
   useEffect(() => {
     const element = flowRef.current
@@ -41,6 +52,28 @@ function BookingFlow() {
     return () => observer.disconnect()
   }, [])
 
+  const calConfig = useMemo(() => ({
+    duration: "30",
+    ...calAttributionConfig(attribution),
+  }), [attribution])
+  const fallbackUrl = useMemo(
+    () => attributedCalUrl(CALENDLY_URL, attribution),
+    [attribution],
+  )
+
+  const handleStarted = () => {
+    if (startedTracked.current) return
+    startedTracked.current = true
+    trackFunnel("booking_started")
+  }
+
+  const handleCompleted = (booking: CalBookingCompletion) => {
+    const uid = booking.uid || "unknown"
+    if (completedUid.current === uid) return
+    completedUid.current = uid
+    trackFunnel("booking_completed")
+  }
+
   return (
     <div ref={flowRef} className="relative z-10 mx-auto max-w-4xl">
       <div className="mb-7 text-center md:mb-10">
@@ -49,16 +82,23 @@ function BookingFlow() {
           CHOOSE A TIME.<br /><span style={{ color: "var(--red)" }}>TELL US WHAT YOU NEED.</span>
         </Disp>
         <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-white/70 md:text-base">
-          Pick a time. The booking form collects the context we need to prepare.
+          Choose a time for a focused 30-minute strategy call. The booking form collects the context we need to prepare.
         </p>
       </div>
 
       {calendarActive && !embedFailed ? (
         <>
-          <CalInline calLink={CAL_LINK} config={{ duration: "60" }} onFail={() => setEmbedFailed(true)} />
+          <CalInline
+            calLink={CAL_LINK}
+            namespace={`call-${surface}`}
+            config={calConfig}
+            onFail={() => setEmbedFailed(true)}
+            onStarted={handleStarted}
+            onCompleted={handleCompleted}
+          />
           <p className="mt-4 text-center text-xs text-white/60">
             Calendar not loading?{" "}
-            <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-[#FF2D55]">
+            <a href={fallbackUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-[#FF2D55]">
               Open it in a new tab
             </a>
           </p>
@@ -67,7 +107,7 @@ function BookingFlow() {
         <div className="mx-auto max-w-xl rounded-3xl border border-white/10 bg-white/[0.035] p-6 text-center md:p-9">
           <p className="text-sm text-white/70">The calendar could not load here. Continue directly on Cal.com.</p>
           <a
-            href={CALENDLY_URL}
+            href={fallbackUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-5 inline-flex min-h-12 items-center justify-center rounded-full bg-[#FF2D55] px-8 text-sm font-bold text-white transition-colors hover:bg-[#FF1745]"
@@ -96,7 +136,7 @@ export const BookingSection = memo(function BookingSection() {
       <div className="relative py-16 md:py-24 px-4 md:px-6 overflow-hidden bg-[#050507]">
         <ShaderAnimation className="absolute inset-0 w-full h-full opacity-80 pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#050507] via-[#050507]/10 to-[#050507]/50 pointer-events-none" />
-        <BookingFlow />
+        <BookingFlow surface="inline" />
       </div>
     </div>
   )
@@ -113,6 +153,7 @@ export const BookingDialog = memo(function BookingDialog() {
     const onOpen = () => {
       const dlg = ref.current
       if (!dlg || dlg.open) return
+      trackFunnel("booking_opened")
       setOpen(true)
       dlg.showModal()
     }
@@ -149,7 +190,7 @@ export const BookingDialog = memo(function BookingDialog() {
             ✕
           </button>
           <div className="px-4 md:px-8 py-12 md:py-14">
-            <BookingFlow />
+            <BookingFlow surface="dialog" />
           </div>
         </div>
       )}

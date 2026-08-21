@@ -10,7 +10,7 @@
 // ── Booking config ───────────────────────────────────────────────────────────
 export const CAL_LINK = "axmedia/call"
 export const CALENDLY_URL = `https://cal.com/${CAL_LINK}`
-export const CAL_DEFAULTS: Record<string, string> = { duration: "60", overlayCalendar: "true" }
+export const CAL_DEFAULTS: Record<string, string> = { duration: "30", overlayCalendar: "true" }
 
 // ── Shared viewport config for whileInView reveals ──────────────────────────
 export const VP = { once: true, margin: "0px 0px -40px 0px" } as const
