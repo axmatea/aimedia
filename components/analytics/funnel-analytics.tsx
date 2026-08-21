@@ -16,7 +16,12 @@ export function FunnelAnalytics({ analyticsMode = "auto" }: { analyticsMode?: "a
   useEffect(() => {
     if (tracked.current) return
     tracked.current = true
-    trackFunnel("landing_viewed")
+    // The Analytics child initializes Vercel's event queue in its own effect.
+    // Defer the custom landing event one turn so first-load attribution is not
+    // dropped before that queue exists. Automatic page-view tracking remains
+    // independent and starts immediately.
+    const timeout = window.setTimeout(() => trackFunnel("landing_viewed"), 0)
+    return () => window.clearTimeout(timeout)
   }, [])
 
   return <Analytics beforeSend={beforeSend} mode={analyticsMode} />
