@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { track } from "@vercel/analytics/server"
 import {
+  isCalWebhookPing,
   MAX_CAL_WEBHOOK_BYTES,
   parseCalBookingLead,
   verifyCalWebhookSignature,
@@ -30,6 +31,12 @@ export async function POST(request: NextRequest) {
     secret,
   })) {
     return NextResponse.json({ error: "invalid signature" }, { status: 401 })
+  }
+
+  // Cal.com validates a subscriber URL with a signed PING before allowing the
+  // webhook to be created. A ping proves reachability and must never create a lead.
+  if (isCalWebhookPing(rawBody)) {
+    return NextResponse.json({ ok: true, triggerEvent: "PING" })
   }
 
   const parsed = parseCalBookingLead(rawBody)

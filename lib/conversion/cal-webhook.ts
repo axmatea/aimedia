@@ -107,6 +107,15 @@ export function verifyCalWebhookSignature(input: {
   return crypto.timingSafeEqual(Buffer.from(supplied, "hex"), Buffer.from(expected, "hex"))
 }
 
+export function isCalWebhookPing(rawBody: string) {
+  try {
+    const envelope = record(JSON.parse(rawBody))
+    return clean(envelope?.triggerEvent, 80) === "PING"
+  } catch {
+    return false
+  }
+}
+
 export function parseCalBookingLead(rawBody: string): CalWebhookParseResult {
   let parsed: unknown
   try {

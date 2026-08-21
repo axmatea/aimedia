@@ -3,6 +3,7 @@ import crypto from "node:crypto"
 import test from "node:test"
 
 import {
+  isCalWebhookPing,
   parseCalBookingLead,
   verifyCalWebhookSignature,
 } from "../../../lib/conversion/cal-webhook.ts"
@@ -44,6 +45,12 @@ test("verifies the exact Cal webhook body with HMAC SHA-256", () => {
   assert.equal(verifyCalWebhookSignature({ rawBody, signature, secret: SECRET }), true)
   assert.equal(verifyCalWebhookSignature({ rawBody: `${rawBody} `, signature, secret: SECRET }), false)
   assert.equal(verifyCalWebhookSignature({ rawBody, signature: "invalid", secret: SECRET }), false)
+})
+
+test("accepts Cal subscriber verification pings without treating them as bookings", () => {
+  assert.equal(isCalWebhookPing(JSON.stringify({ triggerEvent: "PING" })), true)
+  assert.equal(isCalWebhookPing(fixture()), false)
+  assert.equal(isCalWebhookPing("not-json"), false)
 })
 
 test("creates a structured qualified lead without copying arbitrary payload data", () => {
