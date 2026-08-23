@@ -15,6 +15,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: "https://aimedia.global/systems/qualified-pipeline",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
       url: "https://aimedia.global/privacy-policy",
       lastModified: new Date(),
       changeFrequency: "monthly",
