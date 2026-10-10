@@ -11,7 +11,9 @@
     "test:conversion": "node --experimental-strip-types --test scripts/conversion/tests/*.test.ts",
     "test:deployment": "node --test scripts/deployment/tests/*.test.mjs",
     "smoke:deployment": "node scripts/deployment-smoke.mjs",
-    "check:runtime-env": "node scripts/check-runtime-env.mjs"
+    "check:runtime-env": "node scripts/check-runtime-env.mjs",
+    "verify:conversion": "node --experimental-strip-types scripts/conversion/verify.ts",
+    "preflight:conversion": "node scripts/conversion/preflight.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",
