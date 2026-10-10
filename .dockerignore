@@ -1,0 +1,21 @@
+# Allowlist the build context. Local credentials, outreach data, Git metadata,
+# existing build output, and personal notes must never enter the image.
+**
+!package.json
+!package-lock.json
+!next.config.ts
+!tsconfig.json
+!postcss.config.mjs
+!app/
+!app/**
+!components/
+!components/**
+!lib/
+!lib/**
+!public/
+!public/**
+!scripts/
+!scripts/check-runtime-env.mjs
+**/.env*
+**/*.pem
+**/.DS_Store

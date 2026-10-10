@@ -36,3 +36,15 @@ function props never cross the server/client boundary (dispatch the
 - This folder is for the app and site code.
 - AI Media visual assets now live in `/Users/axmatea/Desktop/AI Integration/Assets/AI Media/`.
 - Use `Assets/AI Media/Instagram Assets/` for reels, previews, post packs, and related media files.
+
+## Paid acquisition conversion contract
+
+The local Meta proof funnel is:
+
+`/systems/qualified-pipeline -> Cal -> signed webhook -> canonical Notion CRM`
+
+It captures session first-touch UTM/Meta identifiers, deduplicates by Cal Booking UID, and fails closed when webhook or CRM configuration is missing. Before any deployment or campaign activation, follow [`docs/meta-proof-attribution-runbook.md`](docs/meta-proof-attribution-runbook.md).
+
+## Railway migration
+
+See [the migration and rollback runbook](docs/railway-migration.md) and [production-source recovery evidence](docs/railway-source-recovery.json). Source recovery is complete; paid staging, secure configuration, integration tests and DNS gates remain.

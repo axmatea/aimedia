@@ -1,0 +1,515 @@
+{
+  "deployment": "dpl_4VcCzgrEuNRh3bSAU85wre4d7UC6",
+  "source": "cli",
+  "git_sha_recorded": false,
+  "source_viewer": "https://vercel.com/ai-media1/ai-media-global/4VcCzgrEuNRh3bSAU85wre4d7UC6/source",
+  "visible_manifest_unchanged_files": 117,
+  "excluded": [
+    ".env.example",
+    "generated next-env.d.ts"
+  ],
+  "recovered_files": [
+    {
+      "path": "README.md",
+      "recovered_sha1": "a48a3a1f0fc0935ea6ba5e973098b2d15acd66a2",
+      "bytes": 1895,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "a48a3a1f0fc0935ea6ba5e973098b2d15acd66a2"
+    },
+    {
+      "path": "app/api/booking/cancel-followups/route.ts",
+      "recovered_sha1": "8d0d3e9f8a3a77e36f8c8f4753abdae4689980d4",
+      "bytes": 1688,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": false,
+      "matches_base_bytes": true,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "app/api/booking/contacted/route.ts",
+      "recovered_sha1": "9a42d73cefa15d8d5c5fad395f75910ea8588eaf",
+      "bytes": 4943,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": false,
+      "matches_base_bytes": true,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "app/api/booking/route.ts",
+      "recovered_sha1": "e075719892dd2ae7b67ff4cb9f7c6896e80b5e5f",
+      "bytes": 21797,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": false,
+      "matches_base_bytes": true,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "app/api/webhooks/cal/route.ts",
+      "recovered_sha1": "fd1b1ea35a089ac717f0ec96bb568fd480967063",
+      "bytes": 4775,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": false,
+      "matches_base_bytes": false,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "app/api/webhooks/resend/route.ts",
+      "recovered_sha1": "d467105f2df93b3bf1cb56c73dcd8237bcfc5b32",
+      "bytes": 6050,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": false,
+      "matches_base_bytes": true,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "app/cookies/page.tsx",
+      "recovered_sha1": "85d90cb8efb987bd517b8d96b39d7de9e4314bd5",
+      "bytes": 5522,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "85d90cb8efb987bd517b8d96b39d7de9e4314bd5"
+    },
+    {
+      "path": "app/privacy-policy/page.tsx",
+      "recovered_sha1": "7d83efee21a519850a57968fb3ebd96e71ecfc40",
+      "bytes": 8048,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "7d83efee21a519850a57968fb3ebd96e71ecfc40"
+    },
+    {
+      "path": "app/systems/qualified-pipeline/page.tsx",
+      "recovered_sha1": "d7a1de9c92645a571ddc22839e0d79a414c3ba59",
+      "bytes": 11527,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": true,
+      "matches_base_bytes": true,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "docs/meta-proof-attribution-runbook.md",
+      "recovered_sha1": "2014820ba1ed05e52e0ff35c29653da17bd23573",
+      "bytes": 10244,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "2014820ba1ed05e52e0ff35c29653da17bd23573"
+    },
+    {
+      "path": "lib/conversion/attribution.ts",
+      "recovered_sha1": "5400350b5f2ef5265926d3226a50b4faf08afcc5",
+      "bytes": 7690,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "5400350b5f2ef5265926d3226a50b4faf08afcc5"
+    },
+    {
+      "path": "lib/conversion/booking-contract.ts",
+      "recovered_sha1": "526887fc19a1d3ba85f8d9f0cd4d117717b6eb3f",
+      "bytes": 2044,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "526887fc19a1d3ba85f8d9f0cd4d117717b6eb3f"
+    },
+    {
+      "path": "lib/conversion/booking-lock.ts",
+      "recovered_sha1": "3b900338e839e1088d6608dd9f58638648ecd36c",
+      "bytes": 4623,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "3b900338e839e1088d6608dd9f58638648ecd36c"
+    },
+    {
+      "path": "lib/conversion/booking-replay.ts",
+      "recovered_sha1": "5e2de122a1a718d7e6cce12681fe63da756d496e",
+      "bytes": 5407,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "5e2de122a1a718d7e6cce12681fe63da756d496e"
+    },
+    {
+      "path": "lib/conversion/cal-scope.ts",
+      "recovered_sha1": "9ed34b47902795fcc432f3d6e5757f554a038869",
+      "bytes": 1368,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "9ed34b47902795fcc432f3d6e5757f554a038869"
+    },
+    {
+      "path": "lib/conversion/cal-webhook.ts",
+      "recovered_sha1": "461afd79d7b824903a9e28ebe8289c4e9e7bd26e",
+      "bytes": 11067,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "461afd79d7b824903a9e28ebe8289c4e9e7bd26e"
+    },
+    {
+      "path": "lib/conversion/meta-attribution-allowlist.ts",
+      "recovered_sha1": "0c0d93984f2943a41eedaf590fbecb412077cb99",
+      "bytes": 3200,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "0c0d93984f2943a41eedaf590fbecb412077cb99"
+    },
+    {
+      "path": "lib/conversion/meta-capi-contract.ts",
+      "recovered_sha1": "98e886134ed65a81c79e53b60b2b4e8da114369a",
+      "bytes": 3785,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "98e886134ed65a81c79e53b60b2b4e8da114369a"
+    },
+    {
+      "path": "lib/conversion/meta-capi.ts",
+      "recovered_sha1": "d581fc4ee72962d96343b7bf02030402735f964b",
+      "bytes": 2114,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "d581fc4ee72962d96343b7bf02030402735f964b"
+    },
+    {
+      "path": "lib/conversion/notion-bookings.ts",
+      "recovered_sha1": "8d80c92043f739c392aff7af24354ef049449cd0",
+      "bytes": 18408,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "8d80c92043f739c392aff7af24354ef049449cd0"
+    },
+    {
+      "path": "lib/conversion/qualification.ts",
+      "recovered_sha1": "7acf702c78c4965e466b218c5b7d5a3ba981c4c6",
+      "bytes": 6120,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "7acf702c78c4965e466b218c5b7d5a3ba981c4c6"
+    },
+    {
+      "path": "package-lock.json",
+      "recovered_sha1": "a05ef9501fabd9f601985b30a719ebd6f7a42836",
+      "bytes": 531183,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "a05ef9501fabd9f601985b30a719ebd6f7a42836"
+    },
+    {
+      "path": "package.json",
+      "recovered_sha1": "df57790fa830e27b1857b4a53aa2e23010ca01bc",
+      "bytes": 1717,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "df57790fa830e27b1857b4a53aa2e23010ca01bc"
+    },
+    {
+      "path": "scripts/conversion/preflight.mjs",
+      "recovered_sha1": "1b5b05548ed00950977e0c2eb26f731723f0652b",
+      "bytes": 1843,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "1b5b05548ed00950977e0c2eb26f731723f0652b"
+    },
+    {
+      "path": "scripts/conversion/tests/attribution.test.ts",
+      "recovered_sha1": "484dae04083ed64e29b893e8a6eea7b4c2acf0f6",
+      "bytes": 4558,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": true,
+      "matches_base_bytes": false,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "scripts/conversion/tests/booking-contract.test.ts",
+      "recovered_sha1": "f98c15b3504a6998e4e8a5427a2ccd44b34a6185",
+      "bytes": 2817,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": true,
+      "matches_base_bytes": false,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "scripts/conversion/tests/booking-lock.test.ts",
+      "recovered_sha1": "8ad42bbd507bb296992efb3fae8c2980c0794298",
+      "bytes": 7984,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": true,
+      "matches_base_bytes": false,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "scripts/conversion/tests/booking-replay.test.ts",
+      "recovered_sha1": "a18f5a4cdc0682f1389eb98a831bb77a671bcde4",
+      "bytes": 10435,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": true,
+      "matches_base_bytes": false,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "scripts/conversion/tests/cal-scope.test.ts",
+      "recovered_sha1": "4d7409d9057bbc94932291522312bb5dc0b6362c",
+      "bytes": 1155,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": true,
+      "matches_base_bytes": false,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "scripts/conversion/tests/cal-webhook.test.ts",
+      "recovered_sha1": "b00789d0e93cd4b5d1af93e5d225d2d10a92e81d",
+      "bytes": 6318,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": true,
+      "matches_base_bytes": false,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "scripts/conversion/tests/meta-attribution-allowlist.test.ts",
+      "recovered_sha1": "c82a5c1b710014d3f770a3c7243198062100b55c",
+      "bytes": 2271,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": true,
+      "matches_base_bytes": false,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "scripts/conversion/tests/meta-capi-contract.test.ts",
+      "recovered_sha1": "eac86cb1c850f541977526fd51e8248b5ee5c259",
+      "bytes": 4761,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": true,
+      "matches_base_bytes": false,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "scripts/conversion/tests/qualification.test.ts",
+      "recovered_sha1": "f0cbc40744de40f39629a9fcb90a821dc9fb9a61",
+      "bytes": 2191,
+      "method": "official_source_viewer_rendered_text_or_copy",
+      "whitespace_normalized": true,
+      "matches_base_bytes": false,
+      "limitation": "No independent deployment hash exposed at this folder depth"
+    },
+    {
+      "path": "scripts/conversion/verify.ts",
+      "recovered_sha1": "4b6baaa6377a9bd7c64dc20dda52f8954436e31d",
+      "bytes": 3501,
+      "method": "official_source_viewer_manifest_sha1_verified",
+      "live_sha1": "4b6baaa6377a9bd7c64dc20dda52f8954436e31d"
+    }
+  ],
+  "public_deep_asset_parity": {
+    "base": "757f5ea8190005257d7bc8b2cc46e16ada17d1fc",
+    "origin": "https://aimedia.global",
+    "files": [
+      {
+        "path": "public/animated/posters/core.webp",
+        "base_sha256": "876c9e756c440422ace469cfbaed044cbb071cec6637e0527921f7ebb3e4cfce",
+        "base_bytes": 129726,
+        "url": "https://aimedia.global/animated/posters/core.webp",
+        "http_status": 200,
+        "live_bytes": 129726,
+        "live_sha256": "876c9e756c440422ace469cfbaed044cbb071cec6637e0527921f7ebb3e4cfce",
+        "same": true
+      },
+      {
+        "path": "public/animated/posters/entity.webp",
+        "base_sha256": "258dc0278d7d072029a4b301cdfc6a1663408733f72b9b38a2a76caf414f1946",
+        "base_bytes": 42974,
+        "url": "https://aimedia.global/animated/posters/entity.webp",
+        "http_status": 200,
+        "live_bytes": 42974,
+        "live_sha256": "258dc0278d7d072029a4b301cdfc6a1663408733f72b9b38a2a76caf414f1946",
+        "same": true
+      },
+      {
+        "path": "public/animated/posters/inquiry-entity.jpg",
+        "base_sha256": "fc25a559b8995c6f4a223bfe32a4bcf2ede100e9896ebbca82c5b823eae58140",
+        "base_bytes": 41513,
+        "url": "https://aimedia.global/animated/posters/inquiry-entity.jpg",
+        "http_status": 200,
+        "live_bytes": 41513,
+        "live_sha256": "fc25a559b8995c6f4a223bfe32a4bcf2ede100e9896ebbca82c5b823eae58140",
+        "same": true
+      },
+      {
+        "path": "public/animated/posters/liquid-system.jpg",
+        "base_sha256": "1f5eefbbc6e8bd582221112d098f8270fb5146290864776132372c0c19875462",
+        "base_bytes": 45285,
+        "url": "https://aimedia.global/animated/posters/liquid-system.jpg",
+        "http_status": 200,
+        "live_bytes": 45285,
+        "live_sha256": "1f5eefbbc6e8bd582221112d098f8270fb5146290864776132372c0c19875462",
+        "same": true
+      },
+      {
+        "path": "public/animated/posters/orchestration.webp",
+        "base_sha256": "d73452260d5d8ad4554f4d9fa6e21042b41d8fd41e593ba7dd6d3a3da3e29b0b",
+        "base_bytes": 151066,
+        "url": "https://aimedia.global/animated/posters/orchestration.webp",
+        "http_status": 200,
+        "live_bytes": 151066,
+        "live_sha256": "d73452260d5d8ad4554f4d9fa6e21042b41d8fd41e593ba7dd6d3a3da3e29b0b",
+        "same": true
+      },
+      {
+        "path": "public/animated/posters/workflow.webp",
+        "base_sha256": "4975eb4ad1b1f3ecfba43d3ccbc2ff5a5419fd96b3531fe2470722272cddd1c4",
+        "base_bytes": 97950,
+        "url": "https://aimedia.global/animated/posters/workflow.webp",
+        "http_status": 200,
+        "live_bytes": 97950,
+        "live_sha256": "4975eb4ad1b1f3ecfba43d3ccbc2ff5a5419fd96b3531fe2470722272cddd1c4",
+        "same": true
+      },
+      {
+        "path": "public/animated/video/desktop/core-to-orchestration.mp4",
+        "base_sha256": "eec2f822b162603b7ffc5755cdec2b390a3f640b9760a357ba97b75447b31516",
+        "base_bytes": 4513211,
+        "url": "https://aimedia.global/animated/video/desktop/core-to-orchestration.mp4",
+        "http_status": 200,
+        "live_bytes": 4513211,
+        "live_sha256": "eec2f822b162603b7ffc5755cdec2b390a3f640b9760a357ba97b75447b31516",
+        "same": true
+      },
+      {
+        "path": "public/animated/video/desktop/entity-through-core.mp4",
+        "base_sha256": "a1c9af5d263974ae78f1fd68d6fe0ea6c39d24a39ea1f63560fc7451f5da558c",
+        "base_bytes": 8066904,
+        "url": "https://aimedia.global/animated/video/desktop/entity-through-core.mp4",
+        "http_status": 200,
+        "live_bytes": 8066904,
+        "live_sha256": "a1c9af5d263974ae78f1fd68d6fe0ea6c39d24a39ea1f63560fc7451f5da558c",
+        "same": true
+      },
+      {
+        "path": "public/animated/video/desktop/entity-to-core.mp4",
+        "base_sha256": "cef3191985f95283e7251531f215cf60aeda5a4f72b43c86b3b9cae1313b788f",
+        "base_bytes": 1888076,
+        "url": "https://aimedia.global/animated/video/desktop/entity-to-core.mp4",
+        "http_status": 200,
+        "live_bytes": 1888076,
+        "live_sha256": "cef3191985f95283e7251531f215cf60aeda5a4f72b43c86b3b9cae1313b788f",
+        "same": true
+      },
+      {
+        "path": "public/animated/video/desktop/orchestration-to-workflow.mp4",
+        "base_sha256": "bf53108ec1722a9979c81bf65314aa9b461853bbab08e4157b4392d5c816c45f",
+        "base_bytes": 3294874,
+        "url": "https://aimedia.global/animated/video/desktop/orchestration-to-workflow.mp4",
+        "http_status": 200,
+        "live_bytes": 3294874,
+        "live_sha256": "bf53108ec1722a9979c81bf65314aa9b461853bbab08e4157b4392d5c816c45f",
+        "same": true
+      },
+      {
+        "path": "public/animated/video/mobile/core-to-orchestration.mp4",
+        "base_sha256": "396c108aedc5c45b6352f01357c782e1542757bc3fbd07cc0d7df0953cdcb213",
+        "base_bytes": 1856057,
+        "url": "https://aimedia.global/animated/video/mobile/core-to-orchestration.mp4",
+        "http_status": 200,
+        "live_bytes": 1856057,
+        "live_sha256": "396c108aedc5c45b6352f01357c782e1542757bc3fbd07cc0d7df0953cdcb213",
+        "same": true
+      },
+      {
+        "path": "public/animated/video/mobile/entity-through-core.mp4",
+        "base_sha256": "53bdc3e62307b2d0aeca3667c7720374b455690f9020f042e48668c28ce057c7",
+        "base_bytes": 4152245,
+        "url": "https://aimedia.global/animated/video/mobile/entity-through-core.mp4",
+        "http_status": 200,
+        "live_bytes": 4152245,
+        "live_sha256": "53bdc3e62307b2d0aeca3667c7720374b455690f9020f042e48668c28ce057c7",
+        "same": true
+      },
+      {
+        "path": "public/animated/video/mobile/entity-to-core.mp4",
+        "base_sha256": "490692a7f871ab98e415a2da38c85dbd9d85457ac3991f486b9c055095eea6e5",
+        "base_bytes": 694125,
+        "url": "https://aimedia.global/animated/video/mobile/entity-to-core.mp4",
+        "http_status": 200,
+        "live_bytes": 694125,
+        "live_sha256": "490692a7f871ab98e415a2da38c85dbd9d85457ac3991f486b9c055095eea6e5",
+        "same": true
+      },
+      {
+        "path": "public/animated/video/mobile/orchestration-to-workflow.mp4",
+        "base_sha256": "5a94ea1fa998698d0decb15041e6d2efa9907f096a50d473df95b87a04277411",
+        "base_bytes": 1587352,
+        "url": "https://aimedia.global/animated/video/mobile/orchestration-to-workflow.mp4",
+        "http_status": 200,
+        "live_bytes": 1587352,
+        "live_sha256": "5a94ea1fa998698d0decb15041e6d2efa9907f096a50d473df95b87a04277411",
+        "same": true
+      },
+      {
+        "path": "public/generated/outcomes/blur/outcome-content-blur.webp",
+        "base_sha256": "f49053240fdfc9599fabfff58f14b585d0678ad5c8a5ff451b7c5b3b38aeff0c",
+        "base_bytes": 6902,
+        "url": "https://aimedia.global/generated/outcomes/blur/outcome-content-blur.webp",
+        "http_status": 200,
+        "live_bytes": 6902,
+        "live_sha256": "f49053240fdfc9599fabfff58f14b585d0678ad5c8a5ff451b7c5b3b38aeff0c",
+        "same": true
+      },
+      {
+        "path": "public/generated/outcomes/blur/outcome-local-blur.webp",
+        "base_sha256": "0b308db442209c3d8fe526250214e446df6a15453a7c47bdca2f9c453bf8eb3c",
+        "base_bytes": 5294,
+        "url": "https://aimedia.global/generated/outcomes/blur/outcome-local-blur.webp",
+        "http_status": 200,
+        "live_bytes": 5294,
+        "live_sha256": "0b308db442209c3d8fe526250214e446df6a15453a7c47bdca2f9c453bf8eb3c",
+        "same": true
+      },
+      {
+        "path": "public/generated/outcomes/blur/outcome-saas-blur.webp",
+        "base_sha256": "90aca30c1cfc8562f9dd33eea0f076a7a2bb767cc6bf70842358b004cf05a9b3",
+        "base_bytes": 5304,
+        "url": "https://aimedia.global/generated/outcomes/blur/outcome-saas-blur.webp",
+        "http_status": 200,
+        "live_bytes": 5304,
+        "live_sha256": "90aca30c1cfc8562f9dd33eea0f076a7a2bb767cc6bf70842358b004cf05a9b3",
+        "same": true
+      },
+      {
+        "path": "public/generated/outcomes/blur/outcome-web3-blur.webp",
+        "base_sha256": "b54770c2f9a454f6410a4932a01a053feaead541cdbd54b976c86516dd71aadc",
+        "base_bytes": 6606,
+        "url": "https://aimedia.global/generated/outcomes/blur/outcome-web3-blur.webp",
+        "http_status": 200,
+        "live_bytes": 6606,
+        "live_sha256": "b54770c2f9a454f6410a4932a01a053feaead541cdbd54b976c86516dd71aadc",
+        "same": true
+      },
+      {
+        "path": "public/generated/outcomes/outcome-content.webp",
+        "base_sha256": "780e93291ddf83add28b076eae914a5b45729cf3d21878fb26c1df17642b9d32",
+        "base_bytes": 151778,
+        "url": "https://aimedia.global/generated/outcomes/outcome-content.webp",
+        "http_status": 200,
+        "live_bytes": 151778,
+        "live_sha256": "780e93291ddf83add28b076eae914a5b45729cf3d21878fb26c1df17642b9d32",
+        "same": true
+      },
+      {
+        "path": "public/generated/outcomes/outcome-local.webp",
+        "base_sha256": "6d4066172c4d2ce3cc6657098556cbca176dc2a26b4b87055f244bba98f515d9",
+        "base_bytes": 141438,
+        "url": "https://aimedia.global/generated/outcomes/outcome-local.webp",
+        "http_status": 200,
+        "live_bytes": 141438,
+        "live_sha256": "6d4066172c4d2ce3cc6657098556cbca176dc2a26b4b87055f244bba98f515d9",
+        "same": true
+      },
+      {
+        "path": "public/generated/outcomes/outcome-saas.webp",
+        "base_sha256": "4f7d2ff1a885c613cfb6b22730fe5e593fb1ac11c9c5e5395f35d5db80969264",
+        "base_bytes": 96536,
+        "url": "https://aimedia.global/generated/outcomes/outcome-saas.webp",
+        "http_status": 200,
+        "live_bytes": 96536,
+        "live_sha256": "4f7d2ff1a885c613cfb6b22730fe5e593fb1ac11c9c5e5395f35d5db80969264",
+        "same": true
+      },
+      {
+        "path": "public/generated/outcomes/outcome-web3.webp",
+        "base_sha256": "690d6014b2648baea3d06c888c1c0ca1815fe52970b269ec59dc7cfd4a42582b",
+        "base_bytes": 168042,
+        "url": "https://aimedia.global/generated/outcomes/outcome-web3.webp",
+        "http_status": 200,
+        "live_bytes": 168042,
+        "live_sha256": "690d6014b2648baea3d06c888c1c0ca1815fe52970b269ec59dc7cfd4a42582b",
+        "same": true
+      }
+    ]
+  },
+  "intentional_migration_differences": [
+    "Next.js and runtime dependency security patch",
+    "non-root standalone Docker runtime and health route",
+    "25-second application booking deadline and abortable I/O",
+    "strict full runtime readiness validation",
+    "Vercel-only telemetry excluded from transactional critical path",
+    "count-up reduced-motion lint correction"
+  ]
+}
