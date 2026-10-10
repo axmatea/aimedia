@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/design-preview" },
 }
 
-const Arrow = () => <span aria-hidden="true">↗</span>
+const Arrow = () => <span aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ display: "block" }}><path d="M5 19 19 5M5 5h14v14" /></svg></span>
 const systems = [
   { no: "01", name: "Go-to-market", detail: "A clearer path from buyer signal to qualified conversation.", flow: ["Research", "Enrich", "Review", "CRM"], href: "/systems/qualified-pipeline" },
   { no: "02", name: "Content systems", detail: "Research, creation, approvals and distribution. One connected workflow.", flow: ["Brief", "Create", "Approve", "Publish"], href: "#workflow" },

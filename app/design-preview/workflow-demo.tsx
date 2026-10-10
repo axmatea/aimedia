@@ -9,6 +9,10 @@ const workflows = [
   { label: "Operations", input: "A new client project", detail: "Scope, context and delivery requirements", stages: ["Capture context", "Organize work", "Prepare workspace", "Ready for review"], output: "A connected workspace. For your team.", code: "operations.delivery" },
 ]
 
+function DiagonalArrow({ down = false }: { down?: boolean }) {
+  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ display: "block", transform: down ? "rotate(180deg)" : undefined }}><path d="M5 19 19 5M5 5h14v14" /></svg>
+}
+
 export function WorkflowDemo() {
   const [selected, setSelected] = useState(0)
   const [step, setStep] = useState(-1)
@@ -46,11 +50,11 @@ export function WorkflowDemo() {
       <div className={s.demoCanvas}>
         <div className={s.demoRail} aria-hidden="true"><span>INPUT</span><i /><span>PROCESS</span><i /><span>OUTPUT</span></div>
         <div className={s.demoContent}>
-          <div className={s.inputCard}><div className={s.inputIcon} aria-hidden="true">↙</div><div><h2>{workflow.input}</h2><p>{workflow.detail}</p></div><span className={s.signalDot} aria-hidden="true" /></div>
+          <div className={s.inputCard}><div className={s.inputIcon} aria-hidden="true"><DiagonalArrow down /></div><div><h2>{workflow.input}</h2><p>{workflow.detail}</p></div><span className={s.signalDot} aria-hidden="true" /></div>
           <div className={s.connector} aria-hidden="true" />
           <div className={s.engine}><div className={s.engineHeader}><span>AX / ORCHESTRATOR</span><span aria-hidden="true">✳</span></div><ol>{workflow.stages.map((label, index) => <li key={label} className={`${index < step ? s.stepDone : ""} ${index === step ? s.stepActive : ""}`}><span className={s.stepIcon} aria-hidden="true">{index < step ? "✓" : String(index + 1).padStart(2, "0")}</span><span>{label}</span><span className={s.stepState}>{index < step ? "Done" : index === step ? "Running" : "Queued"}</span></li>)}</ol></div>
           <div className={s.connector} aria-hidden="true" />
-          <div className={`${s.outputCard} ${complete ? s.outputComplete : ""}`}><span className={s.approvalIcon} aria-hidden="true">↗</span><div><span>HUMAN APPROVAL</span><p>{workflow.output}</p></div></div>
+          <div className={`${s.outputCard} ${complete ? s.outputComplete : ""}`}><span className={s.approvalIcon} aria-hidden="true"><DiagonalArrow /></span><div><span>HUMAN APPROVAL</span><p>{workflow.output}</p></div></div>
         </div>
       </div>
       <div className={s.demoFooter}><span>{workflow.code}</span><button type="button" onClick={run}>{running ? "Reset demo" : complete ? "Run again" : "Run workflow"}<span aria-hidden="true">{running ? "↺" : "▷"}</span></button></div>
