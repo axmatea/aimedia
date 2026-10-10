@@ -1,4 +1,19 @@
 import crypto from "node:crypto"
+import {
+  evaluateQualification,
+  normalizeBudgetBand,
+  normalizeBusinessType,
+  normalizeBuyerRole,
+  normalizeContactPreference,
+  normalizeTimeline,
+  normalizeWebsite,
+  type BudgetBand,
+  type BusinessType,
+  type BuyerRole,
+  type ContactPreference,
+  type QualificationStatus,
+  type Timeline,
+} from "./qualification.ts"
 
 export const MAX_CAL_WEBHOOK_BYTES = 64 * 1024
 
@@ -7,10 +22,21 @@ type UnknownRecord = Record<string, unknown>
 export type StructuredBookingLead = {
   bookingUid: string
   bookingStatus: "Booked" | "Pending"
+  eventTypeId: string
+  eventTypeSlug: string
+  organizerUsername: string
   name: string
   email: string
   phone: string
   company: string
+  website: string
+  businessType: BusinessType
+  buyerRole: BuyerRole
+  problem: string
+  serviceNeeded: string
+  budgetBand: BudgetBand
+  timeline: Timeline
+  preferredContact: ContactPreference
   projectContext: string
   source: string
   utmSource: string
@@ -18,7 +44,14 @@ export type StructuredBookingLead = {
   utmCampaign: string
   utmTerm: string
   utmContent: string
+  fbclid: string
+  fbc: string
+  fbp: string
   attributionRef: string
+  metaCampaignId: string
+  metaAdSetId: string
+  metaAdId: string
+  creativeLabel: string
   referrerHost: string
   landingPage: string
   conversionAction: "book_a_call"
@@ -27,7 +60,9 @@ export type StructuredBookingLead = {
   startTime: string
   endTime: string
   qualified: boolean
-  contextStatus: "QUALIFIED" | "NEEDS CONTEXT"
+  qualificationStatus: QualificationStatus
+  qualificationReasons: string[]
+  contextStatus: QualificationStatus
 }
 
 export type CalWebhookParseResult =
@@ -36,6 +71,9 @@ export type CalWebhookParseResult =
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const ATTRIBUTION_REF = /^[A-Za-z0-9_-]{6,96}$/
+const META_CLICK_ID = /^[A-Za-z0-9._~-]{8,512}$/
+const META_BROWSER_ID = /^fb\.\d\.\d{10,16}\.[A-Za-z0-9._~-]{6,512}$/
+const META_OBJECT_ID = /^\d{6,32}$/
 const SUPPORTED_TRIGGERS = new Set(["BOOKING_CREATED", "BOOKING_REQUESTED"])
 
 function record(value: unknown): UnknownRecord | null {
@@ -95,6 +133,18 @@ function metadataValue(metadata: UnknownRecord | null, ...keys: string[]) {
   return ""
 }
 
+function allowlistedMetadata(
+  metadata: UnknownRecord | null,
+  pattern: RegExp,
+  ...keys: string[]
+) {
+  for (const key of keys) {
+    const value = clean(metadata?.[key], 560)
+    if (pattern.test(value)) return value
+  }
+  return ""
+}
+
 export function verifyCalWebhookSignature(input: {
   rawBody: string
   signature: string | null
@@ -133,15 +183,72 @@ export function parseCalBookingLead(rawBody: string): CalWebhookParseResult {
   const attendees = Array.isArray(payload.attendees) ? payload.attendees : []
   const attendee = attendees.map(record).find((item) => EMAIL_PATTERN.test(clean(item?.email, 254).toLowerCase()))
   const metadata = record(payload.metadata)
+  const eventType = record(payload.eventType) || record(payload.type)
+  const organizer = record(payload.organizer)
 
   const bookingUid = clean(payload.uid, 200)
+  const eventTypeId = clean(payload.eventTypeId ?? eventType?.id, 20)
+  const eventTypeSlug = clean(payload.eventTypeSlug ?? eventType?.slug, 120).toLowerCase()
+  const organizerUsername = clean(
+    organizer?.username ?? payload.organizerUsername,
+    120,
+  ).toLowerCase()
   const email = clean(attendee?.email, 254).toLowerCase()
   const name = clean(attendee?.name, 200) || responseLookup(payload, ["name", "your name"])
   const phone = responseLookup(payload, ["phone", "phone number", "attendee phone number"])
   const company = responseLookup(payload, ["company", "company name", "business", "organization"])
-  const projectContext = responseLookup(payload, [
-    "project context",
+  const website = normalizeWebsite(responseLookup(payload, [
+    "website",
+    "company website",
+    "business website",
+    "url",
+  ]))
+  const businessType = normalizeBusinessType(responseLookup(payload, [
+    "business type",
+    "type of business",
+    "company type",
+  ]))
+  const buyerRole = normalizeBuyerRole(responseLookup(payload, [
+    "your role",
+    "role",
+    "buyer role",
+    "job title",
+  ]))
+  const problem = responseLookup(payload, [
+    "concrete bottleneck",
+    "current bottleneck",
+    "bottleneck",
     "what should we solve",
+    "biggest problem",
+    "problem",
+    "project context",
+  ])
+  const serviceNeeded = responseLookup(payload, [
+    "service needed",
+    "what service do you need",
+    "what do you need",
+    "service",
+  ])
+  const budgetBand = normalizeBudgetBand(responseLookup(payload, [
+    "budget band",
+    "budget",
+    "investment range",
+    "ability to invest",
+  ]))
+  const timeline = normalizeTimeline(responseLookup(payload, [
+    "timeline",
+    "urgency",
+    "when do you want to start",
+    "start timeline",
+  ]))
+  const preferredContact = normalizeContactPreference(responseLookup(payload, [
+    "preferred contact",
+    "preferred contact channel",
+    "how should we contact you",
+    "contact preference",
+  ]))
+  const projectContext = problem || responseLookup(payload, [
+    "project context",
     "what do you need",
     "goal",
     "project",
@@ -152,7 +259,17 @@ export function parseCalBookingLead(rawBody: string): CalWebhookParseResult {
   const startTime = iso(payload.startTime)
   const endTime = iso(payload.endTime)
 
-  if (!bookingUid || !EMAIL_PATTERN.test(email) || !name || !bookedAt || !startTime || !endTime) {
+  if (
+    !bookingUid
+    || !/^\d{1,20}$/.test(eventTypeId)
+    || !eventTypeSlug
+    || !/^[a-z0-9][a-z0-9._-]{1,119}$/.test(organizerUsername)
+    || !EMAIL_PATTERN.test(email)
+    || !name
+    || !bookedAt
+    || !startTime
+    || !endTime
+  ) {
     return { ok: false, error: "invalid_payload" }
   }
 
@@ -161,22 +278,57 @@ export function parseCalBookingLead(rawBody: string): CalWebhookParseResult {
   const utmCampaign = metadataValue(metadata, "utmCampaign", "utm_campaign")
   const utmTerm = metadataValue(metadata, "utmTerm", "utm_term")
   const utmContent = metadataValue(metadata, "utmContent", "utm_content")
+  const fbclid = allowlistedMetadata(metadata, META_CLICK_ID, "fbclid")
+  const fbc = allowlistedMetadata(metadata, META_BROWSER_ID, "fbc", "_fbc")
+  const fbp = allowlistedMetadata(metadata, META_BROWSER_ID, "fbp", "_fbp")
   const rawAttributionRef = metadataValue(metadata, "attributionRef")
+  const metaCampaignId = allowlistedMetadata(metadata, META_OBJECT_ID, "metaCampaignId")
+  const metaAdSetId = allowlistedMetadata(metadata, META_OBJECT_ID, "metaAdSetId")
+  const metaAdId = allowlistedMetadata(metadata, META_OBJECT_ID, "metaAdId")
+    || (META_OBJECT_ID.test(rawAttributionRef) ? rawAttributionRef : "")
+  const creativeLabel = metadataValue(metadata, "creativeLabel") || utmContent
   const landingPath = metadataValue(metadata, "landingPath") || "/"
   const pending = trigger === "BOOKING_REQUESTED"
     || payload.requiresConfirmation === true
     || clean(payload.status, 40).toUpperCase() === "PENDING"
-  const qualified = Boolean(company && projectContext)
+  const qualification = evaluateQualification({
+    company,
+    website,
+    businessType,
+    buyerRole,
+    problem,
+    serviceNeeded,
+    budgetBand,
+    timeline,
+    preferredContact,
+  })
+
+  // Reject mismatched click attribution instead of silently binding a booking
+  // to a different Meta click carried by a stale or malformed fbc value.
+  if (fbclid && fbc && !fbc.endsWith(`.${fbclid}`)) {
+    return { ok: false, error: "invalid_payload" }
+  }
 
   return {
     ok: true,
     lead: {
       bookingUid,
       bookingStatus: pending ? "Pending" : "Booked",
+      eventTypeId,
+      eventTypeSlug,
+      organizerUsername,
       name,
       email,
       phone,
       company,
+      website,
+      businessType,
+      buyerRole,
+      problem,
+      serviceNeeded,
+      budgetBand,
+      timeline,
+      preferredContact,
       projectContext,
       source: metadataValue(metadata, "source") || utmSource || "Website",
       utmSource,
@@ -184,7 +336,14 @@ export function parseCalBookingLead(rawBody: string): CalWebhookParseResult {
       utmCampaign,
       utmTerm,
       utmContent,
+      fbclid,
+      fbc,
+      fbp,
       attributionRef: ATTRIBUTION_REF.test(rawAttributionRef) ? rawAttributionRef : "",
+      metaCampaignId,
+      metaAdSetId,
+      metaAdId,
+      creativeLabel,
       referrerHost: metadataValue(metadata, "referrerHost"),
       landingPage: landingPath.startsWith("/") ? landingPath : "/",
       conversionAction: "book_a_call",
@@ -192,8 +351,10 @@ export function parseCalBookingLead(rawBody: string): CalWebhookParseResult {
       bookedAt,
       startTime,
       endTime,
-      qualified,
-      contextStatus: qualified ? "QUALIFIED" : "NEEDS CONTEXT",
+      qualified: qualification.qualified,
+      qualificationStatus: qualification.status,
+      qualificationReasons: qualification.reasons,
+      contextStatus: qualification.status,
     },
   }
 }
