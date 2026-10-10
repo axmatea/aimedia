@@ -32,11 +32,7 @@ export function CountUp({ value, duration = 1600 }: { value: string; duration?: 
   const [display, setDisplay] = useState(() => (parsed ? format(0) : value))
 
   useEffect(() => {
-    if (!parsed || !inView) return
-    if (reduceMotion) {
-      setDisplay(format(parsed.target))
-      return
-    }
+    if (!parsed || !inView || reduceMotion) return
     let raf: number
     const start = performance.now()
     const tick = (now: number) => {
@@ -54,7 +50,7 @@ export function CountUp({ value, duration = 1600 }: { value: string; duration?: 
   return (
     <span ref={ref}>
       {parsed.prefix}
-      {display}
+      {reduceMotion && inView ? format(parsed.target) : display}
       {parsed.suffix}
     </span>
   )
