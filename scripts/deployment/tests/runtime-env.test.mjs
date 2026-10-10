@@ -13,6 +13,10 @@ const valid = {
   CANCEL_FOLLOWUPS_SECRET: secret,
   RESEND_WEBHOOK_SECRET: secret,
   CAL_WEBHOOK_SECRET: secret,
+  NOTION_LEADS_DB_ID: "test-db", CAL_EVENT_TYPE_ID: "5203336", CAL_EVENT_TYPE_SLUG: "call", CAL_ORGANIZER_USERNAME: "axmedia",
+  BOOKING_LOCK_WORKER_URL: "https://lock.example.invalid", BOOKING_LOCK_HMAC_SECRET: secret, BOOKING_LOCK_HASH_SECRET: secret + "-distinct",
+  META_DATASET_ID: "123456789", META_CAPI_ACCESS_TOKEN: secret, META_GRAPH_API_VERSION: "v99.0",
+  META_ATTRIBUTION_ALLOWLIST_JSON: JSON.stringify([{ campaignId: "1234561", adSetId: "1234562", adId: "1234563", creativeLabel: "fixture" }]),
   PUBLIC_BASE_URL: "https://example.invalid",
   FROM_EMAIL: "test@example.invalid",
   OWNER_EMAIL: "test@example.invalid",
@@ -57,4 +61,26 @@ test("Sheets webhook must use HTTPS without URL credentials", () => {
   assert.equal(result.status, 1)
   assert.match(result.stderr, /INVALID SHEETS_WEBHOOK_URL/)
   assert.doesNotMatch(result.stderr, /password/)
+})
+
+
+test("production booking dependencies cannot be omitted", () => {
+  for (const name of ["NOTION_LEADS_DB_ID", "CAL_EVENT_TYPE_ID", "CAL_EVENT_TYPE_SLUG", "CAL_ORGANIZER_USERNAME", "BOOKING_LOCK_WORKER_URL", "BOOKING_LOCK_HMAC_SECRET", "BOOKING_LOCK_HASH_SECRET", "META_DATASET_ID", "META_CAPI_ACCESS_TOKEN", "META_GRAPH_API_VERSION", "META_ATTRIBUTION_ALLOWLIST_JSON"]) {
+    const result = check({ ...valid, [name]: "" })
+    assert.equal(result.status, 1, name)
+    assert(result.stdout.includes(`MISSING ${name}`))
+  }
+})
+
+test("unsafe lock origins, reused keys, malformed allowlists and test mode block live readiness", () => {
+  for (const patch of [
+    { BOOKING_LOCK_WORKER_URL: "https://lock.example.invalid/path" },
+    { BOOKING_LOCK_HASH_SECRET: secret },
+    { META_ATTRIBUTION_ALLOWLIST_JSON: "[{}]" },
+    { META_CAPI_TEST_EVENT_CODE: "fixture-test-code" },
+  ]) {
+    const result = check({ ...valid, ...patch })
+    assert.equal(result.status, 1)
+    assert.doesNotMatch(result.stdout + result.stderr, /test-only-placeholder|example\.invalid|fixture-test-code/)
+  }
 })
