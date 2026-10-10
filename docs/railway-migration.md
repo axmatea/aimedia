@@ -97,7 +97,8 @@ Run `node scripts/check-runtime-env.mjs` inside the configured runtime. It check
 2. **Webhooks:** preserve `/api/webhooks/cal` and `/api/webhooks/resend`, their original signing secrets, and existing domain-based URLs. If either provider uses a Vercel-specific URL, update it only after staging is healthy and with approval.
 3. **Email continuity:** preserve sender-domain SPF/DKIM/DMARC, MX, return-path, and verification records. Existing scheduled emails must not be recreated or sent twice. HMAC owner links need the same secret after cutover.
 4. **Security configuration:** the existing cancellation and Resend handlers only enforce their guards when the respective secrets are present. Missing secrets are a hard cutover blocker, even if `/api/health` passes. This migration preparation does not alter their business behavior.
-5. **Canonical hosts:** sitemap, metadata, and email links use `aimedia.global`. Preserve apex/`www` redirect behavior, path, and query strings. Extra aliases require an explicit domain inventory and desired redirect behavior.
+5. **Provider notices:** the recovered privacy and cookie pages still accurately describe the current Vercel deployment. Before Railway cutover, approve the factual host-description change and the disposition of Vercel Analytics; see the proposed wording in `railway-provider-notice-proposal.md`. Do not publish that proposal as live policy without approval.
+6. **Canonical hosts:** sitemap, metadata, and email links use `aimedia.global`. Preserve apex/`www` redirect behavior, path, and query strings. Extra aliases require an explicit domain inventory and desired redirect behavior.
 
 ## Bounded booking execution
 
