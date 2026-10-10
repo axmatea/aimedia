@@ -4,6 +4,13 @@ Parent MOC: [[MOC — Projects]]
 
 Active AI Media web project.
 
+## Railway migration preparation
+
+See [docs/railway-migration.md](docs/railway-migration.md) for the source audit,
+runtime configuration, validation commands, cost assumptions, and gated DNS
+cutover/rollback. The Dockerfile builds the same Next.js app as a standalone
+Node.js service; it does not provision Railway resources or change domains.
+
 ## Run
 
 ```zsh
