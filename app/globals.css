@@ -3037,11 +3037,37 @@ html:not(.dark) .ai-switch-thumb { background-color: #050507 !important; }
   }
 }
 
-/* Themes share exactly one responsive robot composition. Only the backdrop
-   changes; switching themes must not change the figure's scale or crop. */
+/* Light hero: no atmospheric veil over the entity. The robot gets its own
+   clean stage so the text does not need fog-shaped masking for contrast. */
 html:not(.dark) .hero-robot-shell .ai-hero-fade-x,
 html:not(.dark) .hero-robot-shell .ai-hero-fade-y {
   display: none;
+}
+
+@media (min-width: 1024px) {
+  html:not(.dark) .hero-robot-shell {
+    right: -8vw;
+    width: min(56vw, 920px);
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  html:not(.dark) .hero-robot-shell {
+    top: 6svh;
+    width: min(86vw, 580px);
+    height: 58svh;
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  html:not(.dark) .hero-robot-shell {
+    top: 9svh;
+    width: 82vw;
+    height: 50svh;
+  }
 }
 
 /* Global reach: stable labels on large screens, compact city chips on phones. */
