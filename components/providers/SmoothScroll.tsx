@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { frame, cancelFrame } from "motion/react"
 import Lenis from "lenis"
 
@@ -44,8 +45,12 @@ export function lenisScrollTo(target: string | HTMLElement, offset = -80) {
  * syncTouch:false keeps native mobile momentum and avoids touch-scroll jank.
  */
 export function SmoothScroll() {
+  const pathname = usePathname()
   useEffect(() => {
     if (
+      // The cinematic route already interpolates its own timeline. Native
+      // scrolling keeps keyboard jumps and reverse scroll in one clock.
+      pathname === "/animated" ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
       !window.matchMedia("(hover: hover) and (pointer: fine)").matches
     ) return
@@ -63,7 +68,7 @@ export function SmoothScroll() {
       lenis.destroy()
       lenisInstance = null
     }
-  }, [])
+  }, [pathname])
 
   return null
 }

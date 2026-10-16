@@ -4,7 +4,7 @@ import { useSyncExternalStore } from "react"
 import { useTheme } from "next-themes"
 import { MoonIcon, SunIcon } from "lucide-react"
 
-import { LiquidMetalButton } from "@/components/ui/liquid-metal-button"
+import { themeControlClassName } from "@/components/ui/action-button"
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme()
@@ -14,14 +14,15 @@ export default function ThemeToggle() {
   const label = `Switch to ${nextTheme} mode`
 
   return (
-    <LiquidMetalButton
-      viewMode="icon"
-      label={label}
+    <button
+      type="button"
+      aria-label={label}
       title={label}
-      pressed={isDark}
+      aria-pressed={isDark}
       onClick={() => setTheme(nextTheme)}
-      className="nav-theme-metal"
-      icon={isDark ? <SunIcon aria-hidden="true" /> : <MoonIcon aria-hidden="true" />}
-    />
+      className={themeControlClassName}
+    >
+      {isDark ? <SunIcon aria-hidden="true" /> : <MoonIcon aria-hidden="true" />}
+    </button>
   )
 }

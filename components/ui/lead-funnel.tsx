@@ -106,7 +106,7 @@ export function LeadFunnel() {
             <p className="text-[9px] text-white/50">Approval before send</p>
           </div>
         </div>
-        <p className="text-[9px] text-white/45">Demo data</p>
+        <p className="text-[10px] text-white/60">Demo data</p>
       </div>
     </div>
   )

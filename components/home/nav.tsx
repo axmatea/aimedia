@@ -18,7 +18,7 @@ import Link from "next/link"
 import { Menu, X } from "lucide-react"
 import ThemeToggle from "@/components/ui/toggle-theme"
 import { AxWordmark } from "@/components/ui/ax-wordmark"
-import { LiquidMetalButton } from "@/components/ui/liquid-metal-button"
+import { ActionButton } from "@/components/ui/action-button"
 import { NAV_LINKS } from "@/components/home/data"
 import { scrollToId, openBooking } from "@/components/home/actions"
 
@@ -88,7 +88,7 @@ export function SiteNav() {
       </div>
       <div className="flex items-center gap-2 md:gap-4">
         <ThemeToggle />
-        <LiquidMetalButton label="Book a Call" onClick={() => openBooking("navigation")} className="nav-booking-metal" />
+        <ActionButton label="Book a Call" onClick={() => openBooking("navigation")} compact showArrow={false} />
         <button
           type="button"
           className="xl:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border ai-border ai-muted transition-colors hover:text-[#FF2D55]"
@@ -103,7 +103,8 @@ export function SiteNav() {
 
       <div
         id="mobile-navigation"
-        className={`absolute left-3 right-3 top-[calc(100%+0.5rem)] xl:hidden rounded-2xl border ai-border bg-[#07070a]/95 p-2 shadow-2xl backdrop-blur-xl transition-[opacity,transform,visibility] duration-200 ${menuOpen ? "visible translate-y-0 opacity-100" : "invisible -translate-y-2 opacity-0"}`}
+        inert={!menuOpen}
+        className={`absolute left-3 right-3 top-[calc(100%+0.5rem)] xl:hidden rounded-2xl border ai-border bg-[#f5f4f0]/98 dark:bg-[#07070a]/98 p-2 shadow-xl backdrop-blur-xl transition-[opacity,transform,visibility] duration-200 motion-reduce:transition-none ${menuOpen ? "visible translate-y-0 opacity-100" : "invisible -translate-y-2 opacity-0"}`}
       >
         <div className="grid gap-1">
           {NAV_LINKS.map((item) => (
@@ -113,7 +114,7 @@ export function SiteNav() {
                 href={item.href}
                 prefetch={false}
                 onClick={() => setMenuOpen(false)}
-                className="flex min-h-11 items-center rounded-xl px-4 text-sm font-bold text-[#FF2D55] hover:bg-white/[0.06]"
+                className="flex min-h-11 items-center rounded-xl px-4 text-sm font-bold text-[#d91f42] dark:text-[#FF2D55] hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
               >
                 {item.label}
               </Link>
@@ -122,19 +123,17 @@ export function SiteNav() {
                 key={item.label}
                 href={item.href}
                 onClick={(event) => { event.preventDefault(); handleAnchor(item.href) }}
-                className="ai-muted flex min-h-11 items-center rounded-xl px-4 text-sm font-bold hover:bg-white/[0.06] hover:!text-white"
+                className="ai-muted flex min-h-11 items-center rounded-xl px-4 text-sm font-bold hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:!text-black dark:hover:!text-white"
               >
                 {item.label}
               </a>
             )
           ))}
-          <button
-            type="button"
+          <ActionButton
+            label="Book a Call"
             onClick={() => { setMenuOpen(false); openBooking("mobile_navigation") }}
-            className="mt-1 flex min-h-11 items-center justify-center rounded-xl bg-[#FF2D55] px-4 text-sm font-bold text-white"
-          >
-            Book a Call
-          </button>
+            className="mt-1 w-full"
+          />
         </div>
       </div>
     </nav>
