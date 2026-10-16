@@ -16,6 +16,7 @@
 !public/**
 !scripts/
 !scripts/check-runtime-env.mjs
+!scripts/start-runtime.mjs
 **/.env*
 **/*.pem
 **/.DS_Store

@@ -131,7 +131,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <LazyMotion features={domAnimation}>
             <SmoothScroll />
             {children}
-            <FunnelAnalytics analyticsMode={process.env.VERCEL ? "auto" : "development"} />
+            <FunnelAnalytics />
           </LazyMotion>
         </ThemeProvider>
       </body>

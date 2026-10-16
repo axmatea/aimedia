@@ -14,7 +14,7 @@ export default function CookiePreferences() {
       <div className="max-w-3xl mx-auto">
         <p className="text-white/55 text-[10px] uppercase tracking-[0.3em] font-bold mb-4">Legal</p>
         <h1 className="text-white text-4xl md:text-5xl font-black uppercase mb-2" style={{ fontFamily: "var(--font-bebas)" }}>Cookie and Storage Notice</h1>
-        <p className="text-white/55 text-sm mb-12">Last updated: August 23, 2026</p>
+        <p className="text-white/55 text-sm mb-12">Last updated: October 15, 2026</p>
 
         <div className="space-y-10 text-white/55 text-sm leading-relaxed">
           <section>
@@ -28,7 +28,7 @@ export default function CookiePreferences() {
               {[
                 { name: "First-touch campaign attribution", desc: "For campaign visits, we store the first touch in browser session storage, including UTM values, landing and referrer information, Meta click identifiers, and allowlisted ad identifiers. It remains for the browser session or until site data is cleared.", status: "Active for campaign visits" },
                 { name: "Existing Meta identifiers", desc: "Our attribution code may read existing _fbc and _fbp cookies. When a current fbclid exists, it derives an fbc value in memory. Our attribution code does not create or extend a Meta browser cookie solely for this handoff.", status: "Read when present" },
-                { name: "Vercel Analytics", desc: "Vercel Analytics receives page and funnel-event data with first-touch source and campaign values. Identifying contact and advertising parameters are removed from the URL sent to analytics.", status: "Active" },
+                { name: "Website and funnel analytics", desc: "Our own collector on Railway measures page paths and funnel events with limited source and campaign labels. A random identifier in browser session storage links events within a session. The analytics store excludes contact details, full URL queries, IP addresses, advertising identifiers, and booking references. Events are retained for up to 90 days.", status: "Active" },
                 { name: "Cal.com", desc: "The embedded or external scheduler may use cookies or browser storage under Cal.com’s own privacy and cookie practices.", status: "On booking interaction" },
                 { name: "Interface preferences", desc: "Browser storage may remember interface preferences such as the selected visual theme.", status: "When used" },
                 { name: "Essential provider storage", desc: "Hosting, security, and scheduling providers may use storage necessary to deliver or protect their services.", status: "As applicable" },

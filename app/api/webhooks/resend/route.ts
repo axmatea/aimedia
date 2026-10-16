@@ -107,11 +107,14 @@ async function locateLead(p: ResendEventPayload): Promise<NotionLead | null> {
 }
 
 export async function POST(req: NextRequest) {
+  const secret = process.env.RESEND_WEBHOOK_SECRET?.trim()
+  if (!secret) {
+    return NextResponse.json({ error: "Webhook unavailable" }, { status: 503 })
+  }
   const rawBody = await req.text()
 
-  // Signature verification: required if RESEND_WEBHOOK_SECRET is set.
-  const secret = process.env.RESEND_WEBHOOK_SECRET
-  if (secret) {
+  // Always fail closed when a deployment is missing its signing secret.
+  {
     const ok = verifySvixSignature(
       secret,
       rawBody,

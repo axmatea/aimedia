@@ -1,5 +1,47 @@
 # AI Media: Railway migration preparation
 
+## Current migration execution: 2026-10-15
+
+This section supersedes older preparation-only account/configuration findings below. Cutover is **not approved by these notes** and has not occurred.
+
+- Current production remains Vercel `dpl_4VcCzgrEuNRh3bSAU85wre4d7UC6`, immutable URL `https://ai-media-global-2lppynzts-ai-media1.vercel.app`. Homepage, animated experience and qualified-pipeline route return 200. The production source has not changed from the recovered deployment.
+- Isolated execution checkout: `01_AI_BUSINESS/aimedia/website-railway-release`, branch `codex/railway-runtime-release`, starting at `f9e02b6`. This intentionally excludes the later unrelated design-preview commits. The dirty main checkout is preserved.
+- Existing Railway project `aimedia` / service `aimedia-web` / environment `staging` is reused. Temporary URL: `https://aimedia-web-staging.up.railway.app`. No new project or database service is needed.
+- Existing account access works through the Railway connector, CLI and signed-in dashboard; the account is already on Hobby. No subscription upgrade has been purchased.
+- The owner explicitly approved replacement of Vercel Analytics by a first-party collector and a 1000 MB Railway volume. Collection keeps the existing funnel names, source/campaign attribution and path-only dimensions, uses anonymous session IDs, excludes internal QA by default and retains events for 90 days. Historical Vercel Analytics reports are not deleted or imported into a different metric definition. Unique sessions are not equivalent to Vercel's visitor metric.
+- A dedicated `/data` volume is staged. Runtime bootstrap prepares only that mount, then drops root privileges before the application starts. SQLite, API functions, assets, image optimization and measurement run on Railway; no new analytics vendor is introduced.
+- Available existing runtime credentials were transferred through private stdin with deployment suppressed. No unused Google OAuth, Hunter, Redis/KV, Vercel token or outbound credentials were copied.
+- Read-only provider verification using the Railway-configured credentials confirms NAYL Systems, all 37 required Notion schema fields, the verified `aimedia.global` Resend domain, one domain-based Resend webhook, no Vercel-specific Resend webhook URL, and the existing dedicated booking-lock Worker's healthy process. These are not write/booking validations.
+- Three existing signing/digest credentials remain unavailable: `CAL_WEBHOOK_SECRET`, `BOOKING_LOCK_HMAC_SECRET`, `BOOKING_LOCK_HASH_SECRET`. They are non-exportable Vercel Secrets and were not found in the checked approved local configuration or exact Keychain records. The stable digest key must not be regenerated as a migration shortcut. The owner must restore the originals securely from their secret source, or approve a separately scoped recovery/rotation plan.
+- `CANCEL_FOLLOWUPS_SECRET` is absent from the current Vercel inventory too. The migration makes cancellation and Resend ingestion fail closed if their guards are absent, preventing partial configuration from enabling unauthenticated mutations. Establishing a cancellation secret and matching callers remains a cutover gate.
+- Meta CAPI variables are also absent from the current production project's variable inventory. They have not been invented or activated. The recovered strict preflight therefore continues to flag them; do not describe CAPI as verified or healthy.
+- The sidebar browser is now able to observe the existing staging `/animated`. Read-only HTTP smoke checks passed for 15 routes/assets, headers, health and MP4 byte ranges. The replacement collector and updated runtime still require a new staging deployment and interaction/console checks before cutover.
+- First-party collector revision: the complete production build (including TypeScript), ESLint, 58 conversion tests and 49 deployment tests pass locally. No real emails, bookings, CRM writes or DNS changes were made. Three API configuration guards fail closed before external provider calls.
+- The owner confirmed Railway as the final hosting destination and separately requested a visual revision. That visual work is isolated in a subsequent commit; it does not authorize bypassing the remaining secret, DNS, or integration gates.
+
+### Exact domain records prepared, no DNS change applied
+
+Railway attached these custom domains in its own configuration only; public DNS still serves Vercel.
+
+| Type | Name | Required value |
+| --- | --- | --- |
+| CNAME / flattening ALIAS | `@` | `d8i18p0t.up.railway.app` |
+| TXT | `_railway-verify` | `railway-verify=a7d93e97933ab12d97ae8dc3b97c0fe71b6ec64f54b2b7988454da663aa5b30b` |
+| CNAME | `www` | `3zzxc639.up.railway.app` |
+| TXT | `_railway-verify.www` | `railway-verify=0506edcccda543ed247036d306c7bea7938ba1f34c0e41ce60f31d478147b81d` |
+
+GoDaddy's authoritative nameservers are still `ns13.domaincontrol.com` and `ns14.domaincontrol.com`. Railway documents that GoDaddy does not support the required apex flattening/ALIAS. A DNS provider change, such as free Cloudflare DNS, needs a complete authoritative zone export and separate owner approval before changing nameservers. Do not guess a fixed Railway A record. Preserve Google Workspace MX, SPF, DKIM, DMARC and all other non-web records. Public lookups do not constitute a complete zone backup.
+
+Rollback web records: `@ A 76.76.21.21`; `www CNAME cname.vercel-dns.com`. Keep the Vercel aliases and immutable deployment intact. With DNS moved, restore these web records on the new authoritative provider for the fastest rollback; reverting nameservers is a second, slower fallback. Validate HTTPS and domain-based webhooks again.
+
+### Current cost envelope and retirement boundary
+
+Railway Hobby already has a $5 monthly minimum including $5 usage shared with the account's other projects. Website usage is additional metered consumption, not a second automatic $5 subscription. At current prices, illustrative app usage at 0.25 GB average RAM, 0.025 average vCPU and 10 GB egress is about $3.50/month; at 0.5 GB, 0.05 vCPU and 20 GB egress about $7/month. A fully used 1 GB volume adds about $0.15/month. These are estimates, not measured monthly bills. Videos can raise egress. Pro's $20 minimum has not been selected. Keep the service at one replica; turn off staging sleep for production only as part of the reviewed cutover configuration.
+
+After all gates and separate retirement approval, the AI Media project's Vercel hosting/functions, custom-domain aliases, Git auto-deploy connection and new Web Analytics collection can be disabled. Preserve historical analytics and the rollback deployment during observation. No active Vercel Cron definitions were found. The site's recovered runtime uses no Vercel Blob/Postgres/KV APIs, but do not delete marketplace storage or cancel the shared Vercel team plan without checking other consumers/projects. Notion, Cal.com, Resend, the dedicated Cloudflare Worker/D1 and Google Workspace remain active external dependencies.
+
+The earlier source recovery and offline verification evidence follows.
+
 Audit date: 2026-10-10 UTC. This is a reviewable preparation branch, not a completed migration.
 No Railway resources, credentials, domain records, or production aliases were changed.
 

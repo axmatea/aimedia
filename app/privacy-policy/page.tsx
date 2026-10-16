@@ -14,7 +14,7 @@ export default function PrivacyPolicy() {
       <div className="max-w-3xl mx-auto">
         <p className="text-white/55 text-[10px] uppercase tracking-[0.3em] font-bold mb-4">Legal</p>
         <h1 className="text-white text-4xl md:text-5xl font-black uppercase mb-2" style={{ fontFamily: "var(--font-bebas)" }}>Privacy Policy</h1>
-        <p className="text-white/55 text-sm mb-12">Last updated: August 23, 2026</p>
+        <p className="text-white/55 text-sm mb-12">Last updated: October 15, 2026</p>
 
         <div className="space-y-10 text-white/55 text-sm leading-relaxed">
           <section>
@@ -52,7 +52,7 @@ export default function PrivacyPolicy() {
             <p>We currently use:</p>
             <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
               <li><span className="text-white/65">Cal.com</span> to display scheduling tools, collect booking details, and carry campaign-attribution metadata with a booking</li>
-              <li><span className="text-white/65">Vercel</span> for website hosting and website or funnel analytics; identifying contact and advertising parameters are removed from analytics URLs before events are sent</li>
+              <li><span className="text-white/65">Railway</span> for website hosting and our own website and funnel analytics. The analytics store receives page paths, event names, limited source and campaign labels, and a random session identifier; contact details, full URLs, IP addresses, advertising identifiers, and booking references are excluded from these analytics records.</li>
               <li><span className="text-white/65">Notion</span> as our internal CRM for booking, qualification, contact, and attribution information</li>
               <li><span className="text-white/65">Cloudflare Worker and D1</span> as an isolated duplicate-prevention service that receives keyed cryptographic digests of booking UID and normalized email, plus an operation identifier, state, timestamps, and an opaque CRM reference, but not plaintext booking-form content through this service</li>
               <li><span className="text-white/65">Meta Platforms</span> for server-side conversion measurement for verified Meta-attributed bookings, as described above</li>
@@ -62,7 +62,7 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-white/85 font-bold text-base mb-3 uppercase tracking-wider">5. Data Retention</h2>
-            <p>Retention periods vary by record type and operational need. We retain booking and CRM information for business administration, follow-up, attribution, security, and legal purposes. Limited cryptographic duplicate-prevention records may be retained to preserve the one-booking-to-one-record mapping and prevent duplicate conversions. We delete or anonymize information when it is no longer reasonably needed, subject to security, dispute, recordkeeping, and legal obligations.</p>
+            <p>Retention periods vary by record type and operational need. Our own website analytics events are retained for up to 90 days. We retain booking and CRM information for business administration, follow-up, attribution, security, and legal purposes. Limited cryptographic duplicate-prevention records may be retained to preserve the one-booking-to-one-record mapping and prevent duplicate conversions. We delete or anonymize information when it is no longer reasonably needed, subject to security, dispute, recordkeeping, and legal obligations.</p>
           </section>
 
           <section>

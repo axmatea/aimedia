@@ -11,11 +11,14 @@ function getResend() {
 
 export async function POST(req: NextRequest) {
   try {
+    const expected = process.env.CANCEL_FOLLOWUPS_SECRET?.trim()
+    if (!expected) {
+      return NextResponse.json({ error: "Cancellation unavailable" }, { status: 503 })
+    }
     const { email, secret } = (await req.json()) as { email?: string; secret?: string }
 
-    // Optional shared-secret guard so this can't be hit from random clients.
-    const expected = process.env.CANCEL_FOLLOWUPS_SECRET
-    if (expected && secret !== expected) {
+    // A partially configured migration must never expose cancellation writes.
+    if (secret !== expected) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
     if (!email) {

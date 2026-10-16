@@ -106,6 +106,7 @@ test("all provider fetches and retry delays in recovered booking flow use the sh
     assert.doesNotMatch(source, /setTimeout\(/)
   }
   const route = readFileSync(new URL("app/api/webhooks/cal/route.ts", root), "utf8")
-  assert.match(route, /process\.env\.VERCEL && result\.firstMapped/)
-  assert.doesNotMatch(route, /await Promise\.allSettled/)
+  assert.match(route, /if \(result\.firstMapped\)/)
+  assert.match(route, /after\(async \(\) =>/)
+  assert.doesNotMatch(route, /@vercel\/analytics/)
 })

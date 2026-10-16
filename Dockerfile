@@ -22,6 +22,9 @@ COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 COPY --from=builder --chown=node:node /app/public ./public
 COPY --from=builder --chown=node:node /app/scripts/check-runtime-env.mjs ./scripts/check-runtime-env.mjs
-USER node
+COPY --from=builder --chown=node:node /app/scripts/start-runtime.mjs ./scripts/start-runtime.mjs
+# Railway mounts volumes as root. The entrypoint prepares this one mount and
+# drops to the node user before loading any application code or opening a port.
+USER root
 EXPOSE 3000
-CMD ["node", "server.js"]
+CMD ["node", "scripts/start-runtime.mjs"]

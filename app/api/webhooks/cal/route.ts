@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from "next/server"
+import { after, NextRequest, NextResponse } from "next/server"
 import { BookingBodyTooLargeError, BookingDeadline } from "@/lib/conversion/booking-deadline"
-import { track } from "@vercel/analytics/server"
 import {
   isCalWebhookPing,
   MAX_CAL_WEBHOOK_BYTES,
@@ -107,23 +106,36 @@ async function handleBooking(request: NextRequest, deadline: BookingDeadline) {
     const common = {
       source: parsed.lead.source,
       campaign: parsed.lead.utmCampaign || "none",
+      medium: parsed.lead.utmMedium || undefined,
+      path: parsed.lead.landingPage,
     }
     // Cal retries the same booking UID. Conversion analytics fire only on the
     // first accepted UID mapping; a replay updates CRM state but never counts twice.
-    // Vercel telemetry is optional and provider-specific. Never hold a completed
-    // transaction open for it, or silently route analytics to a new destination.
-    if (process.env.VERCEL && result.firstMapped) {
-      void Promise.allSettled([
-        track("booking_attributed", common),
-        result.created ? track("lead_created", common) : Promise.resolve(),
-        parsed.lead.qualified ? track("qualified_lead_created", common) : Promise.resolve(),
-        parsed.lead.qualificationStatus === "NEEDS_CONTEXT"
-          ? track("needs_context_lead_created", common)
-          : Promise.resolve(),
-        parsed.lead.qualificationStatus === "NOT_ICP"
-          ? track("not_icp_lead_created", common)
-          : Promise.resolve(),
-      ])
+    // Write analytics after the response, outside the CRM/Meta transaction.
+    // A telemetry or scheduler failure must not trigger a Cal retry.
+    if (result.firstMapped) {
+      try {
+        after(async () => {
+          try {
+            const { recordAnalyticsEvent } = await import("@/lib/analytics/server")
+            await Promise.allSettled([
+              recordAnalyticsEvent("booking_attributed", common),
+              result.created ? recordAnalyticsEvent("lead_created", common) : Promise.resolve(),
+              parsed.lead.qualified ? recordAnalyticsEvent("qualified_lead_created", common) : Promise.resolve(),
+              parsed.lead.qualificationStatus === "NEEDS_CONTEXT"
+                ? recordAnalyticsEvent("needs_context_lead_created", common)
+                : Promise.resolve(),
+              parsed.lead.qualificationStatus === "NOT_ICP"
+                ? recordAnalyticsEvent("not_icp_lead_created", common)
+                : Promise.resolve(),
+            ])
+          } catch {
+            console.warn("Booking analytics unavailable")
+          }
+        })
+      } catch {
+        console.warn("Booking analytics unavailable")
+      }
     }
     return NextResponse.json({
       ok: true,

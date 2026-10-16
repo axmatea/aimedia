@@ -19,6 +19,11 @@ const nextConfig: NextConfig = {
   headers: async () => [
     {
       source: "/(.*)",
+      has: [{ type: "host", value: "aimedia-web-staging.up.railway.app" }],
+      headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+    },
+    {
+      source: "/(.*)",
       headers: [
         { key: "X-Content-Type-Options", value: "nosniff" },
         { key: "X-Frame-Options", value: "DENY" },

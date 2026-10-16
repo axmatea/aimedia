@@ -1,7 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
+import { after, NextRequest, NextResponse } from "next/server"
 import crypto from "node:crypto"
 import { Resend } from "resend"
-import { track } from "@vercel/analytics/server"
 import { scheduleFollowUps } from "@/lib/followups"
 
 function getResend() {
@@ -473,22 +472,30 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    await Promise.allSettled([
-      track("inquiry_submitted", {
-        source: source || "Website",
-        utm_campaign: utmCampaign || undefined,
-        landing_page: landingPage || "/",
-        conversion_action: conversionAction || "project_inquiry",
-      }),
-      company && goal
-        ? track("qualified_lead_created", {
+    // Telemetry is optional and must never delay or fail an accepted inquiry.
+    try {
+      after(async () => {
+        try {
+          const { recordAnalyticsEvent } = await import("@/lib/analytics/server")
+          const properties = {
             source: source || "Website",
-            utm_campaign: utmCampaign || undefined,
-            landing_page: landingPage || "/",
-            conversion_action: conversionAction || "project_inquiry",
-          })
-        : Promise.resolve(),
-    ])
+            campaign: utmCampaign || "none",
+            medium: utmMedium || undefined,
+            path: landingPage || "/",
+          }
+          await Promise.allSettled([
+            recordAnalyticsEvent("inquiry_submitted", properties),
+            company && goal
+              ? recordAnalyticsEvent("qualified_lead_created", properties)
+              : Promise.resolve(),
+          ])
+        } catch {
+          console.warn("Inquiry analytics unavailable")
+        }
+      })
+    } catch {
+      console.warn("Inquiry analytics unavailable")
+    }
 
     return NextResponse.json({
       success: true,
