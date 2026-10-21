@@ -31,8 +31,14 @@ for (const [key, value] of Object.entries({
   assert.equal(home.headers.get(key), value, `Missing/mismatched ${key}`)
 }
 const html = await home.text()
-const chunkPath = html.match(/src="([^" ]+\/_next\/static\/[^" ]+\.js)"/)?.[1]
-  || html.match(/src="(\/_next\/static\/[^" ]+\.js)"/)?.[1]
+// Vercel appends a deployment query to chunk URLs; it is not part of the
+// filename and must not make a healthy production page fail this check.
+const chunkPath = [...html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/g)]
+  .map(match => match[1])
+  .find(src => {
+    const url = new URL(src, baseUrl)
+    return url.pathname.startsWith("/_next/static/") && url.pathname.endsWith(".js")
+  })
 assert(chunkPath, "Home must include a Next.js script")
 assert.equal(new URL(chunkPath, baseUrl).origin, baseUrl.origin, "Unexpected asset origin")
 await get(chunkPath)
