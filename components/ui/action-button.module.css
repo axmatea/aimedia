@@ -1,0 +1,148 @@
+.action {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 13px 23px;
+  border: 0;
+  border-radius: var(--ax-radius-pill, 999px);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+
+.primary {
+  background: linear-gradient(180deg, #28282d, #101013);
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+:global(.dark) .primary {
+  background: linear-gradient(180deg, #fff, #e6e6ea);
+  color: #111114;
+  box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(0, 0, 0, 0.16);
+}
+
+.primary .arrow {
+  color: #c81d3d;
+}
+
+.compact {
+  min-height: 44px;
+  padding: 11px 17px;
+  font-size: 12px;
+}
+
+.secondary {
+  padding-inline: 14px;
+  background: transparent;
+  color: rgba(5, 5, 7, 0.72);
+}
+
+:global(.dark) .secondary {
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.arrow {
+  flex: 0 0 auto;
+  transition: transform 180ms var(--ax-ease-out, ease-out);
+}
+
+.themeControl {
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(5, 5, 7, 0.045);
+  color: #202024;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.themeControl svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.6;
+}
+
+:global(.dark) .themeControl {
+  background: rgba(255, 255, 255, 0.065);
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.action:focus-visible,
+.themeControl:focus-visible {
+  outline: 2px solid var(--ax-hot, #ff2d55);
+  outline-offset: 4px;
+}
+
+.primary:active {
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+.action:disabled,
+.themeControl:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .primary:hover:not(:disabled) {
+    background: #34343a;
+  }
+
+  :global(.dark) .primary:hover:not(:disabled) {
+    background: #fff;
+  }
+
+  .action:hover:not(:disabled) .arrow {
+    transform: translateX(3px);
+  }
+
+  .secondary:hover {
+    color: #050507;
+  }
+
+  :global(.dark) .secondary:hover {
+    color: #fff;
+  }
+
+  .themeControl:hover {
+    background: rgba(5, 5, 7, 0.09);
+  }
+
+  :global(.dark) .themeControl:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+}
+
+@media (max-width: 519px) {
+  .compact {
+    padding-inline: 12px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .action,
+  .arrow,
+  .themeControl {
+    transition: none;
+  }
+
+  .action:hover:not(:disabled) .arrow {
+    transform: none;
+  }
+}

@@ -133,15 +133,26 @@ export const Lightning: React.FC<LightningProps> = ({
 
     const vertexShader = compileShader(vertexShaderSource, gl.VERTEX_SHADER)
     const fragmentShader = compileShader(fragmentShaderSource, gl.FRAGMENT_SHADER)
-    if (!vertexShader || !fragmentShader) return
+    if (!vertexShader || !fragmentShader) {
+      if (vertexShader) gl.deleteShader(vertexShader)
+      if (fragmentShader) gl.deleteShader(fragmentShader)
+      return
+    }
 
     const program = gl.createProgram()
-    if (!program) return
+    if (!program) {
+      gl.deleteShader(vertexShader)
+      gl.deleteShader(fragmentShader)
+      return
+    }
     gl.attachShader(program, vertexShader)
     gl.attachShader(program, fragmentShader)
     gl.linkProgram(program)
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       console.error("Program linking error:", gl.getProgramInfoLog(program))
+      gl.deleteProgram(program)
+      gl.deleteShader(vertexShader)
+      gl.deleteShader(fragmentShader)
       return
     }
     gl.useProgram(program)
@@ -163,13 +174,21 @@ export const Lightning: React.FC<LightningProps> = ({
     const uIntensityLocation = gl.getUniformLocation(program, "uIntensity")
     const uSizeLocation = gl.getUniformLocation(program, "uSize")
 
-    const startTime = performance.now()
     let animId: number | null = null
+    let intersecting = false
+    let elapsed = 0
+    let previousFrame: number | null = null
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const shouldAnimate = () => intersecting && !document.hidden && !reducedMotion.matches
 
-    const render = () => {
+    const render = (timestamp: number) => {
+      animId = null
+      if (!shouldAnimate()) return
+      if (previousFrame !== null) elapsed += Math.min(timestamp - previousFrame, 50) / 1000
+      previousFrame = timestamp
       gl.viewport(0, 0, canvas.width, canvas.height)
       gl.uniform2f(iResolutionLocation, canvas.width, canvas.height)
-      gl.uniform1f(iTimeLocation, (performance.now() - startTime) / 1000.0)
+      gl.uniform1f(iTimeLocation, elapsed)
       gl.uniform1f(uHueLocation, hue)
       gl.uniform1f(uXOffsetLocation, xOffset)
       gl.uniform1f(uSpeedLocation, speed)
@@ -179,15 +198,16 @@ export const Lightning: React.FC<LightningProps> = ({
       animId = requestAnimationFrame(render)
     }
     const startLoop = () => {
-      if (animId === null) animId = requestAnimationFrame(render)
+      if (animId === null && shouldAnimate()) animId = requestAnimationFrame(render)
     }
     const stopLoop = () => {
       if (animId !== null) {
         cancelAnimationFrame(animId)
         animId = null
       }
+      previousFrame = null
     }
-    startLoop()
+    const syncActivity = () => shouldAnimate() ? startLoop() : stopLoop()
 
     // Resize the backing store only when the box actually changes (never per
     // frame). ResizeObserver fires once on observe, covering the initial size.
@@ -196,15 +216,26 @@ export const Lightning: React.FC<LightningProps> = ({
 
     // Fully cancel the rAF loop off-screen instead of idle-spinning empty frames.
     const obs = new IntersectionObserver(
-      ([e]) => (e.isIntersecting ? startLoop() : stopLoop()),
+      ([entry]) => {
+        intersecting = entry.isIntersecting
+        syncActivity()
+      },
       { threshold: 0.1 }
     )
     obs.observe(canvas)
+    document.addEventListener("visibilitychange", syncActivity)
+    reducedMotion.addEventListener("change", syncActivity)
 
     return () => {
       obs.disconnect()
       ro.disconnect()
+      document.removeEventListener("visibilitychange", syncActivity)
+      reducedMotion.removeEventListener("change", syncActivity)
       stopLoop()
+      gl.deleteBuffer(vertexBuffer)
+      gl.deleteProgram(program)
+      gl.deleteShader(vertexShader)
+      gl.deleteShader(fragmentShader)
     }
   }, [hue, xOffset, speed, intensity, size])
 

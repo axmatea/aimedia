@@ -19,9 +19,9 @@
 
 import { useState, useEffect, useCallback } from "react"
 import dynamic from "next/dynamic"
-import Link from "next/link"
 import { AnimatePresence, m, useReducedMotion } from "motion/react"
-import { LiquidMetalButton } from "@/components/ui/liquid-metal-button"
+import { useTheme } from "next-themes"
+import { ActionButton, ExperienceLink } from "@/components/ui/action-button"
 import { Disp } from "@/components/home/shared"
 import { HERO_AUDIENCES } from "@/components/home/data"
 import { openBooking } from "@/components/home/actions"
@@ -40,6 +40,8 @@ export function HeroVisual() {
   // The Lightning WebGL layer is display:none below lg anyway (hidden dark:lg:block),
   // so on phones we skip mounting it entirely: no chunk download, no WebGL context.
   const [desktop, setDesktop] = useState(false)
+  const { resolvedTheme } = useTheme()
+  const reducedMotion = useReducedMotion()
   const [robotReady, setRobotReady] = useState(false)
   const handleRobotReady = useCallback(() => setRobotReady(true), [])
 
@@ -53,7 +55,7 @@ export function HeroVisual() {
 
   return (
     <>
-      <picture className={`hero-robot-poster ${robotReady ? "is-hidden" : ""}`}>
+      <picture className={`hero-robot-poster ${robotReady && !reducedMotion ? "is-hidden" : ""}`}>
         <source media="(max-width: 520px)" srcSet="/hero/robot-poster-mobile.webp" />
         <source media="(max-width: 1023px)" srcSet="/hero/robot-poster-tablet.webp" />
         <img
@@ -69,9 +71,9 @@ export function HeroVisual() {
       </picture>
 
       {/* Lightning behind robot: subtle ambient in the brand-red family, hidden in light mode.
-          Mounted only on lg+ viewports (it is display:none below that anyway). */}
+          Never load a hidden GPU layer in light mode or reduced-motion mode. */}
       <div className="absolute right-0 top-0 w-[75%] h-full pointer-events-none hidden dark:lg:block z-[1] opacity-30 mix-blend-screen">
-        {desktop && <Lightning hue={350} xOffset={0.3} speed={1.0} intensity={0.35} size={2.2} />}
+        {desktop && resolvedTheme === "dark" && !reducedMotion && <Lightning hue={350} xOffset={0.3} speed={1.0} intensity={0.35} size={2.2} />}
       </div>
 
       {/* Robot */}
@@ -135,15 +137,14 @@ export function HeroRotator() {
 // ── HeroCtas: commercial action + opt-in animated route ────────────────────
 export function HeroCtas() {
   return (
-    <div className="grid grid-cols-1 min-[500px]:grid-cols-2 gap-3 flex-shrink-0 w-full sm:w-auto sm:min-w-[440px]">
-      <LiquidMetalButton label="Book a Call" onClick={() => openBooking("hero")} className="w-full justify-center" />
-      <Link
+    <div className="flex flex-col min-[500px]:flex-row min-[500px]:items-center gap-2 min-[500px]:gap-4 flex-shrink-0 w-full sm:w-auto">
+      <ActionButton label="Book a Call" onClick={() => openBooking("hero")} className="w-full min-[500px]:w-auto" />
+      <ExperienceLink
         href="/animated"
         prefetch={false}
-        className="w-full px-6 md:px-7 py-3.5 border-2 border-black/20 dark:border-white/25 text-black/70 dark:text-white/80 text-center text-sm font-semibold rounded-full transition-[border-color,color,transform] active:scale-[0.97] motion-reduce:active:scale-100 [@media(hover:hover)]:hover:border-[#FF2D55] [@media(hover:hover)]:hover:text-[#FF2D55]"
-      >
-        Enter Animated Experience
-      </Link>
+        label="Enter Animated Experience"
+        className="w-full min-[500px]:w-auto"
+      />
     </div>
   )
 }

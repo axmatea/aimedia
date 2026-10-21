@@ -41,7 +41,7 @@ import {
 // ── Page ────────────────────────────────────────────────────────────────────
 export default function Home() {
   return (
-    <main className="w-full ai-page grain">
+    <main className="w-full ai-page">
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <SiteNav />
@@ -80,6 +80,10 @@ export default function Home() {
             </span>
             <HeroRotator />
           </h1>
+
+          <p className="ai-muted mt-5 max-w-[25rem] text-sm leading-relaxed md:text-base">
+            AI agents, connected workflows, and custom business platforms.
+          </p>
 
           <div className="mt-10 flex items-start lg:max-w-[55%]">
             <HeroCtas />
@@ -204,7 +208,7 @@ export default function Home() {
                     <div>
                       <div className="mb-2 flex items-center justify-between gap-4">
                         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">AI content team · Demo</p>
-                        <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/45">Tap a creator</p>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/60">Tap a creator</p>
                       </div>
                       <p className="mb-1 text-sm font-bold text-white/75">One system. Every channel.</p>
                       <p className="max-w-md text-xs leading-relaxed text-white/60">
@@ -237,7 +241,7 @@ export default function Home() {
                       ))}
                     </ul>
 
-                    <p className="border-t border-white/5 pt-4 font-mono text-[9px] text-white/45">
+                    <p className="border-t border-white/5 pt-4 font-mono text-[10px] text-white/60">
                       Illustrative cadence · final mix follows the approved strategy
                     </p>
                   </div>

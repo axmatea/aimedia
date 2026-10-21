@@ -76,12 +76,22 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
   const [motionOk, setMotionOk] = useState<boolean | null>(null)
   // Lazy init: only mount the Spline runtime once the hero is near the viewport.
   const [inView, setInView] = useState(false)
+  const [pageVisible, setPageVisible] = useState(false)
   // Heavy Spline runtime is intentionally delayed until after first paint so it
   // never competes with hydration or the initial chunk work.
   const [canMountScene, setCanMountScene] = useState(false)
   // Head mouse-follow lerp only runs on fine-pointer (cursor) devices. On touch the
   // scene still plays its own idle animation, we just skip the wasted pointer work.
   const interactiveRef = useRef(true)
+  const appRef = useRef<SplineApp | null>(null)
+  const visibleRef = useRef(false)
+  const startLerpRef = useRef<(() => void) | null>(null)
+  const headRef = useRef<{ rotation: { x: number; y: number; z: number } } | null>(null)
+  const headBaseRotation = useRef({ x: 0, y: 0, z: 0 })
+  const rafRef = useRef<number | null>(null)
+  const targetRef = useRef({ x: 0, y: 0 })
+  const currentRef = useRef({ x: 0, y: 0 })
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
@@ -91,6 +101,10 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
     const syncMotion = () => setMotionOk(webGLAvailable && !reducedMotionQuery.matches)
     const syncInteractive = () => {
       interactiveRef.current = finePointerQuery.matches && !reducedMotionQuery.matches
+      if (!interactiveRef.current && rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+      }
     }
 
     syncMotion()
@@ -99,6 +113,14 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
     const onReduced = () => {
       syncMotion()
       syncInteractive()
+      // The React Spline wrapper disposes its own renderer on unmount. Remove
+      // our independent mouse listeners, reveal timers and lerp frames too.
+      if (reducedMotionQuery.matches) {
+        appRef.current?._splineCleanup?.()
+        appRef.current = null
+        headRef.current = null
+        setSceneReady(false)
+      }
     }
     const onPointer = () => syncInteractive()
 
@@ -171,7 +193,7 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
   //      already painted server-side (the LCP), so this reads as a fast,
   //      intentional arrival without the boot blocking the load frame.
   useEffect(() => {
-    if (motionOk !== true || !inView || canMountScene) return
+    if (motionOk !== true || !inView || !pageVisible || canMountScene) return
 
     let cancelled = false
     let idleId: number | null = null
@@ -227,22 +249,14 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
       for (const t of timeouts) window.clearTimeout(t)
       if (idleId !== null) win.cancelIdleCallback?.(idleId)
     }
-  }, [motionOk, inView, canMountScene])
-
-  const appRef = useRef<SplineApp | null>(null)
-  const visibleRef = useRef(true)
-  const startLerpRef = useRef<(() => void) | null>(null)
-  const headRef = useRef<{ rotation: { x: number; y: number; z: number } } | null>(null)
-  const headBaseRotation = useRef({ x: 0, y: 0, z: 0 })
-  const rafRef = useRef<number | null>(null)
-  const targetRef = useRef({ x: 0, y: 0 })
-  const currentRef = useRef({ x: 0, y: 0 })
+  }, [motionOk, inView, pageVisible, canMountScene])
 
   const handleLoad = useCallback((app: Application) => {
     const splineApp = app as SplineApp
+    appRef.current?._splineCleanup?.()
     appRef.current = splineApp
     const canvas = splineApp.canvas
-    const isInteractive = interactiveRef.current
+    headRef.current = null
 
     if (canvas) {
       canvas.style.background = 'transparent'
@@ -268,72 +282,72 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
       }
     }
 
-    let forwardMouse: ((e: MouseEvent) => void) | null = null
-
-    if (isInteractive) {
-      // Forward global mouse to canvas (activates built-in Spline events too)
-      forwardMouse = (e: MouseEvent) => {
-        if (!visibleRef.current) return
-        canvas?.dispatchEvent(new MouseEvent('mousemove', {
-          bubbles: false, cancelable: true,
-          clientX: e.clientX, clientY: e.clientY,
-          screenX: e.screenX, screenY: e.screenY,
-          movementX: e.movementX, movementY: e.movementY,
-        }))
-
-        // Update target for smooth lerp
-        const vw = window.innerWidth
-        const vh = window.innerHeight
-        targetRef.current = {
-          x: (e.clientX / vw - 0.5),   // -0.5 … 0.5
-          y: (e.clientY / vh - 0.5),   // -0.5 … 0.5
-        }
-      }
-
-      window.addEventListener('mousemove', forwardMouse)
-
-      // Smooth lerp animation loop for direct head rotation
-      const MAX_Y = 0.6   // radians ~34° horizontal
-      const MAX_X = 0.4   // radians ~23° vertical
-      const LERP  = 0.08  // smoothing factor (faster response)
-
-      const animate = () => {
-        rafRef.current = requestAnimationFrame(animate)
-
-        // Lerp current → target
-        currentRef.current.x += (targetRef.current.x - currentRef.current.x) * LERP
-        currentRef.current.y += (targetRef.current.y - currentRef.current.y) * LERP
-
-        if (headRef.current) {
-          headRef.current.rotation.y = headBaseRotation.current.y + currentRef.current.x * MAX_Y * 2
-          headRef.current.rotation.x = headBaseRotation.current.x + currentRef.current.y * MAX_X
-        }
-      }
-      startLerpRef.current = () => {
-        if (rafRef.current === null) rafRef.current = requestAnimationFrame(animate)
-      }
-      rafRef.current = requestAnimationFrame(animate)
+    // Keep Spline's authored idle animation. Our additional head-follow loop is
+    // event-driven and stops once settled instead of running another RAF forever.
+    const MAX_Y = 0.6
+    const MAX_X = 0.4
+    const LERP = 0.08
+    const EPSILON = 0.0005
+    const hasPendingMovement = () =>
+      Math.abs(targetRef.current.x - currentRef.current.x) > EPSILON ||
+      Math.abs(targetRef.current.y - currentRef.current.y) > EPSILON
+    const animate = () => {
+      rafRef.current = null
+      const head = headRef.current
+      if (!head || !visibleRef.current || !interactiveRef.current) return
+      currentRef.current.x += (targetRef.current.x - currentRef.current.x) * LERP
+      currentRef.current.y += (targetRef.current.y - currentRef.current.y) * LERP
+      head.rotation.y = headBaseRotation.current.y + currentRef.current.x * MAX_Y * 2
+      head.rotation.x = headBaseRotation.current.x + currentRef.current.y * MAX_X
+      if (hasPendingMovement()) rafRef.current = requestAnimationFrame(animate)
     }
+    const startLerp = () => {
+      if (headRef.current && visibleRef.current && interactiveRef.current &&
+          hasPendingMovement() && rafRef.current === null) {
+        rafRef.current = requestAnimationFrame(animate)
+      }
+    }
+    startLerpRef.current = startLerp
+    const forwardMouse = (event: MouseEvent) => {
+      if (!visibleRef.current || !interactiveRef.current) return
+      canvas?.dispatchEvent(new MouseEvent('mousemove', {
+        bubbles: false, cancelable: true,
+        clientX: event.clientX, clientY: event.clientY,
+        screenX: event.screenX, screenY: event.screenY,
+        movementX: event.movementX, movementY: event.movementY,
+      }))
+      targetRef.current = {
+        x: event.clientX / window.innerWidth - 0.5,
+        y: event.clientY / window.innerHeight - 0.5,
+      }
+      startLerp()
+    }
+    window.addEventListener('mousemove', forwardMouse, { passive: true })
+
+    let revealFrame: number | null = null
+    let revealTimer: number | null = null
 
     // Cleanup
     const cleanup = () => {
-      if (forwardMouse) {
-        window.removeEventListener('mousemove', forwardMouse)
-      }
+      window.removeEventListener('mousemove', forwardMouse)
+      if (revealFrame !== null) cancelAnimationFrame(revealFrame)
+      if (revealTimer !== null) window.clearTimeout(revealTimer)
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current)
         rafRef.current = null
       }
+      if (startLerpRef.current === startLerp) startLerpRef.current = null
     }
     splineApp._splineCleanup = cleanup
 
     // Let the real Spline animation play hidden for a short pre-roll before reveal.
     // This avoids exposing the broken first boot pose while keeping the first visible
     // hero moment animated, not static.
-    splineApp.play?.()
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        window.setTimeout(() => {
+    if (visibleRef.current) splineApp.play?.()
+    else splineApp.stop?.()
+    revealFrame = requestAnimationFrame(() => {
+      revealFrame = requestAnimationFrame(() => {
+        revealTimer = window.setTimeout(() => {
           setSceneReady(true)
           onLoad?.(app)
         }, 420)
@@ -342,11 +356,12 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
   }, [onLoad])
 
   // Lazy-init when near the viewport, then pause the render loop when off-screen.
-  const containerRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
-    const setActive = (active: boolean) => {
+    let intersecting = false
+    const syncActivity = () => {
+      const active = intersecting && !document.hidden
       visibleRef.current = active
       const app = appRef.current
       if (active) {
@@ -360,22 +375,33 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
         }
       }
     }
-    const obs = new IntersectionObserver(
+    const preloadObserver = new IntersectionObserver(
       ([entry]) => {
         // Mount the runtime once when it first approaches view, keep it mounted
         // afterwards so scrolling does not trigger an expensive reload.
         if (entry.isIntersecting) setInView(true)
-        setActive(entry.isIntersecting)
       },
       // rootMargin preloads slightly before the hero scrolls in
       { threshold: 0.05, rootMargin: '200px' }
     )
-    obs.observe(el)
+    preloadObserver.observe(el)
+    // Preloading near view and rendering in view are separate conditions. The
+    // preload margin must not keep a GPU animation alive below the viewport.
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      intersecting = entry.isIntersecting
+      syncActivity()
+    }, { threshold: 0.05 })
+    visibilityObserver.observe(el)
     // Pause everything when the tab is hidden (battery / thermal)
-    const onVis = () => setActive(!document.hidden)
+    const onVis = () => {
+      setPageVisible(!document.hidden)
+      syncActivity()
+    }
+    onVis()
     document.addEventListener('visibilitychange', onVis)
     return () => {
-      obs.disconnect()
+      preloadObserver.disconnect()
+      visibilityObserver.disconnect()
       document.removeEventListener('visibilitychange', onVis)
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
       if (appRef.current) {
