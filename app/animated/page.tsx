@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import Link from "next/link"
 
 import { CinematicExperience } from "@/components/animated-cinema/cinematic-experience"
+import { CinematicPosterHints } from "@/components/animated-cinema/cinematic-poster-hints"
+import { CINEMA } from "@/components/animated-cinema/config"
 
 export const metadata: Metadata = {
   title: "Animated Experience",
@@ -15,7 +17,7 @@ export const metadata: Metadata = {
     url: "/animated",
     type: "website",
     images: [{
-      url: "/animated/neural-return/entity.webp",
+      url: `${CINEMA.root}/entity.webp`,
       width: 1920,
       height: 1080,
       alt: "AX Media's obsidian AI entity with an illuminated white-red core",
@@ -25,12 +27,13 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "AX Media · Animated Experience",
     description: "A cinematic scroll-driven journey through the systems AX Media builds.",
-    images: ["/animated/neural-return/entity.webp"],
+    images: [`${CINEMA.root}/entity.webp`],
   },
 }
 
 export default function AnimatedPage() {
   return <>
+    <CinematicPosterHints />
     <h1 className="sr-only">AX Media Animated Experience</h1>
     <CinematicExperience resolution={<>
       <h2>Build the system<br />your business is missing.</h2>

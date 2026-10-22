@@ -72,7 +72,15 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
     let hasFrame = false, pendingReplay = false, focusResolution = false
     const frameIntervals: number[] = []
 
-    const geometry = (progress: number) => filmRect(width, height, CINEMA.sourceWidth / CINEMA.sourceHeight, framingAt(progress, width / height < 0.95 ? CINEMA.framing.portrait : CINEMA.framing.desktop))
+    const geometry = (progress: number) => {
+      const framing = framingAt(progress, width / height < 0.95 ? CINEMA.framing.portrait : CINEMA.framing.desktop)
+      // Static accessibility/network fallbacks must never inherit an interior
+      // camera crop. Preserve the full-entity safe framing for their stills.
+      return filmRect(width, height, CINEMA.sourceWidth / CINEMA.sourceHeight, {
+        ...framing,
+        immersion: preference.matches || fallback ? 0 : framing.immersion,
+      })
+    }
 
     const paintLayers = (progress: number) => {
       const rect = geometry(progress)
@@ -145,7 +153,9 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
         root!.dataset.rafP95Ms = (sorted[Math.floor(sorted.length * 0.95)] ?? 0).toFixed(2)
       }
       lastTime = now
-      interpolated = preference.matches || fallback ? target : follow(interpolated, target, elapsed)
+      // Decode retries must ask for the same next visible step, not advance an
+      // unseen clock. Reversing input replaces that step from the current image.
+      interpolated = preference.matches || fallback ? target : follow(presented, target, elapsed)
       const requested = frameAt(interpolated, CINEMA.frameCount, CINEMA.filmEnd)
       let ready = preference.matches || fallback
       if (!ready && cache) {

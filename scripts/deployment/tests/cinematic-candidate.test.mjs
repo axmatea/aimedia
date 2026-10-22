@@ -1,5 +1,5 @@
 import assert from "node:assert/strict"
-import { readFileSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import test from "node:test"
 import vm from "node:vm"
 import ts from "typescript"
@@ -38,16 +38,67 @@ test("single film timeline has exact endpoints and continuous reversible framing
   }
   for (const [width, height] of [[1440, 900], [1280, 800], [768, 1024], [390, 844], [360, 800], [970, 1034], [840, 1034]]) {
     let previous = null
-    for (let step = 0; step <= 1000; step++) {
-      const progress = step / 1000
+    // Portrait cover grows a 16:9 world beyond the viewport. Sample below one
+    // native scroll pixel, so continuity is tested without imposing contain-only speed.
+    for (let step = 0; step <= 10000; step++) {
+      const progress = step / 10000
       const framing = timeline.framingAt(progress, width / height < .95 ? CINEMA.framing.portrait : CINEMA.framing.desktop)
       const rect = timeline.filmRect(width, height, 16 / 9, framing)
       assert.ok(Math.abs(rect.width / rect.height - 16 / 9) < .000001)
-      assert.ok(rect.y >= 0 && rect.y + rect.height <= height, "Complete source height must fit intermediate portrait sizes")
+      if (framing.immersion === 0) assert.ok(rect.y >= 0 && rect.y + rect.height <= height, "Full-entity phases preserve the complete source height")
       if (previous) assert.ok(Math.abs(rect.width - previous.width) < width * .0075, "Camera must not snap")
       previous = rect
     }
   }
+})
+
+test("optional cinematic immersion preserves safe geometry at zero and centered cover at one", () => {
+  const aspects = [16 / 9, 4 / 3, 1]
+  for (const [width, height] of [[1440, 900], [1280, 800], [768, 1024], [390, 844], [360, 800], [970, 1034]]) {
+    for (const sourceAspect of aspects) {
+      const framing = { scale: 1.35, centerX: .44, centerY: .48 }
+      const legacyWidth = Math.min(Math.min(width, height * sourceAspect) * framing.scale, height * sourceAspect * .94)
+      const legacy = { x: width * framing.centerX - legacyWidth / 2, y: height * framing.centerY - legacyWidth / sourceAspect / 2, width: legacyWidth, height: legacyWidth / sourceAspect }
+      assert.deepEqual({ ...timeline.filmRect(width, height, sourceAspect, framing) }, legacy)
+      assert.deepEqual({ ...timeline.filmRect(width, height, sourceAspect, { ...framing, immersion: 0 }) }, legacy)
+      const cover = timeline.filmRect(width, height, sourceAspect, { ...framing, immersion: 1 })
+      assert.ok(cover.width >= width - .000001 && cover.height >= height - .000001)
+      assert.ok(Math.abs(cover.x + cover.width / 2 - width / 2) < .000001)
+      assert.ok(Math.abs(cover.y + cover.height / 2 - height / 2) < .000001)
+      for (let step = 0; step <= 100; step++) {
+        const immersion = step / 100
+        const rect = timeline.filmRect(width, height, sourceAspect, { ...framing, immersion })
+        assert.ok(Math.abs(rect.width / rect.height - sourceAspect) < .000001, "Film is cropped, never stretched")
+        assert.ok(rect.width >= Math.min(legacy.width, cover.width) && rect.width <= Math.max(legacy.width, cover.width))
+        assert.ok(Math.abs(rect.width - (legacy.width + (cover.width - legacy.width) * immersion)) < .000001)
+      }
+    }
+  }
+})
+
+test("immersion keyframes interpolate continuously and reversibly through entry and return", () => {
+  const keys = [
+    { at: 0, scale: 2.2, centerX: .5, centerY: .48 },
+    { at: .2, scale: 2.2, centerX: .5, centerY: .48, immersion: 0 },
+    { at: .4, scale: 1.35, centerX: .5, centerY: .48, immersion: 1 },
+    { at: .7, scale: 1.35, centerX: .5, centerY: .48, immersion: 1 },
+    { at: 1, scale: 2.2, centerX: .5, centerY: .48 },
+  ]
+  assert.equal(timeline.framingAt(-1, keys).immersion, 0)
+  assert.equal(timeline.framingAt(2, keys).immersion, 0)
+  assert.equal(timeline.framingAt(.4, keys).immersion, 1)
+  assert.equal(timeline.framingAt(.7, keys).immersion, 1)
+  const forward = []
+  for (let step = 0; step <= 1000; step++) {
+    const framing = timeline.framingAt(step / 1000, keys)
+    assert.ok(framing.immersion >= 0 && framing.immersion <= 1)
+    const rect = timeline.filmRect(390, 844, 16 / 9, framing)
+    if (forward.length) assert.ok(Math.abs(rect.width - forward.at(-1).width) < 8, "Immersion may not snap between safe and cover rects")
+    forward.push(rect)
+  }
+  for (let step = 1000; step >= 0; step--) assert.deepEqual(timeline.filmRect(390, 844, 16 / 9, timeline.framingAt(step / 1000, keys)), forward[step])
+  const ui = source("cinematic-experience.tsx")
+  assert.match(ui, /immersion: preference\.matches \|\| fallback \? 0 : framing\.immersion/)
 })
 
 test("reduced-motion still crossfades preserve one complete visual without frame downloads", () => {
@@ -63,6 +114,101 @@ test("reduced-motion still crossfades preserve one complete visual without frame
   assert.match(ui, /if \(ready\) \{ presented = interpolated; paintLayers\(presented\) \}/)
   assert.match(ui, /addEventListener\("scroll", readScroll, \{ passive: true \}\)/)
   assert.doesNotMatch(ui, /preventDefault|addEventListener\("wheel"/)
+})
+
+/** Execute the actual production coordinator; only decode readiness is simulated. */
+function productionTickHarness({ presented = 0, target = .18 } = {}) {
+  const ui = source("cinematic-experience.tsx")
+  const parsed = ts.createSourceFile("cinematic-experience.tsx", ui, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+  let implementation
+  function visit(node) {
+    if (ts.isFunctionDeclaration(node) && node.name?.text === "tick") implementation = node.getText(parsed)
+    ts.forEachChild(node, visit)
+  }
+  visit(parsed)
+  assert.ok(implementation, "Test must execute the production tick, not a duplicated algorithm")
+  const available = new Set(), requests = [], drawings = [], overlays = []
+  let context
+  context = vm.createContext({
+    frame: null, disposed: false, visible: true, lastTime: 0, frameIntervals: [],
+    root: { dataset: {} }, preference: { matches: false }, fallback: false,
+    presented, interpolated: presented, target, direction: 1,
+    CINEMA, follow: timeline.follow, frameAt: timeline.frameAt,
+    loadingRef: { current: { setAttribute() {} } },
+    cache: { request(position) { requests.push(position) }, failedAt() { return false }, dispose() {} },
+    paintFilm(position, progress) {
+      if (!available.has(Math.floor(position)) || !available.has(Math.ceil(position))) return false
+      drawings.push({ position, progress })
+      return true
+    },
+    paintLayers(progress) { overlays.push(progress) },
+    requestTick() { context.frame = 1 },
+  })
+  vm.runInContext(ts.transpileModule(implementation, { compilerOptions: { target: ts.ScriptTarget.ES2020 } }).outputText, context)
+  return {
+    context, requests, drawings, overlays,
+    ready(position = requests.at(-1)) { available.add(Math.floor(position)); available.add(Math.ceil(position)) },
+    tick(now) { context.tick(now) },
+  }
+}
+
+test("production tick retries its first pending exact pair instead of moving an unpresented goalpost", () => {
+  const harness = productionTickHarness()
+  harness.tick(16)
+  const firstRequest = harness.requests.at(-1)
+  assert.ok(firstRequest > 0)
+  assert.equal(harness.context.presented, 0)
+  assert.equal(harness.drawings.length, 0)
+  assert.equal(harness.overlays.length, 0, "HTML cannot run ahead while the canvas is buffering")
+  assert.equal(harness.context.root.dataset.buffering, "true")
+  harness.ready(firstRequest)
+  harness.tick(116)
+  assert.equal(harness.requests.at(-1), firstRequest, "A completed pair must be presented before asking for another step")
+  assert.equal(harness.drawings.length, 1)
+  assert.equal(harness.drawings[0].position, firstRequest)
+  assert.equal(harness.context.presented, harness.drawings[0].progress)
+  assert.equal(harness.overlays.at(-1), harness.drawings[0].progress)
+  assert.equal(harness.context.root.dataset.buffering, "false")
+})
+
+test("production tick cancels a pending forward proposal on reversal and preserves atomic replay/hidden behavior", () => {
+  const harness = productionTickHarness({ presented: .5, target: .8 })
+  harness.tick(16)
+  const forward = harness.requests.at(-1)
+  harness.ready(forward) // Its late decode must not force a frame in the old direction.
+  harness.context.target = .2
+  harness.context.direction = -1
+  harness.tick(116)
+  const reverse = harness.requests.at(-1)
+  assert.ok(reverse < timeline.frameAt(.5, CINEMA.frameCount, CINEMA.filmEnd))
+  assert.notEqual(reverse, forward)
+  assert.equal(harness.context.presented, .5)
+  assert.equal(harness.drawings.length, 0)
+  harness.context.visible = false
+  harness.ready(reverse)
+  const beforeHidden = harness.requests.length
+  harness.tick(216)
+  assert.equal(harness.requests.length, beforeHidden)
+  assert.equal(harness.overlays.length, 0)
+  harness.context.visible = true
+  harness.tick(316)
+  assert.equal(harness.requests.at(-1), reverse)
+  assert.ok(harness.context.presented < .5)
+  assert.equal(harness.overlays.at(-1), harness.drawings.at(-1).progress)
+  // These are the actual Replay handler's explicit clock resets. Old decoded
+  // surfaces must not become a substitute for its exact zero frame.
+  harness.context.target = 0
+  harness.context.interpolated = 0
+  harness.context.presented = 0
+  harness.context.lastTime = 0
+  const beforeReplay = harness.drawings.length
+  harness.tick(416)
+  assert.equal(harness.requests.at(-1), 0)
+  assert.equal(harness.drawings.length, beforeReplay)
+  harness.ready(0)
+  harness.tick(516)
+  assert.equal(harness.drawings.at(-1).position, 0)
+  assert.equal(harness.overlays.at(-1), 0)
 })
 
 for (const mobile of [false, true]) test(`real cache bounds all surfaces, chunks and concurrency (${mobile ? "mobile" : "desktop"})`, async () => {
@@ -331,8 +477,12 @@ test("candidate is isolated from homepage and accessible controls keep real dest
   assert.match(ui, /focus\(\{ preventScroll: true \}\)/)
   assert.match(ui, /document\.hidden/)
   assert.match(ui, /URL\.revokeObjectURL/)
-  const delivery = JSON.parse(readFileSync(new URL("../../../public/animated/neural-return/delivery.json", import.meta.url), "utf8"))
-  assert.equal(CINEMA.frameCount, delivery.frameCount)
-  assert.equal(CINEMA.fps, delivery.fps)
-  assert.equal(delivery.source.audioStreams, 0)
+  assert.equal(CINEMA.root, "/animated/inner-system-v1", "New immutable frames must not reuse cached production URLs")
+  const deliveryPath = new URL(`../../../public${CINEMA.root}/delivery.json`, import.meta.url)
+  if (existsSync(deliveryPath)) {
+    const delivery = JSON.parse(readFileSync(deliveryPath, "utf8"))
+    assert.equal(CINEMA.frameCount, delivery.frameCount)
+    assert.equal(CINEMA.fps, delivery.fps)
+    assert.equal(delivery.source.audioStreams, 0)
+  } else assert.fail("The reviewed delivery manifest must exist before release validation")
 })

@@ -1,0 +1,106 @@
+{
+  "experiment": "inner-system-v1",
+  "approvedOpening": {
+    "commit": "35836214a53444cd4bac49adc8027d952321addf",
+    "job": "2a270a64-5224-4b5e-b8db-5edd7bbfe2d5",
+    "preservedSeconds": [
+      0,
+      6
+    ]
+  },
+  "images": [
+    {
+      "job": "af903462-38c0-47a3-b16a-7d2cfdf9cee8",
+      "params": {
+        "model": "gpt_image_2_5",
+        "variant": "flare",
+        "quality": "high",
+        "resolution": "4k",
+        "background": "opaque",
+        "aspect_ratio": "16:9",
+        "count": 1,
+        "prompt": "Cinematic macro photograph inside the referenced obsidian android's chest. A single restrained crimson pulse travels through elegant branching graphite microchannels. Camera rides low between sculpted black titanium lamellae; tiny polished metallic lattice connections reveal precise molecular-scale order. This is an abstract material microstructure, not biological flesh. Match the reference's glossy black chrome, brushed silver edges and white-red heart illumination. Strong near/far depth, restrained highlights, black negative space, photoreal premium industrial-design campaign. Wide 16:9 frame, vanishing point precisely centered, tunnel environment fills the entire frame. No interface, no text, no symbols, no labels, no grids, no holograms, no neon city, no explosions, no cloudy fog. Frame for a single continuous dolly journey from the robot's heart into its working material.",
+        "medias": [
+          {
+            "role": "image",
+            "value": "dfa73676-d036-4bd8-acb9-0aad5fe61d10"
+          },
+          {
+            "role": "image",
+            "value": "8eb18367-aa39-4e36-be38-1759dd95a8bf"
+          }
+        ]
+      }
+    },
+    {
+      "job": "c6fb64c0-c450-48cc-9728-33d4ad457a00",
+      "params": {
+        "model": "gpt_image_2_5",
+        "variant": "flare",
+        "quality": "high",
+        "resolution": "4k",
+        "background": "opaque",
+        "aspect_ratio": "16:9",
+        "count": 1,
+        "prompt": "Cinematic product photograph of exactly the same obsidian android from reference. Preserve its clean faceless head, correct human proportions, black chrome layered chest armor and narrow controlled crimson energy channels. Three-quarter front angle, entire head and upper torso fully in frame with generous breathing room. A precise small transparent black-glass spherical core floats 15cm in front of its chest, linked to the sternum by one fine crimson filament. Camera has just emerged from its microscopic interior. Refined black void, subtle metallic ground reflection, elegant white edge lighting, no fog. Realistic optics, high-end industrial design, impeccable anatomy and materials. 16:9 composition, subject centered, complete silhouette. No typography, no HUD, no multiple robots, no giant glowing circles, no particles obscuring the subject.",
+        "medias": [
+          {
+            "role": "image",
+            "value": "8eb18367-aa39-4e36-be38-1759dd95a8bf"
+          },
+          {
+            "role": "image",
+            "value": "dfa73676-d036-4bd8-acb9-0aad5fe61d10"
+          }
+        ]
+      }
+    }
+  ],
+  "video": {
+    "job": "81eedd45-7699-476a-970e-59bc2ae813ff",
+    "estimatedCredits": 320,
+    "params": {
+      "model": "cinematic_studio_video_4_0",
+      "mode": "omni_reference",
+      "duration": 20,
+      "resolution": "1080p",
+      "bitrate_mode": "high",
+      "generate_audio": false,
+      "aspect_ratio": "16:9",
+      "count": 1,
+      "prompt": "One uninterrupted 20-second cinematic macro journey, no cuts, no dissolves, no scene changes. Continue the first reference's exact close view into the obsidian android's illuminated chest. 0-3s: move forward through that small white-red core as layered black chrome chest surfaces open naturally around the lens. 3-9s: follow ONE crimson energy pulse through branching metallic microchannels into an exquisitely detailed molecular-scale graphite lattice, using the second reference's material language; controlled forward travel, strong depth, no chaotic flying debris. 9-14s: the lattice smoothly enlarges and becomes the same android's chest armor; camera emerges and arcs to the third reference's three-quarter robot view. Preserve its faceless head, exact obsidian anatomy and complete head in frame. 14-20s: the small core floats out, camera follows it while robot recedes naturally into black; six specialized black-glass satellites assemble around this one central sphere, settling into the last reference's exact frontal orbital composition. Every form grows from the preceding material, physically continuous elegant camera motion. Premium black, brushed silver and restrained crimson, no purple/blue, no fog, no HUD, no generated text, no logos, no explosions, no audio. No dead holds or speed ramps. Begin with the first reference and finish aligned to the final orbital reference.",
+      "medias": [
+        {
+          "role": "start_image",
+          "value": "dfa73676-d036-4bd8-acb9-0aad5fe61d10"
+        },
+        {
+          "role": "image",
+          "value": "af903462-38c0-47a3-b16a-7d2cfdf9cee8"
+        },
+        {
+          "role": "image",
+          "value": "c6fb64c0-c450-48cc-9728-33d4ad457a00"
+        },
+        {
+          "role": "end_image",
+          "value": "6427dc19-620a-4070-b639-e68c7724f355"
+        }
+      ]
+    }
+  },
+  "composition": {
+    "fps": 24,
+    "frameCount": 836,
+    "approvedOpeningFrames": [0, 143],
+    "continuationFrames": [6, 480],
+    "approvedTailFrames": [240, 480],
+    "firstOverlapFrames": 6,
+    "secondOverlapFrames": 18,
+    "firstOverlapAtSeconds": 5.75,
+    "secondOverlapAtSeconds": 24.7916666667,
+    "posterFrames": { "entity": 0, "orchestration": 588, "workflow": 835 },
+    "openingVerification": "The first 120 normalized 10-bit YUV444 decoded frames match the approved source MD5 39bc8168abc1e46623e9cde40092f78e."
+  },
+  "scope": "Cinematic route only. No audio or generated typography. Source masters excluded from Git/deploy."
+}
