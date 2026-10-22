@@ -1,0 +1,20 @@
+{
+  "fps": 24,
+  "duration": 20.041667,
+  "frameCount": 481,
+  "desktop": {
+    "width": 1280,
+    "height": 720,
+    "bytes": 22533686
+  },
+  "mobile": {
+    "width": 768,
+    "height": 432,
+    "bytes": 10144876
+  },
+  "source": {
+    "width": 1920,
+    "height": 1080,
+    "audioStreams": 0
+  }
+}

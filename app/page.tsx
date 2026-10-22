@@ -30,6 +30,7 @@ import { Disp, Tag, AmbientImage } from "@/components/home/shared"
 import { BookingSection, BookingDialog } from "@/components/home/booking"
 import { SiteNav } from "@/components/home/nav"
 import { HeroVisual, HeroCtas, HeroRotator } from "@/components/home/hero-islands"
+import { HeroPosterHints } from "@/components/home/hero-poster-hints"
 import { Reveal } from "@/components/home/reveal"
 import {
   N8nWorkflowBlock, AIUGCCreators, AgentRadial, LeadFunnel, WorldMap,
@@ -42,6 +43,7 @@ import {
 export default function Home() {
   return (
     <main className="w-full ai-page">
+      <HeroPosterHints />
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <SiteNav />

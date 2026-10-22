@@ -1,24 +1,12 @@
 import type { Metadata } from "next"
-import { Geist, Inter } from "next/font/google"
 
-import { AnimatedExperience } from "./animated-experience"
+import Link from "next/link"
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-inter",
-  display: "swap",
-})
-
-const geist = Geist({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-geist-scene",
-  display: "swap",
-})
+import { CinematicExperience } from "@/components/animated-cinema/cinematic-experience"
 
 export const metadata: Metadata = {
   title: "Animated Experience",
+  robots: { index: false, follow: true },
   description: "A cinematic, scroll-driven journey through the AI systems AX Media designs and builds.",
   alternates: { canonical: "/animated" },
   openGraph: {
@@ -27,20 +15,30 @@ export const metadata: Metadata = {
     url: "/animated",
     type: "website",
     images: [{
-      url: "/animated/posters/entity.webp",
-      width: 1600,
-      height: 900,
-      alt: "AX Media evolving AI entity",
+      url: "/animated/neural-return/entity.webp",
+      width: 1920,
+      height: 1080,
+      alt: "AX Media's obsidian AI entity with an illuminated white-red core",
     }],
   },
   twitter: {
     card: "summary_large_image",
     title: "AX Media · Animated Experience",
     description: "A cinematic scroll-driven journey through the systems AX Media builds.",
-    images: ["/animated/posters/entity.webp"],
+    images: ["/animated/neural-return/entity.webp"],
   },
 }
 
 export default function AnimatedPage() {
-  return <div className={`${inter.variable} ${geist.variable}`}><AnimatedExperience /></div>
+  return <>
+    <h1 className="sr-only">AX Media Animated Experience</h1>
+    <CinematicExperience resolution={<>
+      <h2>Build the system<br />your business is missing.</h2>
+      <nav aria-label="Next steps">
+        <Link href="/#booking" prefetch={false}>Book a Strategy Call</Link>
+        <Link href="/systems/qualified-pipeline" prefetch={false}>View Selected Systems</Link>
+        <Link href="/" prefetch={false}>Return to Standard Site</Link>
+      </nav>
+    </>} />
+  </>
 }
