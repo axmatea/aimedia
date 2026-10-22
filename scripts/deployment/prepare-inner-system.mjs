@@ -8,6 +8,7 @@ import sharp from "sharp"
 const FPS = 24
 const PUBLIC_ROOT = "public/animated/inner-system-v1"
 const SOURCE_ROOT = "artifacts/animated-experience/inner-system-source"
+const POSTER_NAMES = { entity: "entity", orchestration: "orchestration", workflow: "workflow" }
 
 export function parseArguments(args) {
   const result = {}
@@ -39,7 +40,11 @@ export function validateMaster(metadata) {
   if (!Number.isSafeInteger(frameCount) || frameCount < 1 || frameCount > 10_000) throw new Error("ffprobe could not confirm a bounded exact frame count.")
   const duration = Number(video.duration ?? metadata.format?.duration)
   if (!Number.isFinite(duration) || duration <= 0 || Math.abs(duration - frameCount / FPS) > .1) throw new Error("Master duration disagrees with its confirmed 24 fps frame count.")
-  return { width: video.width, height: video.height, fps: FPS, frameCount, duration, audioStreams }
+  // FFV1 Matroska timestamps may be quantized to milliseconds. Only optimize
+  // seeking after every decoded frame confirms the expected 24 fps timeline.
+  const times = metadata.frames?.map(frame => Number(frame.best_effort_timestamp_time)) ?? []
+  const timestampSeeking = times.length === frameCount && times.every((time, index) => Number.isFinite(time) && Math.abs(time - times[0] - index / FPS) <= .001)
+  return { width: video.width, height: video.height, fps: FPS, frameCount, duration, audioStreams, timestampSeeking }
 }
 
 async function requireAbsent(target, description) {
@@ -54,16 +59,27 @@ function command(binary, args, options = {}) {
   return result
 }
 
-export async function prepareInnerSystem({ root = process.cwd(), movie, orbitFrame } = {}) {
-  const source = path.join(root, SOURCE_ROOT)
-  const target = path.join(root, PUBLIC_ROOT)
-  const input = path.resolve(root, movie ?? path.join(SOURCE_ROOT, "inner-system-master.mkv"))
-  const review = path.join(source, "inner-system-review.mp4")
+export function extractPosterFrame(movie, index, { timestampSeeking = false } = {}) {
+  const input = timestampSeeking ? ["-ss", String(index / FPS), "-i", movie] : ["-i", movie]
+  const selection = timestampSeeking ? [] : ["-vf", `select=eq(n\\,${index})`]
+  return command("ffmpeg", ["-hide_banner", "-loglevel", "error", ...input, "-map", "0:v:0", "-an", ...selection, "-frames:v", "1", "-f", "image2pipe", "-vcodec", "png", "pipe:1"], { encoding: "buffer" }).stdout
+}
+
+export async function prepareInnerSystem({ root = process.cwd(), movie, orbitFrame, sourceRoot = SOURCE_ROOT, targetRoot = PUBLIC_ROOT, posterNames = POSTER_NAMES, reviewName = "inner-system-review.mp4" } = {}) {
+  const source = path.resolve(root, sourceRoot)
+  const target = path.resolve(root, targetRoot)
+  if (!source.startsWith(path.resolve(root, "artifacts/animated-experience") + path.sep)) throw new Error("Source derivatives must stay in the ignored cinematic source tree.")
+  if (!target.startsWith(path.resolve(root, "public/animated") + path.sep)) throw new Error("Public derivatives must stay in the cinematic asset tree.")
+  if (path.basename(reviewName) !== reviewName || !/^[a-z0-9-]+\.mp4$/.test(reviewName)) throw new Error("Review filename must be a plain MP4 filename inside the ignored source folder.")
+  const names = [posterNames.entity, posterNames.orchestration, posterNames.workflow]
+  if (new Set(names).size !== 3 || names.some(name => typeof name !== "string" || !/^[a-z0-9-]+$/.test(name))) throw new Error("Three unique plain poster filenames are required.")
+  const input = path.resolve(root, movie ?? path.join(sourceRoot, "inner-system-master.mkv"))
+  const review = path.join(source, reviewName)
   // Check all permanent destinations before probing or writing any derivatives.
   await requireAbsent(target, "Immutable public target")
   await requireAbsent(review, "Ignored linear review copy")
   if (!(await stat(input)).isFile()) throw new Error("A reviewed local movie master is required.")
-  const probe = command("ffprobe", ["-v", "error", "-count_frames", "-show_streams", "-show_format", "-of", "json", input])
+  const probe = command("ffprobe", ["-v", "error", "-count_frames", "-show_streams", "-show_format", "-show_frames", "-show_entries", "stream=codec_type,width,height,avg_frame_rate,r_frame_rate,nb_read_frames,nb_frames,duration:format=duration:frame=best_effort_timestamp_time", "-of", "json", input])
   const master = validateMaster(JSON.parse(probe.stdout))
   const orbit = orbitFrame ?? Math.round((master.frameCount - 1) / 2)
   if (!Number.isSafeInteger(orbit) || orbit < 0 || orbit >= master.frameCount) throw new Error("The orchestration poster frame must exist in the reviewed master.")
@@ -88,7 +104,7 @@ export async function prepareInnerSystem({ root = process.cwd(), movie, orbitFra
       desktop: { width: 1280, height: 720, bytes: 0 },
       mobile: { width: 768, height: 432, bytes: 0 },
       source: { width: master.width, height: master.height, audioStreams: master.audioStreams },
-      posterFrames: { entity: 0, orchestration: orbit, workflow: master.frameCount - 1 },
+      posterFrames: { [names[0]]: 0, [names[1]]: orbit, [names[2]]: master.frameCount - 1 },
     }
     for (let first = 0; first < frames.length; first += 4) {
       await Promise.all(frames.slice(first, first + 4).map(async name => {
@@ -105,10 +121,11 @@ export async function prepareInnerSystem({ root = process.cwd(), movie, orbitFra
       }))
     }
     for (const [name, index] of Object.entries(summary.posterFrames)) {
-      // Frame selection is exact, unlike timestamp seeking around GOP edges.
-      const still = command("ffmpeg", ["-hide_banner", "-loglevel", "error", "-i", input, "-map", "0:v:0", "-an", "-vf", `select=eq(n\\,${index})`, "-frames:v", "1", "-f", "image2pipe", "-vcodec", "png", "pipe:1"], { encoding: "buffer" })
-      const desktop = await sharp(still.stdout).webp({ quality: 86, effort: 6 }).toBuffer()
-      const mobile = await sharp(still.stdout).resize({ width: 768 }).webp({ quality: 80, effort: 6 }).toBuffer()
+      // Accurate input seeking decodes only from the preceding keyframe for a
+      // verified CFR master; unusual timestamps retain exact index selection.
+      const still = extractPosterFrame(input, index, { timestampSeeking: master.timestampSeeking })
+      const desktop = await sharp(still).webp({ quality: 86, effort: 6 }).toBuffer()
+      const mobile = await sharp(still).resize({ width: 768 }).webp({ quality: 80, effort: 6 }).toBuffer()
       await Promise.all([
         writeFile(path.join(target, `${name}.webp`), desktop, { flag: "wx" }),
         writeFile(path.join(target, `${name}-mobile.webp`), mobile, { flag: "wx" }),

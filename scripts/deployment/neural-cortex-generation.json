@@ -1,0 +1,101 @@
+{
+  "experiment": "neural-cortex-v1",
+  "status": "approved-scoped-production-release",
+  "productionBaseline": "15aecadb08cafa385d0814368ab5ab8870fb5512",
+  "delivery": {
+    "root": "/animated/neural-cortex-v1",
+    "frames": 739,
+    "fps": 24,
+    "duration": 30.792,
+    "posterFrames": { "entity": 0, "brain": 638, "signals": 738 },
+    "audioStreams": 0
+  },
+  "preservedPrefix": {
+    "master": "inner-system-master.mkv",
+    "unmodifiedFrameRange": [
+      0,
+      353
+    ],
+    "blendedFrameRange": [354, 359],
+    "crossfadeBegins": 14.75,
+    "prefixVerification": {
+      "pixelIdenticalFrames": 354,
+      "pixelFormat": "yuv444p10le",
+      "orderedFrameHashesSha256": "10a6a0a003f82501e1e943a5c1e1ae24ebfb2fc012e7b102c1e890287854761b"
+    }
+  },
+  "images": [
+    {
+      "job": "739f1b86-1897-4b3a-ad5c-c1d8157c69b8",
+      "params": {
+        "model": "gpt_image_2_5",
+        "variant": "flare",
+        "quality": "high",
+        "resolution": "4k",
+        "background": "opaque",
+        "aspect_ratio": "16:9",
+        "count": 1,
+        "medias": [
+          {
+            "role": "image",
+            "value": "66cdab5c-bb09-4c94-b199-51c8a08f936a"
+          }
+        ],
+        "prompt": "Inside the same black-chrome android: reveal its cerebral command center, not a chest and not an orbital machine. A sculptural bilateral synthetic brain made from folded obsidian titanium and fine metallic neural fibers, suspended centrally in a deep black interior. One restrained white-crimson synaptic nexus is exactly at image center, the orchestrator. Six elegant axon bundles branch from this central nexus to six distinct cortical processing regions, three on each side, all integrated into ONE brain rather than floating balls. Clear symmetrical hierarchy, large clean dark breathing room around the outer silhouette. Frontal three-quarter overhead cinematic product photography, coherent brushed silver highlights and crimson energy matching reference material. Entire cerebral form fully visible with generous margins in16:9, maximum silhouette width40% and height65% of frame. No text, icons, typography, labels, spherical satellites, orbital rings, interface panels, biological flesh, blood, neon clutter or fog."
+      }
+    },
+    {
+      "job": "c5f1ecc3-22ac-428d-b962-583534f4e8fd",
+      "params": {
+        "model": "gpt_image_2_5",
+        "variant": "flare",
+        "quality": "high",
+        "resolution": "4k",
+        "background": "opaque",
+        "aspect_ratio": "16:9",
+        "count": 1,
+        "medias": [
+          {
+            "role": "image",
+            "value": "739f1b86-1897-4b3a-ad5c-c1d8157c69b8"
+          }
+        ],
+        "prompt": "Preserve this exact synthetic obsidian brain and six red neural-fiber branches. Refine the framing for the final command-state: the luminous intersection where all six fiber bundles meet must lie precisely at the image midpoint, x50%,y50% (1920,1080 in a3840x2160 frame). Shift the entire brain slightly downward to achieve this; do not invent a second hub. Frontal symmetrical view, one unified brain, white-crimson core exactly centered, individual restrained signals traveling outward along the existing branches. The complete brain silhouette stays inside the frame with clean black margins on every side. Preserve black-chrome folds, refined silver highlights and deep black background. Minimal premium product photography, detailed and sharply resolved. No letters, no text, no symbols, no orbiting balls, no rings, no interface graphics, no haze."
+      }
+    }
+  ],
+  "video": {
+    "job": "7ef74fa6-8d61-4c1b-9e17-aef5f73a0f9c",
+    "params": {
+      "model": "cinematic_studio_video_4_0",
+      "mode": "omni_reference",
+      "duration": 16,
+      "resolution": "1080p",
+      "bitrate_mode": "high",
+      "generate_audio": false,
+      "aspect_ratio": "16:9",
+      "count": 1,
+      "prompt": "A single continuous16-second camera journey inside this same obsidian android, seamless from the first reference. 0–4s follow the existing crimson pulse upward through its metallic inner channel, curving gently toward a neural fiber trunk. 4–8s travel between densely layered black-chrome neurons; the fibers open naturally into the bilateral synthetic brain from the second reference. 8–12s pull back slowly to reveal the COMPLETE brain. One central white-crimson nexus at image center receives the pulse, then routes six restrained packets outward through the six existing cortical branches. 12–16s retain a stable frontal centered brain composition matching the final reference, with delicate ongoing signal motion and a very slow final dolly. The same black, brushed silver and crimson materials throughout. Elegant restrained product-film lighting, black breathing room, physically continuous movement. No return to external robot, no spheres or orbiting satellites, no linear conveyor, no cuts or dead holds. No text, symbols, HUD, fog, explosions or audio. Never crop the brain silhouette in the final view.",
+      "medias": [
+        {
+          "role": "start_image",
+          "value": "66cdab5c-bb09-4c94-b199-51c8a08f936a"
+        },
+        {
+          "role": "image",
+          "value": "739f1b86-1897-4b3a-ad5c-c1d8157c69b8"
+        },
+        {
+          "role": "end_image",
+          "value": "c5f1ecc3-22ac-428d-b962-583534f4e8fd"
+        }
+      ]
+    }
+  },
+  "constraints": [
+    "Production release explicitly approved; preserve existing project and domain configuration",
+    "No old orbital-sphere or workflow-conveyor footage after the microchannel",
+    "All functional labels real HTML; Orchestrator is centered",
+    "Source masters ignored; no audio"
+  ]
+}

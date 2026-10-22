@@ -306,7 +306,7 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
             <Link href="/" className={styles.return}>Return to Standard Site</Link>
           </header>
           <div className={styles.agents}>
-            {CINEMA.agents.map((agent, index) => <span key={agent.name} ref={element => { labelsRef.current[index] = element }} className={styles.agent} aria-hidden="true">{agent.name}</span>)}
+            {CINEMA.agents.map((agent, index) => <span key={agent.name} ref={element => { labelsRef.current[index] = element }} className={styles.agent} data-role={agent.name === "Orchestrator" ? "orchestrator" : "agent"} aria-hidden="true">{agent.name}</span>)}
           </div>
           <div className={styles.phase} aria-hidden="true">
             {CINEMA.phases.map((phase, index) => <span key={phase.text} ref={element => { phasesRef.current[index] = element }}>{phase.text}</span>)}

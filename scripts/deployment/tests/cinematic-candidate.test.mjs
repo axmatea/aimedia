@@ -509,7 +509,7 @@ test("candidate is isolated from homepage and accessible controls keep real dest
   assert.match(ui, /focus\(\{ preventScroll: true \}\)/)
   assert.match(ui, /document\.hidden/)
   assert.match(ui, /URL\.revokeObjectURL/)
-  assert.equal(CINEMA.root, "/animated/inner-system-v1", "New immutable frames must not reuse cached production URLs")
+  assert.equal(CINEMA.root, "/animated/neural-cortex-v1", "New immutable frames must not reuse cached production URLs")
   const deliveryPath = new URL(`../../../public${CINEMA.root}/delivery.json`, import.meta.url)
   if (existsSync(deliveryPath)) {
     const delivery = JSON.parse(readFileSync(deliveryPath, "utf8"))
