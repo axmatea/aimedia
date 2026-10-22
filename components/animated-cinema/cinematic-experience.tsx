@@ -66,6 +66,7 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)")
     let cache: CinemaFrameCache<FrameSurface> | null = null
     let target = 0, presented = 0, interpolated = 0, lastTime = 0
+    let pendingProposal: { target: number; progress: number } | null = null
     let direction = 1, frame: number | null = null
     let disposed = false, fallback = !context, visible = !document.hidden
     let width = 1, height = 1, mobile = false, preferenceReady = false
@@ -153,9 +154,17 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
         root!.dataset.rafP95Ms = (sorted[Math.floor(sorted.length * 0.95)] ?? 0).toFixed(2)
       }
       lastTime = now
-      // Decode retries must ask for the same next visible step, not advance an
-      // unseen clock. Reversing input replaces that step from the current image.
-      interpolated = preference.matches || fallback ? target : follow(presented, target, elapsed)
+      // Lock the exact proposal across decode retries. A retry may have a
+      // different RAF interval, but cannot move the image it is waiting for.
+      if (preference.matches || fallback) {
+        pendingProposal = null
+        interpolated = target
+      } else {
+        if (!pendingProposal || pendingProposal.target !== target) {
+          pendingProposal = { target, progress: follow(presented, target, elapsed) }
+        }
+        interpolated = pendingProposal.progress
+      }
       const requested = frameAt(interpolated, CINEMA.frameCount, CINEMA.filmEnd)
       let ready = preference.matches || fallback
       if (!ready && cache) {
@@ -170,7 +179,7 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
       }
       root!.dataset.buffering = String(!ready)
       loadingRef.current?.setAttribute("aria-hidden", String(ready))
-      if (ready) { presented = interpolated; paintLayers(presented) }
+      if (ready) { presented = interpolated; pendingProposal = null; paintLayers(presented) }
       if (ready && Math.abs(interpolated - target) > 0.00001) requestTick()
       else lastTime = 0
     }
@@ -199,7 +208,10 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
 
     const readScroll = () => {
       const next = clamp(-story.getBoundingClientRect().top / Math.max(1, story.offsetHeight - window.innerHeight))
-      if (next !== target) direction = next > target ? 1 : -1
+      if (next !== target) {
+        direction = next > target ? 1 : -1
+        pendingProposal = null
+      }
       target = next
       requestTick()
     }
@@ -228,6 +240,7 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
     const changePreference = () => {
       root.dataset.reducedMotion = String(preference.matches)
       root.dataset.renderer = preference.matches ? "reduced-motion" : fallback ? "poster-fallback" : "frame-sequence"
+      pendingProposal = null
       hasFrame = false
       createCache()
       paintLayers(presented)
@@ -238,6 +251,7 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
       pendingReplay = true
       hasFrame = false
       target = 0; interpolated = 0; presented = 0; direction = 1
+      pendingProposal = null
       focusResolution = false
       cache?.request(0, 1)
       paintLayers(0)

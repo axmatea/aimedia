@@ -111,7 +111,7 @@ test("reduced-motion still crossfades preserve one complete visual without frame
   assert.match(ui, /if \(preference\.matches \|\| fallback\) return/)
   assert.match(ui, /preference\.addEventListener\("change"/)
   assert.doesNotMatch(ui, /<video|currentTime\s*=|WebGL|setInterval|setTimeout/)
-  assert.match(ui, /if \(ready\) \{ presented = interpolated; paintLayers\(presented\) \}/)
+  assert.match(ui, /if \(ready\) \{ presented = interpolated; pendingProposal = null; paintLayers\(presented\) \}/)
   assert.match(ui, /addEventListener\("scroll", readScroll, \{ passive: true \}\)/)
   assert.doesNotMatch(ui, /preventDefault|addEventListener\("wheel"/)
 })
@@ -132,7 +132,7 @@ function productionTickHarness({ presented = 0, target = .18 } = {}) {
   context = vm.createContext({
     frame: null, disposed: false, visible: true, lastTime: 0, frameIntervals: [],
     root: { dataset: {} }, preference: { matches: false }, fallback: false,
-    presented, interpolated: presented, target, direction: 1,
+    presented, interpolated: presented, target, direction: 1, pendingProposal: null,
     CINEMA, follow: timeline.follow, frameAt: timeline.frameAt,
     loadingRef: { current: { setAttribute() {} } },
     cache: { request(position) { requests.push(position) }, failedAt() { return false }, dispose() {} },
@@ -171,6 +171,37 @@ test("production tick retries its first pending exact pair instead of moving an 
   assert.equal(harness.context.root.dataset.buffering, "false")
 })
 
+test("production tick holds one pending pair across variable RAF intervals and delayed decode callbacks", () => {
+  for (const interval of [8, 16, 80]) {
+    const harness = productionTickHarness({ presented: .12, target: .34 })
+    harness.context.lastTime = 100
+    harness.tick(100 + interval)
+    const pending = harness.requests.at(-1)
+    assert.ok(pending > timeline.frameAt(.12, CINEMA.frameCount, CINEMA.filmEnd))
+    assert.equal(harness.context.presented, .12)
+    // Background frame decodes and a hidden-tab resume can schedule retries at
+    // entirely different timings. None may change the exact requested pair.
+    for (const now of [210 + interval, 226 + interval, 306 + interval]) {
+      harness.tick(now)
+      assert.equal(harness.requests.at(-1), pending, `${interval}ms proposal must survive a changed retry interval`)
+      assert.equal(harness.context.presented, .12)
+      assert.equal(harness.drawings.length, 0)
+      assert.equal(harness.overlays.length, 0)
+    }
+    harness.ready(pending)
+    harness.tick(500 + interval)
+    assert.equal(harness.requests.at(-1), pending)
+    assert.equal(harness.drawings.length, 1)
+    assert.equal(harness.drawings[0].position, pending)
+    assert.equal(harness.overlays.at(-1), harness.drawings[0].progress)
+    assert.equal(harness.context.pendingProposal, null)
+    assert.equal(harness.context.root.dataset.buffering, "false")
+    // After presentation, the following actual RAF may make one new proposal.
+    harness.tick(508 + interval)
+    assert.ok(harness.requests.at(-1) > pending)
+  }
+})
+
 test("production tick cancels a pending forward proposal on reversal and preserves atomic replay/hidden behavior", () => {
   const harness = productionTickHarness({ presented: .5, target: .8 })
   harness.tick(16)
@@ -201,6 +232,7 @@ test("production tick cancels a pending forward proposal on reversal and preserv
   harness.context.interpolated = 0
   harness.context.presented = 0
   harness.context.lastTime = 0
+  harness.context.pendingProposal = null
   const beforeReplay = harness.drawings.length
   harness.tick(416)
   assert.equal(harness.requests.at(-1), 0)
