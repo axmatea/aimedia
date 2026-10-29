@@ -358,6 +358,14 @@ Screenshots (local audit artifacts):
 `/tmp/aimedia-optimization-staging-animated-tablet.jpg`,
 `/tmp/aimedia-optimization-staging-animated-mobile.jpg`.
 The result JSON includes all 55 release-file paths and the 19 removed-file paths.
+Removed direct dependencies: `@base-ui/react`, `@paper-design/shaders`,
+`@radix-ui/react-avatar`, `@radix-ui/react-label`, `@radix-ui/react-slot`,
+`@radix-ui/react-switch`, `@radix-ui/react-tooltip`, `class-variance-authority`,
+`googleapis`, and direct `framer-motion` (still transitively needed by `motion`).
+`dotted-map` moved to development dependencies, where its offline generator runs.
+Final production invalid-payload checks were side-effect-free: empty booking
+request 400, unsigned Resend request 401, uncommissioned Cal webhook 503. The last
+response is the documented existing configuration gap, not a new hosting failure.
 
 **BLOCKED / remaining bottlenecks**: authored Spline subdivision geometry and
 runtime initialization still dominate mobile CPU. Geometry baking requires a

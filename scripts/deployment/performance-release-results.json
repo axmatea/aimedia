@@ -1,6 +1,8 @@
 {
   "date": "2026-10-29",
   "status": "production-deployed-and-verified",
+  "invalidPayloadChecks": { "booking": 400, "unsignedResend": 401, "uncommissionedCal": 503, "liveRecordsCreated": 0 },
+  "removedDirectDependencies": ["@base-ui/react", "@paper-design/shaders", "@radix-ui/react-avatar", "@radix-ui/react-label", "@radix-ui/react-slot", "@radix-ui/react-switch", "@radix-ui/react-tooltip", "class-variance-authority", "framer-motion", "googleapis"],
   "baselineCommit": "e495b7fa85d5f95c58a15e7f0a218249ea77425f",
   "rollbackWorkerVersion": "0133f6b0-0b83-4eb4-88a7-e6c43f2fd34f",
   "stagingUrl": "https://aimedia-web-staging.axmedia.workers.dev",
