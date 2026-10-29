@@ -86,7 +86,7 @@ export function HeroVisual() {
         {/* Scene + runtime wasm are self-hosted (public/spline/): no third-party
             fetches at runtime. Source of truth: Spline export kZDDjO5HuC9GJUM2.
             To update the scene, re-export and replace the files (see splite.tsx). */}
-        <SplineScene scene="/spline/robot.splinecode" className="w-full h-full opacity-100 mix-blend-normal" onLoad={handleRobotReady} onReadyChange={setRobotReady} />
+        <SplineScene scene="/spline/robot-optimized-v1.splinecode" className="w-full h-full opacity-100 mix-blend-normal" onLoad={handleRobotReady} onReadyChange={setRobotReady} />
         <div className="ai-hero-fade-x absolute inset-y-0 left-0 w-[50%]" />
         <div className="ai-hero-fade-y absolute bottom-0 left-0 right-0 h-56" />
         <div className="ai-hero-fade-x absolute inset-y-0 right-0 w-[15%] rotate-180 block dark:hidden" />

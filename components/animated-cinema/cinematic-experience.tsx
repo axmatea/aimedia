@@ -353,8 +353,8 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
             <canvas ref={canvasRef} className={styles.canvas} />
           </div>
           <header className={styles.header}>
-            <Link href="/" className={styles.brand} aria-label="AX Media standard site"><AxWordmark /></Link>
-            <Link href="/" className={styles.return}>Return to Standard Site</Link>
+            <Link href="/" prefetch={false} className={styles.brand} aria-label="AX Media standard site"><AxWordmark /></Link>
+            <Link href="/" prefetch={false} className={styles.return}>Return to Standard Site</Link>
           </header>
           <div className={styles.agents}>
             {CINEMA.agents.map((agent, index) => <span key={agent.name} ref={element => { labelsRef.current[index] = element }} className={styles.agent} data-role={agent.name === "Orchestrator" ? "orchestrator" : "agent"} aria-hidden="true">{agent.name}</span>)}

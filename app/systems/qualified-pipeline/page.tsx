@@ -120,7 +120,7 @@ export default function QualifiedPipelinePage() {
           <div className="grid gap-10 lg:grid-cols-[.7fr_1fr] lg:gap-20">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#FF2D55]">
-                Production, not demo
+                Built for operations
               </p>
               <h2 className="mt-4 max-w-xl font-display text-5xl uppercase leading-[0.9] tracking-wide md:text-7xl">
                 The workflow becomes the product.

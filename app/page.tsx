@@ -24,6 +24,7 @@ import { Spotlight } from "@/components/ui/spotlight"
 import { LogoCloud } from "@/components/ui/logo-cloud-3"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import { AxWordmark } from "@/components/ui/ax-wordmark"
+import { HomeMotionProvider } from "@/components/providers/HomeMotionProvider"
 import { SERVE_ICONS } from "@/components/ui/serve-icons"
 
 import { Disp, Tag, AmbientImage } from "@/components/home/shared"
@@ -42,7 +43,7 @@ import {
 // ── Page ────────────────────────────────────────────────────────────────────
 export default function Home() {
   return (
-    <main className="w-full ai-page">
+    <HomeMotionProvider><main className="w-full ai-page">
       <HeroPosterHints />
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
@@ -209,7 +210,7 @@ export default function Home() {
                   <div className="space-y-6 overflow-hidden rounded-3xl border border-white/8 bg-[#0C0C0F] p-5 sm:p-6 md:p-8">
                     <div>
                       <div className="mb-2 flex items-center justify-between gap-4">
-                        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">AI content team · Demo</p>
+                        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">AI content team</p>
                         <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/60">Tap a creator</p>
                       </div>
                       <p className="mb-1 text-sm font-bold text-white/75">One system. Every channel.</p>
@@ -222,10 +223,10 @@ export default function Home() {
 
                     <ul className="space-y-2 pt-1">
                       {[
-                        { platform: "LinkedIn", cadence: "3 posts / week", color: "#5EA9F0" },
-                        { platform: "X", cadence: "5 posts / week", color: "#FFFFFF" },
-                        { platform: "Instagram", cadence: "3 posts / week", color: "#F26D9C" },
-                        { platform: "YouTube Shorts", cadence: "2 shorts / week", color: "#FF6B6B" },
+                        { platform: "LinkedIn", format: "Thought leadership", color: "#5EA9F0" },
+                        { platform: "X", format: "Product updates", color: "#FFFFFF" },
+                        { platform: "Instagram", format: "Visual storytelling", color: "#F26D9C" },
+                        { platform: "YouTube Shorts", format: "Short-form video", color: "#FF6B6B" },
                       ].map((channel, index) => (
                         <li
                           key={channel.platform}
@@ -233,7 +234,7 @@ export default function Home() {
                         >
                           <span className="text-xs font-bold" style={{ color: channel.color }}>{channel.platform}</span>
                           <span className="inline-flex items-center gap-2 font-mono text-[10px] text-white/60">
-                            {channel.cadence}
+                            {channel.format}
                             <span className="relative inline-flex h-1.5 w-1.5" style={{ "--i": index } as React.CSSProperties} aria-hidden>
                               <span className="ugc-ping absolute inline-flex h-full w-full rounded-full bg-white/35" />
                               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white/30" />
@@ -244,7 +245,7 @@ export default function Home() {
                     </ul>
 
                     <p className="border-t border-white/5 pt-4 font-mono text-[10px] text-white/60">
-                      Illustrative cadence · final mix follows the approved strategy
+                      Aligned to your channels and strategy
                     </p>
                   </div>
                 )}
@@ -337,6 +338,6 @@ export default function Home() {
         </div>
       </footer>
 
-    </main>
+    </main></HomeMotionProvider>
   )
 }

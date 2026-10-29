@@ -2,71 +2,60 @@
 
 import { useEffect } from "react"
 import { usePathname } from "next/navigation"
-import { frame, cancelFrame } from "motion/react"
-import Lenis from "lenis"
+import { registerScrollInstance } from "./scroll-bridge"
 
-// Shared instance so anchor navigation can use Lenis easing too.
-let lenisInstance: Lenis | null = null
-
-export function lenisScrollTo(target: string | HTMLElement, offset = -80) {
-  if (lenisInstance) {
-    // Short, decelerating glide for anchor jumps: smooth without hijacking.
-    // Sections between here and the target render under content-visibility
-    // with estimated placeholder heights, so layout can shift mid-glide and
-    // the landing drifts. After the glide, re-measure the real target position
-    // and close any remaining gap with a short corrective glide.
-    const correct = () => {
-      const lenis = lenisInstance
-      if (!lenis) return
-      const el = typeof target === "string" ? document.querySelector<HTMLElement>(target) : target
-      if (!el) return
-      const drift = el.getBoundingClientRect().top + offset
-      if (Math.abs(drift) > 2) {
-        lenis.scrollTo(el, { offset, duration: 0.18, easing: (t: number) => 1 - Math.pow(1 - t, 3) })
-      }
-    }
-    lenisInstance.scrollTo(target, {
-      offset,
-      duration: 0.85,
-      easing: (t: number) => 1 - Math.pow(1 - t, 3),
-      onComplete: correct,
-    })
-  } else if (typeof target === "string") {
-    document.querySelector(target)?.scrollIntoView({ behavior: "smooth" })
-  } else {
-    target.scrollIntoView({ behavior: "smooth" })
-  }
-}
-
-/**
- * Mounts Lenis smooth scroll, driven by motion/react's own frame loop so there
- * is exactly ONE rAF for Lenis + all framer scroll math (no competing loops).
- * Skips entirely under prefers-reduced-motion (native scroll retained).
- * syncTouch:false keeps native mobile momentum and avoids touch-scroll jank.
- */
+/** Optional desktop enhancement; skipped routes and native scrolling load no runtime. */
 export function SmoothScroll() {
   const pathname = usePathname()
   useEffect(() => {
-    if (
-      // The cinematic route already interpolates its own timeline. Native
-      // scrolling keeps keyboard jumps and reverse scroll in one clock.
-      pathname === "/animated" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      !window.matchMedia("(hover: hover) and (pointer: fine)").matches
-    ) return
+    // The cinematic route already interpolates its own timeline.
+    if (pathname === "/animated") return
 
-    // Keep desktop wheel movement polished but responsive. Touch devices stay
-    // fully native, and reduced-motion users bypass Lenis altogether.
-    const lenis = new Lenis({ smoothWheel: true, syncTouch: false, lerp: 0.14 })
-    lenisInstance = lenis
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)")
+    let disposed = false
+    let generation = 0
+    let stop: (() => void) | null = null
 
-    const update = (data: { timestamp: number }) => lenis.raf(data.timestamp)
-    frame.update(update, true)
+    const stopRuntime = () => {
+      stop?.()
+      stop = null
+    }
+    const sync = () => {
+      const current = ++generation
+      stopRuntime()
+      if (disposed || reducedMotion.matches || !finePointer.matches) return
 
+      // Both libraries stay behind the eligibility gate, with no gesture delay.
+      // import() itself cannot be aborted; the generation prevents stale setup.
+      void Promise.all([import("lenis"), import("./scroll-clock")]).then(([{ default: Lenis }, { frame, cancelFrame }]) => {
+        if (disposed || current !== generation || reducedMotion.matches || !finePointer.matches) return
+
+        const lenis = new Lenis({ smoothWheel: true, syncTouch: false, lerp: 0.14 })
+        const unregister = registerScrollInstance(lenis)
+        const update = (data: { timestamp: number }) => lenis.raf(data.timestamp)
+        stop = () => {
+          unregister()
+          cancelFrame(update)
+          lenis.destroy()
+        }
+        // Share Motion's clock instead of creating a competing animation loop.
+        frame.update(update, true)
+      }).catch(() => {
+        if (current === generation) stopRuntime()
+        // A failed optional chunk leaves the native anchor fallback available.
+      })
+    }
+
+    reducedMotion.addEventListener("change", sync)
+    finePointer.addEventListener("change", sync)
+    sync()
     return () => {
-      cancelFrame(update)
-      lenis.destroy()
-      lenisInstance = null
+      disposed = true
+      generation++
+      reducedMotion.removeEventListener("change", sync)
+      finePointer.removeEventListener("change", sync)
+      stopRuntime()
     }
   }, [pathname])
 

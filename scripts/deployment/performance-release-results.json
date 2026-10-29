@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-29",
+  "status": "staging-verified-production-pending",
+  "baselineCommit": "e495b7fa85d5f95c58a15e7f0a218249ea77425f",
+  "rollbackWorkerVersion": "0133f6b0-0b83-4eb4-88a7-e6c43f2fd34f",
+  "stagingUrl": "https://aimedia-web-staging.axmedia.workers.dev",
+  "stagingWorkerVersion": "b9ba5505-875e-4638-aa0d-56004a4dc410",
+  "productionUrl": "https://aimedia.global",
+  "productionWorkerVersion": null,
+  "method": {
+    "lighthouse": "12.6.1",
+    "chrome": "150.0.7871.24",
+    "mobile": "default simulated mobile throttling, three runs per primary production route, median",
+    "desktop": "desktop preset, single indicative run",
+    "caveats": ["Local lab results, not field INP", "Cloudflare POP and cache variability", "Staging metrics are not production comparison"]
+  },
+  "beforeMobileMedians": {
+    "home": { "performance": 70, "lcpMs": 4389.7755, "tbtMs": 461.606, "transferBytes": 2566699, "cls": 0 },
+    "animated": { "performance": 86, "lcpMs": 4048.129, "tbtMs": 9.5, "transferBytes": 485467, "cls": 0 }
+  },
+  "afterMobileMedians": null,
+  "verifiedPayloads": {
+    "robotScene": { "beforeBytes": 1349622, "afterBytes": 1011211, "savedBytes": 338411, "savedPercent": 25.07, "losslessPixels": true, "geometryAndAnimationUnchanged": true },
+    "mainCss": { "beforeBytes": 136641, "afterBytes": 101989, "beforeGzipBytes": 25807, "afterGzipBytes": 19815 },
+    "worker": { "beforeKiB": 6031.14, "afterKiB": 5883.17, "beforeGzipKiB": 1347.75, "afterGzipKiB": 1332.50 }
+  },
+  "tests": { "conversion": 58, "deployment": 115, "lint": "pass", "typescript": "pass", "cloudflareBuild": "pass", "dryRun": "pass", "stagingSmoke": "pass" },
+  "monitoring": { "cloudflareRumSiteTag": "0b34b09eaacb43f48dcf4e7c3d01cbcf", "autoInstall": true, "fieldCoreWebVitals": "awaiting sufficient real samples" },
+  "knownLimitations": [
+    "Spline geometry/runtime remains the primary homepage CPU cost; source-level mesh bake needs a separate visual fidelity review",
+    "Four npm high findings refer to one upstream OpenNext build-time glob chain; no forced downgrade or override",
+    "Historical credential removed from two unused scripts but not revoked or removed from history; separate approval required",
+    "Cal-to-CRM/Meta commissioning is pre-existing and not completed by this optimization release",
+    "No real email, booking, lead or provider mutation used as a test"
+  ]
+}

@@ -7,7 +7,7 @@ Active AI Media web project.
 ## Run
 
 ```zsh
-cd "/Users/axmatea/Desktop/AI Integration/Projects/AI Media"
+cd "/Users/axmatea/Desktop/AI Integration/01_AI_BUSINESS/aimedia/website-home-performance-release"
 npm install
 npm run dev
 ```
@@ -15,14 +15,14 @@ npm run dev
 ## Architecture (v7.2, server-component islands)
 
 `app/page.tsx` is a SERVER component: all static content (hero text incl. the
-LCP paragraph, marquee, services, trace map, FAQ, CTA band, footer) renders on
+LCP paragraph, marquee, services, FAQ, CTA band, footer) renders on
 the server and ships zero hydration JS. Interactivity lives in explicit client
 islands under `components/home/`:
 
 - `nav.tsx` (SiteNav), `hero-islands.tsx` (HeroVisual robot/Lightning,
   HeroRotator, HeroCtas), `booking.tsx` (BookingFlow/Section/Dialog),
-  `booking-button.tsx`, `reveal.tsx` (whileInView wrapper; children stay
-  server-rendered), `lazy-islands.tsx` (ssr:false widgets: AgentRadial,
+  `reveal.tsx` (whileInView wrapper; children stay server-rendered),
+  `lazy-islands.tsx` (ssr:false widgets: AgentRadial,
   LeadFunnel, N8nWorkflowBlock, AIUGCCreators, WorldMap)
 - `data.ts` + `shared.tsx` are plain modules imported by both sides.
 
@@ -45,12 +45,13 @@ The local Meta proof funnel is:
 
 It captures session first-touch UTM/Meta identifiers, deduplicates by Cal Booking UID, and fails closed when webhook or CRM configuration is missing. Before any deployment or campaign activation, follow [`docs/meta-proof-attribution-runbook.md`](docs/meta-proof-attribution-runbook.md).
 
-## Railway migration
+## Historical Railway recovery
 
-See [the migration and rollback runbook](docs/railway-migration.md) and [production-source recovery evidence](docs/railway-source-recovery.json). Source recovery is complete; paid staging, secure configuration, integration tests and DNS gates remain.
+The Railway runbook and source-recovery manifests are retained as historical
+recovery and rollback evidence. Railway is not the live serving runtime.
 
-## Cloudflare recovery
+## Cloudflare production
 
-Current host migration work uses [the Cloudflare recovery runbook](docs/cloudflare-migration.md).
-Use the approved visual release, not the unrelated dirty outreach worktree.
-The main domain is not switched until secrets and remote integration gates pass.
+The live site runs on Cloudflare Workers through OpenNext. Read
+[the Cloudflare production runbook](docs/cloudflare-migration.md) before changing
+runtime bindings, public hostnames, deployment behavior, or rollback assets.

@@ -1,13 +1,13 @@
 "use client"
 import { useState } from "react"
-import { motion, useTransform, useMotionValue, useSpring, useReducedMotion } from "motion/react"
+import { m, useTransform, useMotionValue, useSpring, useReducedMotion } from "motion/react"
 
 type AICreator = {
   id: number
   name: string
   niche: string
   image: string
-  /** Illustrative activity loop for the "now creating" line (demo personas). */
+  /** Content focus for the selected AI creator. */
   creating: string[]
 }
 
@@ -37,7 +37,7 @@ const TooltipItem = ({
   const translateX = useSpring(useTransform(x, [-100, 100], [-40, 40]), { stiffness: 120, damping: 18 })
 
   return (
-    <motion.div
+    <m.div
       className="group relative"
       style={{ "--i": index } as React.CSSProperties}
       initial={reduceMotion ? false : { opacity: 0, scale: 0.6, y: 10 }}
@@ -45,15 +45,14 @@ const TooltipItem = ({
       viewport={{ once: true, amount: 0.4 }}
       transition={{ duration: 0.5, delay: index * 0.06, ease: [0.2, 0.8, 0.2, 1] }}
     >
-      <motion.div
+      <m.div
         style={{ translateX, rotate }}
         className="pointer-events-none absolute -top-20 left-1/2 hidden -translate-x-1/2 flex-col items-center rounded-xl border border-white/10 bg-[#0C0C0F] px-4 py-2.5 shadow-2xl group-hover:flex z-50"
       >
         <p className="whitespace-nowrap text-xs font-bold text-white">{item.name}</p>
         <p className="whitespace-nowrap text-[10px] text-white/65 mt-0.5">{item.niche}</p>
-        <p className="whitespace-nowrap text-[10px] text-[#C8FF60] font-mono mt-1">Illustrative persona</p>
         <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-[#0C0C0F] border-r border-b border-white/10" />
-      </motion.div>
+      </m.div>
       {/* Tap/click selects the creator: pulse ring + pinned "now creating" line */}
       <button
         type="button"
@@ -85,7 +84,7 @@ const TooltipItem = ({
           <span className="text-[6px] font-black text-[#050507]">AI</span>
         </span>
       </button>
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -116,12 +115,12 @@ export function AIUGCCreators() {
           <span className="text-white/50 text-lg font-light">+</span>
         </div>
       </div>
-      {/* Live micro-line: auto-cycles the team, or pins to the tapped creator */}
+      {/* The selected creator's content focus, not a simulated live activity feed. */}
       <div className="mt-4 flex items-center gap-2 min-h-[18px]" aria-live="off">
         <span className="relative flex h-1.5 w-1.5 flex-shrink-0">
           <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#FF2D55]" />
         </span>
-        <motion.p
+        <m.p
           key={`${activeCreator.id}-${task}`}
           initial={reduceMotion ? false : { opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
@@ -129,9 +128,9 @@ export function AIUGCCreators() {
           className="text-[10px] font-mono text-white/65 truncate"
         >
           <span className="text-white/90 font-bold">{activeCreator.name}</span>
-          {" · now creating: "}
+          {" · Content focus: "}
           {task}
-        </motion.p>
+        </m.p>
       </div>
     </div>
   )

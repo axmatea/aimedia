@@ -5,7 +5,7 @@
  * Client-only module: touches window and the Lenis instance.
  */
 
-import { lenisScrollTo } from "@/components/providers/SmoothScroll"
+import { lenisScrollTo } from "@/components/providers/scroll-bridge"
 import { trackFunnel } from "@/lib/conversion/track"
 
 export const scrollToId = (id: string) => lenisScrollTo(`#${id}`)

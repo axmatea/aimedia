@@ -7,7 +7,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 Before doing site work in this project, also read:
 
 - `./BRIEF.md`
-- `../Cortex/notes/AI-COLLAB.md`
-- `../Cortex/website/SHARED_CONTEXT.md`
-- `../Cortex/website/WORKSTREAMS.md`
-- `../Cortex/website/HANDOFF.md`
+- `./README.md`
+- `./docs/cloudflare-migration.md` for the current production runtime and rollback constraints
+
+The older `../Cortex/...` collaboration files are not present in this checkout.
+Do not block project work or invent their contents.

@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Space_Grotesk, Bebas_Neue } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import { LazyMotion, domAnimation } from "motion/react";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { FunnelAnalytics } from "@/components/analytics/funnel-analytics";
 import "./globals.css";
@@ -128,11 +127,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body className="min-h-full flex flex-col bg-[#050507] text-white antialiased" style={{ fontFamily: "var(--font-space)" }}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          <LazyMotion features={domAnimation}>
-            <SmoothScroll />
-            {children}
-            <FunnelAnalytics />
-          </LazyMotion>
+          <SmoothScroll />
+          {children}
+          <FunnelAnalytics />
         </ThemeProvider>
       </body>
     </html>

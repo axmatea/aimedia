@@ -1,0 +1,43 @@
+.shell {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  color: #f4f3ef;
+  background: #000;
+}
+
+.wordmark {
+  width: 4.625rem;
+  height: 3rem;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.status span {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: #ff2d55;
+  animation: pulse 1.3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status span { animation: none; }
+}

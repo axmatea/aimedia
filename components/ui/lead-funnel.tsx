@@ -3,16 +3,15 @@
 import { useEffect, useState } from "react"
 import { m, useReducedMotion } from "motion/react"
 import { CalendarCheck, Mail, MessageCircleReply, Send, Users } from "lucide-react"
-import { CountUp } from "@/components/ui/count-up"
 
 // Restored from the strongest historical GTM treatment. The multicolour
 // sequence is intentional: each operating handoff gets one controlled signal.
 const FUNNEL_STAGES = [
-  { icon: Users, label: "Prospects identified", value: "8,487", color: "#7B2FFF", width: "100%" },
-  { icon: Mail, label: "Prospect emails", value: "2,088", color: "#A78BFA", width: "72%" },
-  { icon: Send, label: "Contacted", value: "1,182", color: "#FF2D55", width: "52%" },
-  { icon: MessageCircleReply, label: "Replies", value: "402", color: "#FF6B35", width: "34%" },
-  { icon: CalendarCheck, label: "Meetings booked", value: "115", color: "#C8FF60", width: "18%" },
+  { icon: Users, label: "Prospect research", color: "#7B2FFF", width: "100%" },
+  { icon: Mail, label: "Email verification", color: "#A78BFA", width: "72%" },
+  { icon: Send, label: "Approved outreach", color: "#FF2D55", width: "52%" },
+  { icon: MessageCircleReply, label: "Reply routing", color: "#FF6B35", width: "34%" },
+  { icon: CalendarCheck, label: "Call booking", color: "#C8FF60", width: "18%" },
 ] as const
 
 export function LeadFunnel() {
@@ -31,12 +30,12 @@ export function LeadFunnel() {
   return (
     <div
       className="overflow-hidden rounded-3xl border border-[#7B2FFF]/15 bg-[#0A0518] p-5 sm:p-6 md:p-8"
-      aria-label="Illustrative go-to-market pipeline"
+      aria-label="Five-stage go-to-market workflow"
     >
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">Lead pipeline · Demo view</p>
-          <p className="mt-1 text-xs font-bold text-white/75">Illustrative pipeline</p>
+          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">Acquisition workflow</p>
+          <p className="mt-1 text-xs font-bold text-white/75">Research to conversation</p>
         </div>
         <span className="relative flex h-2 w-2" aria-hidden>
           {!reduceMotion && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#7B2FFF] opacity-70" />}
@@ -74,8 +73,8 @@ export function LeadFunnel() {
                 <span className="min-w-0 flex-1">
                   <span className="mb-1.5 flex items-center justify-between gap-3">
                     <span className="truncate text-[9px] font-bold uppercase tracking-[0.1em] text-white/80 sm:text-[10px]">{stage.label}</span>
-                    <strong className="font-mono text-xs" style={{ color: stage.color }}>
-                      <CountUp value={stage.value} duration={1500} />
+                    <strong className="font-mono text-xs" style={{ color: stage.color }} aria-label={`Step ${index + 1} of ${FUNNEL_STAGES.length}`}>
+                      {String(index + 1).padStart(2, "0")}
                     </strong>
                   </span>
                   <span className="block h-1 w-full overflow-hidden rounded-full bg-white/5" aria-hidden>
@@ -106,7 +105,6 @@ export function LeadFunnel() {
             <p className="text-[9px] text-white/50">Approval before send</p>
           </div>
         </div>
-        <p className="text-[10px] text-white/60">Demo data</p>
       </div>
     </div>
   )

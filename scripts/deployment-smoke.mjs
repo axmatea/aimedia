@@ -50,7 +50,7 @@ await get(chunkPath)
 for (const path of [
   "/animated", "/systems/qualified-pipeline", "/privacy-policy", "/legal", "/cookies",
   "/robots.txt", "/sitemap.xml", "/manifest.webmanifest", "/ax-logo-clean.png",
-  "/spline/robot.splinecode", "/spline/process.wasm",
+  "/spline/robot.splinecode", "/spline/robot-optimized-v1.splinecode", "/spline/process.wasm",
 ]) {
   const response = await get(path)
   if (path === "/sitemap.xml") assert.match(await response.text(), /qualified-pipeline/)

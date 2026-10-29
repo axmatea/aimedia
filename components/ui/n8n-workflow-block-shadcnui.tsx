@@ -49,7 +49,7 @@ function PortalDemo() {
   ] as const
 
   return (
-    <div className="platform-demo portal-demo" aria-label="Portal product demonstration">
+    <div className="platform-demo portal-demo" aria-label="Client portal">
       <div className="platform-demo-toolbar">
         <div>
           <strong>Client workspace</strong>
@@ -97,7 +97,7 @@ function PortalDemo() {
 
 function ChatDemo() {
   return (
-    <div className="platform-demo chat-demo" aria-label="AI Chat product demonstration">
+    <div className="platform-demo chat-demo" aria-label="Business AI assistant">
       <div className="platform-demo-toolbar">
         <div><strong>Business assistant</strong><span>Grounded in approved workspace context</span></div>
         <span className="platform-demo-state"><i aria-hidden />Context ready</span>
@@ -110,10 +110,10 @@ function ChatDemo() {
         </div>
         <div className="chat-message chat-message-ai">
           <span><Bot size={13} aria-hidden />AI Media</span>
-          <p>Two approval-gated items are waiting: the workspace structure and launch copy. Everything else can keep moving.</p>
+          <p>I connect approvals and next actions to their source context, so you can review what needs attention before work moves forward.</p>
         </div>
         <div className="chat-context-grid" aria-label="Sources used for the answer">
-          <div><ShieldCheck size={14} aria-hidden /><span><strong>Approvals</strong><small>2 waiting</small></span></div>
+          <div><ShieldCheck size={14} aria-hidden /><span><strong>Approvals</strong><small>Human review</small></span></div>
           <div><Workflow size={14} aria-hidden /><span><strong>Active work</strong><small>Moving</small></span></div>
           <div><Database size={14} aria-hidden /><span><strong>Context</strong><small>Workspace</small></span></div>
         </div>
@@ -131,7 +131,7 @@ const DATA_NODES: Array<{ label: string; detail: string; position: string; icon:
 
 function DataDemo() {
   return (
-    <div className="platform-demo data-demo" aria-label="Data Layer product demonstration">
+    <div className="platform-demo data-demo" aria-label="Connected business data">
       <div className="platform-demo-toolbar">
         <div><strong>Connected business memory</strong><span>Structured records, not a generic document dump</span></div>
         <span className="platform-demo-state"><i aria-hidden />Traceable</span>

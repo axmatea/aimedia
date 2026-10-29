@@ -10,7 +10,6 @@
 // ── Booking config ───────────────────────────────────────────────────────────
 export const CAL_LINK = "axmedia/call"
 export const CALENDLY_URL = `https://cal.com/${CAL_LINK}`
-export const CAL_DEFAULTS: Record<string, string> = { duration: "30", overlayCalendar: "true" }
 
 // ── Shared viewport config for whileInView reveals ──────────────────────────
 export const VP = { once: true, margin: "0px 0px -40px 0px" } as const
@@ -100,112 +99,6 @@ export const SERVICES = [
     tools: ["Custom Platforms", "Client Portals", "Internal Ops", "AI Workflows"],
   },
 ]
-
-// Truth-safe architecture studies. These describe systems we design and build,
-// not named client engagements or claimed performance results.
-export const SELECTED_SYSTEMS = [
-  {
-    index: "01",
-    name: "PIPELINE ORCHESTRATION",
-    label: "Go-to-market system",
-    detail: "Signals, enrichment, outreach, approvals, and CRM state coordinated inside one owned workflow.",
-    stages: ["Signals", "Research", "Outreach", "Review", "CRM"],
-    href: "/systems/qualified-pipeline",
-  },
-  {
-    index: "02",
-    name: "CONTENT OPERATING SYSTEM",
-    label: "Content system",
-    detail: "Positioning, scripts, production, human review, and distribution connected across channels.",
-    stages: ["Strategy", "Create", "Approve", "Publish", "Learn"],
-    href: null,
-  },
-  {
-    index: "03",
-    name: "CLIENT OPERATIONS PLATFORM",
-    label: "Business platform",
-    detail: "A custom operating layer for intake, delivery, approvals, reporting, and internal workflows.",
-    stages: ["Intake", "Scope", "Deliver", "Approve", "Report"],
-    href: "/systems/client-platforms",
-  },
-] as const
-
-export const PROCESS_STEPS = [
-  { index: "01", label: "ANALYZE", detail: "Map the work, systems, constraints, and highest-leverage gap." },
-  { index: "02", label: "DEFINE", detail: "Set the scope, ownership, review gates, and success criteria." },
-  { index: "03", label: "BUILD", detail: "Design, integrate, and implement the system in your stack." },
-  { index: "04", label: "VALIDATE", detail: "Test the workflow, document it, and hand over an operating system you own." },
-] as const
-
-// Outcome renders: brand imagery (2000x1343 webp, optimized, lazy, below the
-// fold). Cards without `image` fall back to the abstract OutcomeVisual, so
-// removing a file is safe and reversible. No generation-tool attribution is
-// rendered on the page (owner decision, v6.1): keep `imageSpec` unset here even
-// though ShowcaseMedia still supports a spec chip row for future use.
-// Truth rule (v7): no client names and no invented metrics live in this data
-// object AT ALL. Even unrendered fields ship in the JS bundle, so the shipped
-// data itself must be honest. Cards describe outcome patterns by industry;
-// named results and real numbers are shared under NDA on the call.
-export const CASE_STUDIES = [
-  {
-    project: "Content Agency", tag: "Content Agency", result: "A coordinated operating model for planning, production, approval, and distribution.", color: "#0A0A0F", accent: "#FF2D55",
-    image: "/generated/outcomes/outcome-content.webp",
-    imageAlt: "Content pieces fanning out from a single engine along glowing red distribution lines",
-    imageCaption: "One engine, every channel",
-  },
-  {
-    project: "SaaS", tag: "SaaS", result: "A reviewed path from buyer signals to CRM-ready next actions.", color: "#0A0A0F", accent: "#FF2D55",
-    image: "/generated/outcomes/outcome-saas.webp",
-    imageAlt: "Glass pipeline chambers moving a stream of red signal through each revenue stage",
-    imageCaption: "Pipeline running end to end",
-  },
-  {
-    project: "Local Business", tag: "Local Business", result: "A connected intake, follow-up, and reporting workflow built around the team.", color: "#050507", accent: "#FF2D55",
-    image: "/generated/outcomes/outcome-local.webp",
-    imageAlt: "Neon rings of demand radiating from a location pin over a dark city map",
-    imageCaption: "Demand radiating from one point",
-  },
-  {
-    project: "Web3", tag: "Web3", result: "Research, community context, and launch operations coordinated with human review.", color: "#050507", accent: "#FF2D55",
-    image: "/generated/outcomes/outcome-web3.webp",
-    imageAlt: "A luminous sphere of connected community nodes orbiting one bright core",
-    imageCaption: "Community mapped before launch",
-  },
-]
-
-// Each node names the deliverables that ship at that step (`ships`), so the map
-// reads as a scope-of-work, not just a diagram. Deliverables mirror the three
-// SERVICES engines. No client metrics, no guarantees.
-export const TRACE_SYSTEM_NODES = [
-  { id: "signals", label: "Buyer signals", detail: "Inbound, CRM, social, and intent data normalized into one source map.", ships: ["Ideal buyer lists", "Intent signals"], x: "13%", y: "22%", tone: "source" },
-  { id: "context", label: "Context graph", detail: "Accounts, offers, objections, and channel history linked before action.", ships: ["Account research", "Offer map"], x: "31%", y: "55%", tone: "inferred" },
-  { id: "core", label: "AX operator core", detail: "Routes work to lead gen, content, and ops automations with review gates.", ships: ["Review gates", "Owner routing"], x: "50%", y: "34%", tone: "core" },
-  { id: "content", label: "Content engine", detail: "Turns approved positioning into scheduled posts, scripts, and assets.", ships: ["Daily posting", "Creative dept"], x: "70%", y: "20%", tone: "output" },
-  { id: "pipeline", label: "Pipeline engine", detail: "Prepares outreach, coordinates follow-up state, and keeps CRM context current.", ships: ["Approval-ready outreach", "CRM sync"], x: "78%", y: "54%", tone: "output" },
-  { id: "proof", label: "Proof loop", detail: "Every verified result routes back into reporting, decisions, and next experiments.", ships: ["Follow-up state", "Operational reporting"], x: "52%", y: "78%", tone: "review" },
-] as const
-
-// Copy-column scope stack: what each engine actually delivers when the map ships.
-export const TRACE_DELIVERABLES = [
-  { label: "GO-TO-MARKET ENGINE", detail: "Buyer research, approval-ready outreach, follow-up state, and coordinated CRM context." },
-  { label: "CONTENT SYSTEM", detail: "A content engine posting daily across your channels, with a full creative department behind it." },
-  { label: "AI OPS PIPELINE", detail: "Lead state, review gates, follow-up logic, and reporting wired into one system you own." },
-] as const
-
-export const TRACE_SYSTEM_EDGES = [
-  { id: "signals-context", d: "M 106 116 C 164 146 198 206 250 234", tone: "extracted", delay: "0s" },
-  { id: "context-core", d: "M 250 234 C 308 212 342 164 392 150", tone: "inferred", delay: "-1.4s" },
-  { id: "core-content", d: "M 392 150 C 452 108 500 92 548 96", tone: "extracted", delay: "-2.6s" },
-  { id: "core-pipeline", d: "M 406 166 C 478 194 536 222 610 250", tone: "extracted", delay: "-3.8s" },
-  { id: "pipeline-proof", d: "M 610 250 C 574 312 502 350 410 346", tone: "inferred", delay: "-5s" },
-  { id: "proof-context", d: "M 410 346 C 326 346 270 306 250 234", tone: "ambiguous", delay: "-6.2s" },
-] as const
-
-export const TRACE_CONFIDENCE_TAGS = [
-  { label: "EXTRACTED", detail: "Direct source events, CRM facts, and logged actions." },
-  { label: "INFERRED", detail: "Model-assisted fit, priority, and next-step suggestions." },
-  { label: "AMBIGUOUS", detail: "Human review before client-facing output or spend." },
-] as const
 
 // FAQ: honest answers in front of the booking ask. No guarantees, invented
 // numbers, or pricing before the work has been scoped.

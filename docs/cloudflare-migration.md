@@ -211,3 +211,74 @@ CRM write or email requires an explicitly approved owner-controlled test fixture
 Do not cancel Vercel or Railway, delete deployments, or alter other projects.
 Workers Free suitability needs remote CPU/runtime validation; a Paid upgrade is
 at least $5/month plus excess usage and requires separate approval before activation.
+
+## Scoped performance and cleanup release, 29 October 2026
+
+Production checkpoint: source `e495b7fa85d5f95c58a15e7f0a218249ea77425f`,
+Worker version `0133f6b0-0b83-4eb4-88a7-e6c43f2fd34f`.
+Rollback the application with `npx wrangler rollback 0133f6b0-0b83-4eb4-88a7-e6c43f2fd34f`.
+Do not restore DNS, rotate credentials, reset databases or cancel another host as
+part of application rollback. All 15 DNS records and mail settings are preserved.
+Registrar remains Porkbun, with Cloudflare authoritative DNS and Workers hosting.
+
+The isolated staging deployment is `https://aimedia-web-staging.axmedia.workers.dev`.
+Its config has no custom domains or business secrets, a staging self-reference,
+noindex headers and the existing anonymous analytics database's staging partition.
+It is not a second CRM or a commissioned conversion backend.
+
+Verified changes:
+
+- Lossless embedded robot texture optimization: scene 1,349,622 to 1,011,211
+  bytes, saving 338,411 bytes (25.07%). Geometry, materials, animation and embedded
+  head video are byte-identical outside the image blob. The original public URL
+  remains. PNG and lossless WebP decode to the same RGBA hash. Reproduction and
+  nine integrity tests live under `scripts/deployment/`.
+- Main CSS: 136,641 to 101,989 raw bytes, 25,807 to 19,815 gzip bytes. These are
+  build-artifact sizes, not claims about measured user latency.
+- Homepage-only Motion provider; Lenis/clock import only for eligible desktop
+  navigation. Animated header links no longer prefetch the homepage. The server
+  component architecture, scroll physics, native fallbacks and film are preserved.
+- Removed 14 unreachable TSX modules, three obsolete CSS modules, dead global
+  style families and unused data exports. Public media, historical configuration,
+  integration routes and original robot asset remain for compatibility.
+- Removed visible Demo/Illustrative labels; fabricated funnel counts and arbitrary
+  channel quotas became neutral workflow stages and content formats. No fictional
+  customer results are presented as real.
+- Removed unused UI/generation dependencies; dotted-map is development-only.
+  Compatible Resend and transitive patches reduce production audit findings from
+  11 (one critical) to four high findings in one build-time glob/OpenNext chain.
+  No forced downgrade/override was applied. Upstream advisory:
+  https://github.com/advisories/GHSA-5j98-mcp5-4vw2 .
+- Two unused logo-generation scripts contained historical hardcoded credential
+  material. Their current files were removed without displaying or testing it.
+  History still needs separately authorized provider revocation/history handling;
+  removal does not establish that the old credential is invalid.
+
+Free Cloudflare Web Analytics is enabled for aimedia.global, separate from the
+existing first-party conversion collector. Site tag:
+`0b34b09eaacb43f48dcf4e7c3d01cbcf`. It uses no cookies or browser-storage IDs,
+excludes URL query strings and does not retain visitor IPs. Existing regional
+privacy defaults remain unchanged; other domains were not edited. The Privacy
+and Cookie notices disclose this measurement. No field p75 INP/LCP claim is made
+until real samples exist. Reversible via this site's auto-install setting.
+
+Validation: production build, TypeScript, ESLint, 58 conversion tests and 115
+deployment tests. Strict staging smoke checks include actual remote video 206
+ranges, missing paths, health/security/noindex headers and both Spline versions.
+Browser QA covers 1440/768/390/360 widths, themes, navigation, platform tabs and
+native 30-minute Cal rendering without creating bookings or sending messages.
+Cal-to-CRM commissioning remains excluded as described above.
+
+Performance methodology: Lighthouse 12.6.1, Chrome 150.0.7871.24, isolated local
+headless browser, default mobile simulated throttling and desktop preset. Compare
+three mobile runs per primary route using medians on the same production host.
+Lighthouse is lab data, not field INP. DevTools MCP was unavailable; existing
+Lighthouse, Sharp, TypeScript/ESLint and browser inspection were used instead.
+LHCI, Playwright and Knip were evaluated; no new audit vendor/tool dependency was
+necessary. No broad cache, TLS, DNS or paid Cloudflare change was made.
+
+Fresh pre-release mobile medians: homepage performance 70, LCP 4,389.78 ms,
+TBT 461.61 ms, transfer 2,566,699 bytes, CLS 0; animated performance 86,
+LCP 4,048.13 ms, TBT 9.5 ms, transfer 485,467 bytes, CLS 0.
+Post-release measurements and known limitations are recorded in
+`scripts/deployment/performance-release-results.json` after live verification.

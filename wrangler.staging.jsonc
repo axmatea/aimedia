@@ -1,0 +1,34 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "aimedia-web-staging",
+  "account_id": "a377efd40123f2456972979cb5a8ccc9",
+  "main": "cloudflare-worker.ts",
+  "keep_names": false,
+  "compatibility_date": "2026-10-29",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "routes": [],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+    "run_worker_first": ["/animated/video/*"]
+  },
+  "services": [
+    { "binding": "WORKER_SELF_REFERENCE", "service": "aimedia-web-staging" }
+  ],
+  // Anonymous telemetry shares the existing collector's staging partition.
+  // No business/CRM/email credentials are copied into this preview Worker.
+  "d1_databases": [
+    {
+      "binding": "ANALYTICS_DB",
+      "database_name": "aimedia-web-analytics",
+      "database_id": "e564e26e-04e1-486e-add2-7b0d1b3a5aa9"
+    }
+  ],
+  "vars": {
+    "PUBLIC_BASE_URL": "https://aimedia.global",
+    "ANALYTICS_ENVIRONMENT": "staging"
+  },
+  "observability": { "enabled": false }
+}

@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   experimental: {
     turbopackFileSystemCacheForDev: true,
     // Tree-shake icon & UI libraries — eliminates unused exports
-    optimizePackageImports: ["lucide-react", "@radix-ui/react-icons", "motion/react"],
+    optimizePackageImports: ["lucide-react", "motion/react"],
   },
   // React Compiler: enable after `npm i babel-plugin-react-compiler`
   // reactCompiler: true,

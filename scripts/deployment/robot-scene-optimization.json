@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "path": "public/spline/robot.splinecode",
+    "bytes": 1349622,
+    "sha256": "4e31d7ef0b54fd02e2dd373f18f89c32003ce6d9220a996e09c94efa4c7c31f9"
+  },
+  "output": {
+    "path": "public/spline/robot-optimized-v1.splinecode",
+    "bytes": 1011211,
+    "sha256": "2937966ae88b97a5386f78e124737713303330307c47a02e3f7b3cc1f8061fd1"
+  },
+  "replacement": {
+    "name": "CHROME.png",
+    "bin32MarkerOffset": 60199,
+    "payloadOffset": 60204,
+    "sourceBytes": 742479,
+    "outputBytes": 404068,
+    "sourceFormat": "png",
+    "outputFormat": "webp",
+    "sourceSha256": "c552fa9badbe8688163f0010184676c48cc8909594a632e7623e0d47b4f3e3c1",
+    "outputSha256": "04ecadda51068f24cc73dc34d3e226b79d57290687a09e13f75f2e3d1d9c6719",
+    "sourceHeaderHex": "c6000b544f",
+    "outputHeaderHex": "c600062a64"
+  },
+  "decodedPixels": {
+    "width": 2000,
+    "height": 2000,
+    "channels": 4,
+    "depth": "uchar",
+    "colourspace": "srgb",
+    "bytes": 16000000,
+    "sha256": "fc1e8ad3703f12cf4a782c06e531187699c701b6c74a21ad434a4c09b3a20fc7"
+  },
+  "encoder": {
+    "sharp": "0.35.5",
+    "libvips": "8.18.7",
+    "libwebp": "1.6.0",
+    "options": { "lossless": true, "effort": 6 }
+  },
+  "comparison": {
+    "bytesSaved": 338411,
+    "gzip": {
+      "level": 9,
+      "node": "22.22.3",
+      "zlib": "1.3.1-e00f703",
+      "sourceBytes": 1236229,
+      "outputBytes": 914893,
+      "bytesSaved": 321336
+    }
+  },
+  "preservation": "Only the CHROME.png bin32 image payload and its four-byte length change. Every other byte, including geometry, materials, animation, asset names and references, is preserved. The original source is never written. A changed source or encoder result requires a reviewed new versioned output path.",
+  "commands": {
+    "generate": "node scripts/deployment/optimize-robot-scene.mjs --write",
+    "verify": "node scripts/deployment/optimize-robot-scene.mjs --check",
+    "test": "node --test scripts/deployment/tests/robot-scene-optimization.test.mjs"
+  }
+}
