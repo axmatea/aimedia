@@ -19,8 +19,10 @@ Do not deploy the unrelated dirty `website/` checkout or Railway prototypes.
 ## Verified production cutover, 29 October 2026
 
 - Live: `https://aimedia.global/` and `https://aimedia.global/animated`.
-- Deployed application source: `244cdc3`; Worker version
+- Initial verified application cutover: source `244cdc3`; Worker version
   `b77462cf-fea8-4dbd-a1c9-0218369ea820`.
+  A follow-up corrects only the public hosting/analytics provider disclosures.
+  The latest deployment receipt is recorded in the shared session registry.
 - Both hostnames are enabled custom domains on `aimedia-web`. Only the old
   Vercel apex A and www CNAME were replaced. All other 13 DNS records were
   compared by identity/value and preserved, including mail and verification.

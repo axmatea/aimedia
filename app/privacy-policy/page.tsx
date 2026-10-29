@@ -14,7 +14,7 @@ export default function PrivacyPolicy() {
       <div className="max-w-3xl mx-auto">
         <p className="text-white/55 text-[10px] uppercase tracking-[0.3em] font-bold mb-4">Legal</p>
         <h1 className="text-white text-4xl md:text-5xl font-black uppercase mb-2" style={{ fontFamily: "var(--font-bebas)" }}>Privacy Policy</h1>
-        <p className="text-white/55 text-sm mb-12">Last updated: August 23, 2026</p>
+        <p className="text-white/55 text-sm mb-12">Last updated: October 29, 2026</p>
 
         <div className="space-y-10 text-white/55 text-sm leading-relaxed">
           <section>
@@ -52,10 +52,10 @@ export default function PrivacyPolicy() {
             <p>We currently use:</p>
             <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
               <li><span className="text-white/65">Cal.com</span> to display scheduling tools, collect booking details, and carry campaign-attribution metadata with a booking</li>
-              <li><span className="text-white/65">Vercel</span> for website hosting and website or funnel analytics; identifying contact and advertising parameters are removed from analytics URLs before events are sent</li>
-              <li><span className="text-white/65">Notion</span> as our internal CRM for booking, qualification, contact, and attribution information</li>
-              <li><span className="text-white/65">Cloudflare Worker and D1</span> as an isolated duplicate-prevention service that receives keyed cryptographic digests of booking UID and normalized email, plus an operation identifier, state, timestamps, and an opaque CRM reference, but not plaintext booking-form content through this service</li>
-              <li><span className="text-white/65">Meta Platforms</span> for server-side conversion measurement for verified Meta-attributed bookings, as described above</li>
+              <li><span className="text-white/65">Cloudflare</span> for website hosting and privacy-minimized first-party analytics; the analytics stream stores anonymous event and browser-session identifiers, minimized source and campaign labels, and known public paths, not contact fields, advertising identifiers, or full URL query strings</li>
+              <li><span className="text-white/65">Notion</span> as our internal CRM for contact, inquiry, and qualification records, and for booking attribution where that integration is enabled</li>
+              <li><span className="text-white/65">Cloudflare Worker and D1</span> to retain isolated duplicate-prevention records containing keyed cryptographic digests of booking UID and normalized email, an operation identifier, state, timestamps, and an opaque CRM reference, without plaintext booking-form content in that service</li>
+              <li><span className="text-white/65">Meta Platforms</span> if server-side conversion measurement is activated for verified Meta-attributed bookings, as described above</li>
             </ul>
             <p className="mt-3">These providers process information under their own terms and privacy practices and may process it in jurisdictions other than your own.</p>
           </section>
