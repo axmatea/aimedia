@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "aimedia-web",
+  "account_id": "a377efd40123f2456972979cb5a8ccc9",
+  "main": ".open-next/worker.js",
+  "keep_names": false,
+  "compatibility_date": "2026-10-29",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    { "binding": "WORKER_SELF_REFERENCE", "service": "aimedia-web" }
+  ],
+  "d1_databases": [
+    { "binding": "ANALYTICS_DB", "database_name": "aimedia-web-analytics" }
+  ],
+  "vars": {
+    "PUBLIC_BASE_URL": "https://aimedia.global",
+    "ANALYTICS_ENVIRONMENT": "staging"
+  },
+  "observability": {
+    "enabled": false
+  }
+}

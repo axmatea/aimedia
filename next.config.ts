@@ -11,12 +11,28 @@ const nextConfig: NextConfig = {
   // React Compiler: enable after `npm i babel-plugin-react-compiler`
   // reactCompiler: true,
   images: {
+    // Existing assets are already web-optimized. Do not silently enable a
+    // separately metered Cloudflare Images product during host migration.
+    unoptimized: process.env.CLOUDFLARE_BUILD === "1",
     minimumCacheTTL: 86400,
     formats: ["image/avif", "image/webp"],
   },
   compress: true,
+  redirects: async () => [
+    {
+      source: "/:path*",
+      has: [{ type: "host", value: "www\\.aimedia\\.global" }],
+      destination: "https://aimedia.global/:path*",
+      permanent: true,
+    },
+  ],
   // Performance headers
   headers: async () => [
+    {
+      source: "/(.*)",
+      has: [{ type: "host", value: ".*\\.workers\\.dev" }],
+      headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+    },
     {
       source: "/(.*)",
       headers: [

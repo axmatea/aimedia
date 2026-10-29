@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import crypto from "node:crypto"
 import { Resend } from "resend"
-import { track } from "@vercel/analytics/server"
+import { trackServerEvent } from "@/lib/analytics/server"
 import { scheduleFollowUps } from "@/lib/followups"
 
 function getResend() {
@@ -473,22 +473,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    await Promise.allSettled([
-      track("inquiry_submitted", {
-        source: source || "Website",
-        utm_campaign: utmCampaign || undefined,
-        landing_page: landingPage || "/",
-        conversion_action: conversionAction || "project_inquiry",
-      }),
-      company && goal
-        ? track("qualified_lead_created", {
-            source: source || "Website",
-            utm_campaign: utmCampaign || undefined,
-            landing_page: landingPage || "/",
-            conversion_action: conversionAction || "project_inquiry",
-          })
-        : Promise.resolve(),
-    ])
+    const telemetry = { source: source || "Website", campaign: utmCampaign, medium: utmMedium, path: landingPage || "/" }
+    trackServerEvent("inquiry_submitted", telemetry)
+    if (company && goal) trackServerEvent("qualified_lead_created", telemetry)
 
     return NextResponse.json({
       success: true,

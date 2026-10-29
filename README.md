@@ -48,3 +48,9 @@ It captures session first-touch UTM/Meta identifiers, deduplicates by Cal Bookin
 ## Railway migration
 
 See [the migration and rollback runbook](docs/railway-migration.md) and [production-source recovery evidence](docs/railway-source-recovery.json). Source recovery is complete; paid staging, secure configuration, integration tests and DNS gates remain.
+
+## Cloudflare recovery
+
+Current host migration work uses [the Cloudflare recovery runbook](docs/cloudflare-migration.md).
+Use the approved visual release, not the unrelated dirty outreach worktree.
+The main domain is not switched until secrets and remote integration gates pass.

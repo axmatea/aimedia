@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { BookingBodyTooLargeError, BookingDeadline } from "@/lib/conversion/booking-deadline"
-import { track } from "@vercel/analytics/server"
+import { trackServerEvent } from "@/lib/analytics/server"
 import {
   isCalWebhookPing,
   MAX_CAL_WEBHOOK_BYTES,
@@ -110,20 +110,15 @@ async function handleBooking(request: NextRequest, deadline: BookingDeadline) {
     }
     // Cal retries the same booking UID. Conversion analytics fire only on the
     // first accepted UID mapping; a replay updates CRM state but never counts twice.
-    // Vercel telemetry is optional and provider-specific. Never hold a completed
-    // transaction open for it, or silently route analytics to a new destination.
-    if (process.env.VERCEL && result.firstMapped) {
-      void Promise.allSettled([
-        track("booking_attributed", common),
-        result.created ? track("lead_created", common) : Promise.resolve(),
-        parsed.lead.qualified ? track("qualified_lead_created", common) : Promise.resolve(),
-        parsed.lead.qualificationStatus === "NEEDS_CONTEXT"
-          ? track("needs_context_lead_created", common)
-          : Promise.resolve(),
-        parsed.lead.qualificationStatus === "NOT_ICP"
-          ? track("not_icp_lead_created", common)
-          : Promise.resolve(),
-      ])
+    // First-party telemetry is optional and runs under Worker waitUntil, never
+    // extending the transaction's shared deadline or changing replay behavior.
+    if (result.firstMapped) {
+      const dimensions = { ...common, medium: parsed.lead.utmMedium, path: parsed.lead.landingPage }
+      trackServerEvent("booking_attributed", dimensions)
+      if (result.created) trackServerEvent("lead_created", dimensions)
+      if (parsed.lead.qualified) trackServerEvent("qualified_lead_created", dimensions)
+      if (parsed.lead.qualificationStatus === "NEEDS_CONTEXT") trackServerEvent("needs_context_lead_created", dimensions)
+      if (parsed.lead.qualificationStatus === "NOT_ICP") trackServerEvent("not_icp_lead_created", dimensions)
     }
     return NextResponse.json({
       ok: true,
