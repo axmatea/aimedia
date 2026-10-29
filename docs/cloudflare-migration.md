@@ -16,6 +16,44 @@ Do not deploy the unrelated dirty `website/` checkout or Railway prototypes.
 - Domain registration transfer is separate from hosting recovery. Do not unlock,
   order, pay for or execute a registrar transfer as an implicit hosting step.
 
+## Verified production cutover, 29 October 2026
+
+- Live: `https://aimedia.global/` and `https://aimedia.global/animated`.
+- Deployed application source: `244cdc3`; Worker version
+  `b77462cf-fea8-4dbd-a1c9-0218369ea820`.
+- Both hostnames are enabled custom domains on `aimedia-web`. Only the old
+  Vercel apex A and www CNAME were replaced. All other 13 DNS records were
+  compared by identity/value and preserved, including mail and verification.
+- A separate, scoped edge redirect fixes HTTP apex and www without changing
+  other subdomains: ruleset `30c45b9810fa4deea2b6d8da6d1582db`, rule
+  `9cddf197386a404cbebb44b6c84f78de`, ref `aimedia_scoped_https`.
+  Expression: `(http.host in {"aimedia.global" "www.aimedia.global"} and not ssl)`.
+  Target: `https://aimedia.global` plus the original path, with query retained,
+  status 308. HTTPS www also redirects to apex through the existing application.
+- Full production build, TypeScript, lint and 136 tests pass. Independent strict
+  public-route/security/404/MP4-range smoke passes on the main domain. HTTPS uses
+  normal certificate validation, without insecure bypasses.
+- Homepage and animated route have no horizontal overflow at 1440, 1280, 768,
+  390 and 360 px. Mobile navigation, native Cal iframe, 30-minute fallback,
+  theme switching, animated entry/end actions/Replay were checked. No browser
+  error-level console messages were observed in those checks.
+- Existing Resend signature accepts a signed delivery-noop and rejects an
+  unsigned request; malformed inquiry is rejected before side effects. Existing
+  NAYL Systems/Notion schema and verified Resend sender domain pass read checks.
+  No actual email, booking or test CRM lead was created. Legacy booking D1
+  remains one COMMITTED row, unchanged.
+- Anonymous production QA funnel events are stored under `internal_qa`.
+  Exclude them from founder conversion reports. Native Cal-to-CRM commissioning
+  is still the explicit pre-existing gap documented below.
+- Mobile Lighthouse lab results: homepage 71/100/100/100 and animated
+  80/100/96/66 (performance/accessibility/best-practices/SEO). Both have a
+  page-load timeout warning and are not a clean performance baseline. Animated
+  SEO includes its intentional noindex; small existing agent labels reduce its
+  legibility audit. No visual redesign or score guarantee is part of cutover.
+- No paid add-on, registrar transfer or Vercel/Railway deletion/cancellation was
+  performed. Those accounts and old resources are not needed to serve the public
+  website now, but billing retirement requires separately scoped owner approval.
+
 ## Runtime
 
 Next.js 16.4.2, OpenNext 1.20.14, Wrangler 4.155.0, `nodejs_compat`.
@@ -88,11 +126,13 @@ Example founder counts from the Cloudflare D1 console (not a public endpoint):
 SELECT name, COUNT(*) AS events
 FROM analytics_events
 WHERE environment = 'production'
+  AND source <> 'internal_qa'
 GROUP BY name;
 
 SELECT source, campaign, medium, name, COUNT(*) AS events
 FROM analytics_events
 WHERE environment = 'production'
+  AND source <> 'internal_qa'
 GROUP BY source, campaign, medium, name;
 ```
 
@@ -131,6 +171,9 @@ material prevents claiming lossless historical identity recovery; no reset,
 cleanup, replacement database or guessed test-record deletion is authorized.
 Cal-to-CRM automation remains an explicit pre-existing integration gap, not a
 completed or live-verified part of this hosting release.
+`npm run check:runtime-env` remains the strict full-funnel commissioning gate,
+not a hosting-only check. It must still fail for the unconfigured Cal/Meta and
+cancellation capabilities; do not report it as passed or remove its safety gates.
 
 The registered production website's legacy inquiry/email settings are migrated
 from the existing export, with the independently verified NAYL Systems Notion
