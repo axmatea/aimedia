@@ -16,7 +16,11 @@
     { "binding": "WORKER_SELF_REFERENCE", "service": "aimedia-web" }
   ],
   "d1_databases": [
-    { "binding": "ANALYTICS_DB", "database_name": "aimedia-web-analytics" }
+    {
+      "binding": "ANALYTICS_DB",
+      "database_name": "aimedia-web-analytics",
+      "database_id": "e564e26e-04e1-486e-add2-7b0d1b3a5aa9"
+    }
   ],
   "vars": {
     "PUBLIC_BASE_URL": "https://aimedia.global",
