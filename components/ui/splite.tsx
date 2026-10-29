@@ -9,6 +9,13 @@ interface SplineSceneProps {
   scene: string
   className?: string
   onLoad?: (app: Application) => void
+  onReadyChange?: (ready: boolean) => void
+}
+
+type SaveDataConnection = {
+  saveData?: boolean
+  addEventListener?: (name: 'change', listener: () => void) => void
+  removeEventListener?: (name: 'change', listener: () => void) => void
 }
 
 type SplineObject = {
@@ -66,14 +73,14 @@ const HEAD_NAMES = ['Head', 'head', 'Robot_Head', 'robot_head', 'HEAD', 'Helmet'
 // version in lockstep with the installed @splinetool/runtime version.
 const SPLINE_WASM_PATH = '/spline'
 
-export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
+export function SplineScene({ scene, className, onLoad, onReadyChange }: SplineSceneProps) {
   // Nothing renders until the live scene is ready: the dark ambient hero
   // background carries the space, then the 3D scene fades and settles in.
   const [sceneReady, setSceneReady] = useState(false)
-  // Motion gate: null until measured on the client. false only when the OS asks
-  // for reduced motion, in which case the scene never mounts and the hero stays
-  // as the clean dark background plus text (the robot is decorative).
+  // Respect explicit reduced-motion and Save-Data preferences. Neither mode
+  // imports the heavy live runtime; the approved server-rendered poster stays.
   const [motionOk, setMotionOk] = useState<boolean | null>(null)
+  const motionAllowedRef = useRef(false)
   // Lazy init: only mount the Spline runtime once the hero is near the viewport.
   const [inView, setInView] = useState(false)
   const [pageVisible, setPageVisible] = useState(false)
@@ -96,11 +103,26 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
   useEffect(() => {
     const finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const connection = (navigator as Navigator & { connection?: SaveDataConnection }).connection
     const webGLAvailable = supportsWebGL()
 
-    const syncMotion = () => setMotionOk(webGLAvailable && !reducedMotionQuery.matches)
+    const syncMotion = () => {
+      const allowed = webGLAvailable && !reducedMotionQuery.matches && !connection?.saveData
+      motionAllowedRef.current = allowed
+      setMotionOk(allowed)
+      if (!allowed) {
+        // Stop immediately, then let React Spline dispose the renderer on
+        // unmount. Cancel our own listeners, pending reveal and pointer frames.
+        appRef.current?.stop?.()
+        appRef.current?._splineCleanup?.()
+        appRef.current = null
+        headRef.current = null
+        setSceneReady(false)
+        onReadyChange?.(false)
+      }
+    }
     const syncInteractive = () => {
-      interactiveRef.current = finePointerQuery.matches && !reducedMotionQuery.matches
+      interactiveRef.current = finePointerQuery.matches && motionAllowedRef.current
       if (!interactiveRef.current && rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current)
         rafRef.current = null
@@ -110,28 +132,23 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
     syncMotion()
     syncInteractive()
 
-    const onReduced = () => {
+    const onPreference = () => {
       syncMotion()
       syncInteractive()
-      // The React Spline wrapper disposes its own renderer on unmount. Remove
-      // our independent mouse listeners, reveal timers and lerp frames too.
-      if (reducedMotionQuery.matches) {
-        appRef.current?._splineCleanup?.()
-        appRef.current = null
-        headRef.current = null
-        setSceneReady(false)
-      }
     }
     const onPointer = () => syncInteractive()
 
-    reducedMotionQuery.addEventListener?.('change', onReduced)
+    reducedMotionQuery.addEventListener?.('change', onPreference)
+    connection?.addEventListener?.('change', onPreference)
     finePointerQuery.addEventListener?.('change', onPointer)
 
     return () => {
-      reducedMotionQuery.removeEventListener?.('change', onReduced)
+      motionAllowedRef.current = false
+      reducedMotionQuery.removeEventListener?.('change', onPreference)
+      connection?.removeEventListener?.('change', onPreference)
       finePointerQuery.removeEventListener?.('change', onPointer)
     }
-  }, [])
+  }, [onReadyChange])
 
   // Cap devicePixelRatio on coarse-pointer (touch) devices. Desktop keeps full
   // crispness. The runtime reads window.devicePixelRatio live (boot + resize +
@@ -253,6 +270,12 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
 
   const handleLoad = useCallback((app: Application) => {
     const splineApp = app as SplineApp
+    // A scene request may finish after a live preference change/unmount.
+    // Never reveal or restart that stale renderer over the static fallback.
+    if (!motionAllowedRef.current) {
+      splineApp.stop?.()
+      return
+    }
     appRef.current?._splineCleanup?.()
     appRef.current = splineApp
     const canvas = splineApp.canvas
@@ -348,12 +371,14 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
     revealFrame = requestAnimationFrame(() => {
       revealFrame = requestAnimationFrame(() => {
         revealTimer = window.setTimeout(() => {
+          if (!motionAllowedRef.current) return
           setSceneReady(true)
+          onReadyChange?.(true)
           onLoad?.(app)
         }, 420)
       })
     })
-  }, [onLoad])
+  }, [onLoad, onReadyChange])
 
   // Lazy-init when near the viewport, then pause the render loop when off-screen.
   useEffect(() => {

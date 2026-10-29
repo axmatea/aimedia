@@ -6,8 +6,9 @@ import ts from "typescript"
 
 // Execute production components with a small browser/React harness. No Spline
 // runtime, WebGL driver, network, analytics, booking or provider is contacted.
-function browserHarness(componentFile) {
+function browserHarness(componentFile, { saveData = false, stateOverrides = {} } = {}) {
   const effects = [], callbacks = [], frames = new Map(), timers = new Map()
+  const stateUpdates = [], renderedTags = []
   const observers = [], documentListeners = new Map(), windowListeners = new Map()
   const canvas = { clientWidth: 1200, clientHeight: 900, style: {}, dispatchEvent() {} }
   const deletions = { buffer: 0, program: 0, shader: 0 }
@@ -36,6 +37,13 @@ function browserHarness(componentFile) {
     addEventListener: (name, callback) => documentListeners.set(name, callback),
     removeEventListener: name => documentListeners.delete(name),
   }
+  const connection = {
+    saveData,
+    listeners: new Set(),
+    addEventListener(_name, callback) { this.listeners.add(callback) },
+    removeEventListener(_name, callback) { this.listeners.delete(callback) },
+    change(value) { this.saveData = value; for (const callback of this.listeners) callback() },
+  }
   let serial = 0
   const window = {
     innerWidth: 1440, innerHeight: 900, devicePixelRatio: 1,
@@ -45,20 +53,27 @@ function browserHarness(componentFile) {
     setTimeout: callback => { timers.set(++serial, callback); return serial },
     clearTimeout: id => timers.delete(id),
   }
+  const lazyComponent = () => null
+  let stateIndex = 0
   const react = {
     useRef: initial => ({ current: initial }),
-    useState: initial => [initial, () => {}],
+    useState: initial => {
+      const index = stateIndex++
+      return [index in stateOverrides ? stateOverrides[index] : initial, value => stateUpdates.push({ index, value })]
+    },
     useEffect: effect => effects.push(effect),
     useCallback: callback => { callbacks.push(callback); return callback },
-    lazy: () => () => null,
+    lazy: () => lazyComponent,
     Suspense: () => null,
   }
-  const jsxRuntime = { jsx: (_tag, props) => {
+  const jsx = (tag, props) => {
+    renderedTags.push(tag)
     if (props.ref) props.ref.current = canvas
     return null
-  }, jsxs: () => null }
+  }
+  const jsxRuntime = { jsx, jsxs: jsx }
   const context = vm.createContext({
-    exports: {}, document, window, console,
+    exports: {}, document, window, console, navigator: { connection },
     requestAnimationFrame: callback => { frames.set(++serial, callback); return serial },
     cancelAnimationFrame: id => frames.delete(id),
     ResizeObserver: class { observe() {} disconnect() {} },
@@ -89,7 +104,7 @@ function browserHarness(componentFile) {
     }
     return count
   }
-  return { ...context, effects, callbacks, frames, timers, observers, deletions, query, documentListeners, windowListeners, flushFrames }
+  return { ...context, effects, callbacks, frames, timers, observers, deletions, query, documentListeners, windowListeners, flushFrames, connection, stateUpdates, renderedTags, lazyComponent }
 }
 
 test("Lightning starts only in view and pauses for hidden tabs and reduced motion, releasing GPU resources", () => {
@@ -121,9 +136,9 @@ test("Lightning starts only in view and pauses for hidden tabs and reduced motio
   assert.equal(reduced.listeners.size, 0)
 })
 
-function splineFixture(hasHead = true) {
+function splineFixture(hasHead = true, props = {}) {
   const harness = browserHarness("components/ui/splite.tsx")
-  harness.exports.SplineScene({ scene: "/spline/robot.splinecode" })
+  harness.exports.SplineScene({ scene: "/spline/robot.splinecode", ...props })
   const cleanups = harness.effects.map(effect => effect())
   const near = harness.observers.find(observer => observer.options.rootMargin)
   const visible = harness.observers.find(observer => !observer.options.rootMargin)
@@ -170,6 +185,63 @@ test("Spline pointer lerp runs only for a real head and stops at its target", ()
   headless.windowListeners.get("mousemove")({ clientX: 1400, clientY: 100 })
   assert.equal(headless.frames.size, 0, "Never spin a lerp loop without a head object")
   for (const cleanup of headless.cleanups) cleanup?.()
+})
+
+test("Save-Data disables the live runtime gate without changing the default live robot", () => {
+  const fallback = browserHarness("components/ui/splite.tsx", {
+    saveData: true,
+    stateOverrides: { 1: false, 2: true, 3: true, 4: true },
+  })
+  const readiness = []
+  fallback.exports.SplineScene({ scene: "/spline/robot.splinecode", onReadyChange: value => readiness.push(value) })
+  const cleanup = fallback.effects[0]()
+  assert.deepEqual(readiness, [false], "The approved poster must remain visible")
+  assert.deepEqual(fallback.stateUpdates.find(update => update.index === 1), { index: 1, value: false })
+  assert.ok(!fallback.renderedTags.includes(fallback.lazyComponent), "No lazy Spline/runtime import while Save-Data is enabled")
+  fallback.connection.change(false)
+  assert.deepEqual(fallback.stateUpdates.filter(update => update.index === 1).at(-1), { index: 1, value: true })
+  cleanup()
+  assert.equal(fallback.connection.listeners.size, 0)
+
+  const normal = browserHarness("components/ui/splite.tsx", {
+    stateOverrides: { 1: true, 2: true, 3: true, 4: true },
+  })
+  normal.exports.SplineScene({ scene: "/spline/robot.splinecode" })
+  assert.ok(normal.renderedTags.includes(normal.lazyComponent), "Default first-load animation remains enabled")
+})
+
+test("live Save-Data and reduced-motion changes cancel work and restore the poster before re-entry", () => {
+  const readiness = []
+  const harness = splineFixture(true, { onReadyChange: value => readiness.push(value) })
+  assert.deepEqual(readiness, [], "Readiness must wait for the authored pre-roll")
+  for (const [id, callback] of [...harness.timers]) { harness.timers.delete(id); callback() }
+  assert.deepEqual(readiness, [true])
+  harness.windowListeners.get("mousemove")({ clientX: 1400, clientY: 100 })
+  assert.equal(harness.frames.size, 1)
+  const stops = harness.calls.stop
+  harness.connection.change(true)
+  assert.equal(harness.calls.stop, stops + 1)
+  assert.equal(harness.frames.size, 0)
+  assert.equal(harness.timers.size, 0)
+  assert.equal(harness.windowListeners.has("mousemove"), false)
+  assert.deepEqual(readiness, [true, false])
+
+  let staleStopped = 0
+  harness.callbacks[0]({ stop: () => staleStopped++ })
+  assert.equal(staleStopped, 1, "A late response must not restart a stale renderer")
+  assert.equal(harness.frames.size, 0)
+  harness.connection.change(false)
+  assert.deepEqual(harness.stateUpdates.filter(update => update.index === 1).at(-1), { index: 1, value: true })
+  assert.deepEqual(readiness, [true, false], "The poster stays visible until the next pre-roll completes")
+
+  const reduced = harness.query("(prefers-reduced-motion: reduce)")
+  reduced.matches = true
+  for (const listener of reduced.listeners) listener()
+  assert.equal(readiness.at(-1), false)
+  for (const cleanup of harness.cleanups) cleanup?.()
+  assert.equal(harness.connection.listeners.size, 0)
+  harness.callbacks[0]({ stop: () => staleStopped++ })
+  assert.equal(staleStopped, 2, "Unmount also rejects late callbacks")
 })
 
 test("hero never mounts Lightning for the light theme, a small screen or reduced motion", () => {

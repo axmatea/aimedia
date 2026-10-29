@@ -113,7 +113,56 @@ test("reduced-motion still crossfades preserve one complete visual without frame
   assert.doesNotMatch(ui, /<video|currentTime\s*=|WebGL|setInterval|setTimeout/)
   assert.match(ui, /if \(ready\) \{ presented = interpolated; pendingProposal = null; paintLayers\(presented\) \}/)
   assert.match(ui, /addEventListener\("scroll", readScroll, \{ passive: true \}\)/)
-  assert.doesNotMatch(ui, /preventDefault|addEventListener\("wheel"/)
+  assert.doesNotMatch(ui, /preventDefault/)
+})
+
+test("frame cache activation waits for intent or restored progress and stays disposed", () => {
+  const ui = source("cinematic-experience.tsx")
+  const parsed = ts.createSourceFile("cinematic-experience.tsx", ui, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+  let implementation
+  function visit(node) {
+    if (ts.isClassDeclaration(node) && node.name?.text === "CinemaFrameActivation") implementation = node.getText(parsed)
+    ts.forEachChild(node, visit)
+  }
+  visit(parsed)
+  assert.ok(implementation, "Test must execute the production activation gate")
+  const gateContext = vm.createContext({ exports: {}, Number })
+  vm.runInContext(ts.transpileModule(`export ${implementation}`, {
+    compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.CommonJS },
+  }).outputText, gateContext)
+  const Gate = gateContext.exports.CinemaFrameActivation
+  const gate = new Gate()
+  let starts = 0
+  const start = () => { starts++ }
+  assert.equal(gate.activate(0, false, start), false)
+  assert.equal(gate.activate(.0001, false, start), false)
+  assert.equal(starts, 0, "The opening poster must cause zero frame work")
+  assert.equal(gate.activate(0, true, start), true)
+  assert.equal(starts, 1)
+  assert.equal(gate.activate(.5, true, start), false, "Intent may activate only once")
+  gate.dispose()
+  assert.equal(gate.activate(.8, true, start), false)
+  assert.equal(starts, 1, "Disposed gates cannot resurrect frame work")
+
+  const restored = new Gate()
+  assert.equal(restored.activate(.25, false, start), true, "Restored nonzero scroll must warm without new input")
+  assert.equal(starts, 2)
+})
+
+test("production intent listeners and resize work are passive, coalesced and fully disposed", () => {
+  const ui = source("cinematic-experience.tsx")
+  for (const event of ["wheel", "touchstart"]) {
+    assert.match(ui, new RegExp(`addEventListener\\("${event}", onScrollIntent, \\{ passive: true \\}\\)`))
+    assert.match(ui, new RegExp(`removeEventListener\\("${event}", onScrollIntent\\)`))
+  }
+  assert.match(ui, /addEventListener\("keydown", onKeyIntent\)/)
+  assert.match(ui, /removeEventListener\("keydown", onKeyIntent\)/)
+  assert.match(ui, /if \(resizeFrame === null\) resizeFrame = requestAnimationFrame\(resize\)/)
+  assert.match(ui, /if \(resizeFrame !== null\) cancelAnimationFrame\(resizeFrame\)/)
+  assert.match(ui, /activation\.dispose\(\)/)
+  assert.match(ui, /storyTop = window\.scrollY \+ story\.getBoundingClientRect\(\)\.top/)
+  assert.match(ui, /const next = clamp\(\(window\.scrollY - storyTop\) \/ storyRange\)/)
+  assert.doesNotMatch(ui, /frameIntervals|rafP95Ms|presentedProgress|presentedFrame/)
 })
 
 /** Execute the actual production coordinator; only decode readiness is simulated. */
@@ -130,8 +179,9 @@ function productionTickHarness({ presented = 0, target = .18 } = {}) {
   const available = new Set(), requests = [], drawings = [], overlays = []
   let context
   context = vm.createContext({
-    frame: null, disposed: false, visible: true, lastTime: 0, frameIntervals: [],
+    frame: null, disposed: false, visible: true, lastTime: 0,
     root: { dataset: {} }, preference: { matches: false }, fallback: false,
+    activation: { activated: true },
     presented, interpolated: presented, target, direction: 1, pendingProposal: null,
     CINEMA, follow: timeline.follow, frameAt: timeline.frameAt,
     loadingRef: { current: { setAttribute() {} } },

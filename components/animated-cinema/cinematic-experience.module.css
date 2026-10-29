@@ -55,11 +55,11 @@
   .story { height: 880svh; }
   .header { padding: 20px; }
   .brand { width: 64px; height: 42px; }
-  .return { max-width: 130px; text-align: right; font-size: 11px; line-height: 1.5; }
+  .return { max-width: 145px; text-align: right; font-size: 12px; line-height: 1.5; }
   .controls { left: 20px; right: 20px; bottom: max(18px, env(safe-area-inset-bottom)); }
   .phase { bottom: max(32px, calc(env(safe-area-inset-bottom) + 14px)); width: 120px; }
-  .phase span { font-size: 9px; }
-  .agent { font-size: 10px; }
+  .phase span { font-size: 12px; }
+  .agent { font-size: 12px; }
   .loading { left: 20px; top: 88px; }
   .resolution { padding: 100px 24px; }
   .resolution nav, .resolution :global(.cinema-actions) { flex-direction: column; gap: 5px; margin-top: 28px; }

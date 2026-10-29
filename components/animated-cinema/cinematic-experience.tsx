@@ -20,6 +20,21 @@ type FrameSurface = {
   close: () => void
 }
 
+/** Keeps the frame film dormant behind its matching poster until it is useful. */
+export class CinemaFrameActivation {
+  activated = false
+  private disposed = false
+
+  activate(progress: number, intent: boolean, start: () => void) {
+    if (this.disposed || this.activated || (!intent && !(Number.isFinite(progress) && progress > 0.0001))) return false
+    this.activated = true
+    start()
+    return true
+  }
+
+  dispose() { this.disposed = true }
+}
+
 /** Safari fallback releases the object URL and image surface just like a bitmap. */
 async function decodeFrame(blob: Blob): Promise<FrameSurface> {
   if (typeof createImageBitmap === "function") {
@@ -65,13 +80,15 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
     const context = canvas.getContext("2d", { alpha: false })
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)")
     let cache: CinemaFrameCache<FrameSurface> | null = null
+    const activation = new CinemaFrameActivation()
     let target = 0, presented = 0, interpolated = 0, lastTime = 0
     let pendingProposal: { target: number; progress: number } | null = null
     let direction = 1, frame: number | null = null
     let disposed = false, fallback = !context, visible = !document.hidden
     let width = 1, height = 1, mobile = false, preferenceReady = false
     let hasFrame = false, pendingReplay = false, focusResolution = false
-    const frameIntervals: number[] = []
+    let storyTop = 0, storyRange = 1, resizeFrame: number | null = null
+    let intentListenersAttached = false
 
     const geometry = (progress: number) => {
       const framing = framingAt(progress, width / height < 0.95 ? CINEMA.framing.portrait : CINEMA.framing.desktop)
@@ -85,7 +102,6 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
 
     const paintLayers = (progress: number) => {
       const rect = geometry(progress)
-      root.dataset.presentedProgress = progress.toFixed(5)
       root.style.setProperty("--film-x", `${rect.x}px`)
       root.style.setProperty("--film-y", `${rect.y}px`)
       root.style.setProperty("--film-width", `${rect.width}px`)
@@ -134,7 +150,6 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
       }
       hasFrame = true
       pendingReplay = false
-      root.dataset.presentedFrame = position.toFixed(3)
       return true
     }
 
@@ -147,12 +162,6 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
       frame = null
       if (disposed || !visible) return
       const elapsed = lastTime ? (now - lastTime) / 1000 : 1 / 60
-      if (lastTime && now - lastTime < 150) {
-        frameIntervals.push(now - lastTime)
-        if (frameIntervals.length > 180) frameIntervals.shift()
-        const sorted = [...frameIntervals].sort((a, b) => a - b)
-        root!.dataset.rafP95Ms = (sorted[Math.floor(sorted.length * 0.95)] ?? 0).toFixed(2)
-      }
       lastTime = now
       // Lock the exact proposal across decode retries. A retry may have a
       // different RAF interval, but cannot move the image it is waiting for.
@@ -166,7 +175,9 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
         interpolated = pendingProposal.progress
       }
       const requested = frameAt(interpolated, CINEMA.frameCount, CINEMA.filmEnd)
-      let ready = preference.matches || fallback
+      // Before real scroll intent the matching poster is the complete opening
+      // visual, so the route is ready without allocating or fetching frames.
+      let ready = preference.matches || fallback || !activation.activated
       if (!ready && cache) {
         cache.request(requested, direction)
         if (cache.failedAt(requested)) {
@@ -206,16 +217,47 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
       cache.request(frameAt(presented, CINEMA.frameCount, CINEMA.filmEnd), direction)
     }
 
+    const detachIntentListeners = () => {
+      if (!intentListenersAttached) return
+      intentListenersAttached = false
+      window.removeEventListener("wheel", onScrollIntent)
+      window.removeEventListener("touchstart", onScrollIntent)
+      window.removeEventListener("keydown", onKeyIntent)
+    }
+    const ensureCache = (intent = false) => {
+      if (!preferenceReady || preference.matches || fallback) return false
+      const activated = activation.activate(target, intent, createCache)
+      if (activated) detachIntentListeners()
+      return activated
+    }
+    function onScrollIntent() { ensureCache(true) }
+    function onKeyIntent(event: KeyboardEvent) {
+      if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) ensureCache(true)
+    }
+    const attachIntentListeners = () => {
+      if (intentListenersAttached || activation.activated) return
+      intentListenersAttached = true
+      window.addEventListener("wheel", onScrollIntent, { passive: true })
+      window.addEventListener("touchstart", onScrollIntent, { passive: true })
+      window.addEventListener("keydown", onKeyIntent)
+    }
+
     const readScroll = () => {
-      const next = clamp(-story.getBoundingClientRect().top / Math.max(1, story.offsetHeight - window.innerHeight))
+      const next = clamp((window.scrollY - storyTop) / storyRange)
       if (next !== target) {
         direction = next > target ? 1 : -1
         pendingProposal = null
       }
       target = next
+      ensureCache()
       requestTick()
     }
+    const measureStory = () => {
+      storyTop = window.scrollY + story.getBoundingClientRect().top
+      storyRange = Math.max(1, story.offsetHeight - window.innerHeight)
+    }
     const resize = () => {
+      resizeFrame = null
       const wasMobile = mobile
       width = window.innerWidth
       height = window.innerHeight
@@ -224,25 +266,30 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
       canvas.width = Math.round(width * ratio)
       canvas.height = Math.round(height * ratio)
       context?.setTransform(ratio, 0, 0, ratio, 0, 0)
+      measureStory()
       // A variant change never draws an old nearest frame in the new composition.
       hasFrame = false
-      if (preferenceReady && wasMobile !== mobile) createCache()
+      if (preferenceReady && activation.activated && wasMobile !== mobile) createCache()
       paintLayers(presented)
       readScroll()
+    }
+    const scheduleResize = () => {
+      if (resizeFrame === null) resizeFrame = requestAnimationFrame(resize)
     }
     const visibility = () => {
       visible = !document.hidden
       cache?.setActive(visible)
       if (!visible && frame !== null) { cancelAnimationFrame(frame); frame = null }
       lastTime = 0
-      if (visible) readScroll()
+      if (visible) scheduleResize()
     }
     const changePreference = () => {
       root.dataset.reducedMotion = String(preference.matches)
       root.dataset.renderer = preference.matches ? "reduced-motion" : fallback ? "poster-fallback" : "frame-sequence"
       pendingProposal = null
       hasFrame = false
-      createCache()
+      if (preference.matches || activation.activated) createCache()
+      else ensureCache()
       paintLayers(presented)
       requestTick()
     }
@@ -265,9 +312,10 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
     }
     resize()
     preferenceReady = true
+    attachIntentListeners()
     changePreference()
     window.addEventListener("scroll", readScroll, { passive: true })
-    window.addEventListener("resize", resize, { passive: true })
+    window.addEventListener("resize", scheduleResize, { passive: true })
     document.addEventListener("visibilitychange", visibility)
     preference.addEventListener("change", changePreference)
     readScroll()
@@ -275,11 +323,14 @@ export function CinematicExperience({ resolution }: { resolution: ReactNode }) {
     return () => {
       disposed = true
       if (frame !== null) cancelAnimationFrame(frame)
+      if (resizeFrame !== null) cancelAnimationFrame(resizeFrame)
+      activation.dispose()
+      detachIntentListeners()
       cache?.dispose()
       replayRef.current = null
       skipRef.current = null
       window.removeEventListener("scroll", readScroll)
-      window.removeEventListener("resize", resize)
+      window.removeEventListener("resize", scheduleResize)
       document.removeEventListener("visibilitychange", visibility)
       preference.removeEventListener("change", changePreference)
       canvas.width = 1; canvas.height = 1

@@ -3,15 +3,15 @@ import { useRef, useState, useMemo, useEffect } from "react";
 // m + AnimatePresence from motion/react: the app provides LazyMotion(domAnimation),
 // so m.* elements animate identically to motion.* without the eager full bundle.
 import { m, AnimatePresence, useReducedMotion } from "motion/react";
-import DottedMap from "dotted-map";
 import { useTheme } from "next-themes";
 
-// new DottedMap() + getSVG() walk the entire world grid: profiling showed this
-// single synchronous call was the ~700ms main-thread long task that dominated
-// the home page TBT (it ran at mount, five viewports below the fold). The SVG
-// only depends on the theme color, so compute it once per theme, lazily, and
-// only when the map is actually approaching the viewport.
-const svgCache = new Map<string, string>();
+// These immutable exports are byte-identical to the former DottedMap output.
+// Build the 8,476-point grid offline, not in a render/useMemo during scrolling.
+// Regenerate with scripts/deployment/precompute-world-map.mjs --patch.
+const MAP_BACKGROUNDS = {
+  dark: "/maps/world-v1-dark.svg",
+  light: "/maps/world-v1-light.svg",
+} as const;
 const LABEL_OFFSETS: Record<string, { x: number; y: number }> = {
   "New York": { x: -50, y: -34 },
   "Los Angeles": { x: -56, y: 8 },
@@ -23,19 +23,6 @@ const LABEL_OFFSETS: Record<string, { x: number; y: number }> = {
   Tokyo: { x: 8, y: -30 },
   "São Paulo": { x: -48, y: -32 },
 };
-function buildMapSVG(dark: boolean): string {
-  const key = dark ? "dark" : "light";
-  const hit = svgCache.get(key);
-  if (hit) return hit;
-  const svg = new DottedMap({ height: 100, grid: "diagonal" }).getSVG({
-    radius: 0.22,
-    color: dark ? "#FFFFFF20" : "#00000040",
-    shape: "circle",
-    backgroundColor: "transparent",
-  });
-  svgCache.set(key, svg);
-  return svg;
-}
 
 interface MapProps {
   dots?: Array<{
@@ -61,11 +48,6 @@ export function WorldMap({
   const { resolvedTheme } = useTheme();
   const reduceMotion = useReducedMotion();
 
-  // Defer the expensive grid computation until the section is near view, then
-  // run it in an idle callback so it never lands mid-scroll-frame. The outer
-  // container keeps its aspect ratio the whole time, so there is no layout
-  // shift, just dots fading in slightly before the section scrolls in.
-  const [ready, setReady] = useState(false);
   // Pause the infinite path/beacon animations when the map is off-screen: the
   // animated overlay unmounts (the static dotted-map image stays), so no rAF
   // work runs for a section the user cannot see. Re-entry restarts the loop
@@ -81,38 +63,12 @@ export function WorldMap({
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
-  useEffect(() => {
-    const el = wrapRef.current;
-    if (!el || ready) return;
-    let idleId: number | null = null;
-    const win = window as typeof window & {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-      cancelIdleCallback?: (id: number) => void;
-    };
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        obs.disconnect();
-        if (win.requestIdleCallback) {
-          idleId = win.requestIdleCallback(() => setReady(true), { timeout: 600 });
-        } else {
-          setReady(true);
-        }
-      },
-      // generous margin: compute well before the map is visible
-      { rootMargin: "900px" }
-    );
-    obs.observe(el);
-    return () => {
-      obs.disconnect();
-      if (idleId !== null) win.cancelIdleCallback?.(idleId);
-    };
-  }, [ready]);
-
-  const svgMap = useMemo(
-    () => (ready ? buildMapSVG(resolvedTheme === "dark") : null),
-    [ready, resolvedTheme]
-  );
+  // The parent viewport gate defers this island; lazy image delivery avoids
+  // fetching the map before it is useful. Wait for the resolved theme rather
+  // than briefly requesting the wrong variant during theme hydration.
+  const mapBackground = resolvedTheme
+    ? MAP_BACKGROUNDS[resolvedTheme === "dark" ? "dark" : "light"]
+    : undefined;
 
   const locations = useMemo(() => {
     const unique = new Map<string, { lat: number; lng: number; label: string }>();
@@ -145,17 +101,20 @@ export function WorldMap({
   return (
     <div ref={wrapRef} className="global-world-map-shell">
       <div className="global-world-map w-full aspect-[2/1] rounded-2xl relative overflow-hidden">
-      {svgMap && (
+      {mapBackground && (
         /* eslint-disable-next-line @next/next/no-img-element */
         <img
-          src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
+          src={mapBackground}
           className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] pointer-events-none select-none object-cover opacity-80"
           alt="world map"
+          width={198}
+          height={100}
+          loading="lazy"
+          decoding="async"
           draggable={false}
-          suppressHydrationWarning
         />
       )}
-      {ready && active && (
+      {active && (
       <svg
         ref={svgRef}
         viewBox="0 0 800 400"

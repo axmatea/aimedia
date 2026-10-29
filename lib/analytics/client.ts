@@ -22,9 +22,10 @@ export function trackBrowserEvent(name: BrowserEventName, dimensions: unknown) {
     if (navigator.doNotTrack === "1" || ("globalPrivacyControl" in navigator && navigator.globalPrivacyControl === true)) return
     const body = JSON.stringify({ eventId: crypto.randomUUID(), visitorId: sessionId(), name, dimensions: sanitizeDimensions(dimensions) })
     // No analytics cookies, referrer URL, full query string or third-party script.
+    // Drain the tiny ACK without parsing or retaining it; the caller stays nonblocking.
     void fetch("/api/analytics/events", {
       method: "POST", headers: { "Content-Type": "application/json" }, body,
       credentials: "omit", keepalive: true, cache: "no-store", referrerPolicy: "no-referrer",
-    }).catch(() => {})
+    }).then(response => response.arrayBuffer()).catch(() => {})
   } catch { /* Measurement never blocks navigation or a conversion. */ }
 }
