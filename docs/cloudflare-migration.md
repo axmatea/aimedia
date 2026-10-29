@@ -282,3 +282,108 @@ TBT 461.61 ms, transfer 2,566,699 bytes, CLS 0; animated performance 86,
 LCP 4,048.13 ms, TBT 9.5 ms, transfer 485,467 bytes, CLS 0.
 Post-release measurements and known limitations are recorded in
 `scripts/deployment/performance-release-results.json` after live verification.
+
+### Final live verification and measured outcome
+
+Production source commit: `7bfe02c`. Deployed at `2026-10-29T21:41:07.847283Z`,
+100% on Worker version `1091774f-3a90-405b-a965-7e394337a937`.
+Homepage: https://aimedia.global/ ; film: https://aimedia.global/animated .
+Production API execution is Next/OpenNext in one Worker with Cloudflare Assets;
+anonymous first-party funnel storage is D1, with existing external Cal, Notion,
+Resend and Sheets contracts retained. No Vercel/Railway serving dependency was
+introduced. Other hosting accounts were not cancelled.
+
+**VERIFIED IMPROVEMENT**, three-run mobile medians on the same production URLs:
+
+| Metric | Homepage before → after | Animated before → after |
+| --- | --- | --- |
+| Lighthouse performance | 70 → 76 | 86 → 87 |
+| LCP | 4,389.78 → 4,024.13 ms | 4,048.13 → 3,817.48 ms |
+| TBT, not INP | 461.61 → 385.03 ms | 9.5 → 3 ms |
+| CLS | 0 → 0 | 0 → 0 |
+| Simulated TTFB | 490 → 479 ms | 482 → 563 ms |
+| Initial transfer | 2,566,699 → 2,211,960 B | 485,467 → 374,621 B |
+| JavaScript transfer | 848,014 → 838,562 B | 251,831 → 174,887 B |
+| CSS transfer | 31,815 → 25,231 B | 38,548 → 27,001 B |
+
+Homepage transfer is 13.82% smaller; animated transfer 22.83% smaller, with
+30.55% less initial JavaScript. Desktop homepage single indicative run: 96 → 97,
+LCP 1,077.51 → 949.29 ms. Selected System mobile single run: 87 → 89. No timeout
+warnings or console errors in any final Lighthouse run. Homepage accessibility,
+best practices and SEO remain 100. Animated accessibility/best practices remain
+100; SEO remains 66 because its pre-existing noindex is intentional. Selected
+System accessibility remains 95 with the same two CTA contrast findings.
+
+**INVESTIGATED, NO CHANGE NEEDED**: D1's existing covering index serves the funnel
+aggregate query; read-only provider timings were sub-millisecond. No backend
+rewrite was justified. Five unthrottled API/network samples before/after all
+returned 200; variable POP/cache effects prevent claiming a causal latency gain.
+In particular animated simulated TTFB increased while payload/LCP improved.
+Raw samples and each lab run are preserved in the machine-readable result file.
+
+Cloudflare Brotli/HTTP2/HTTP3, managed WAF/DDoS and scoped HTTPS rules were
+inspected and retained. Rocket Loader stays off. No cache-everything rule, TLS,
+DNS, mail, domain ownership or paid-product change was made. A short QA-heavy
+post-release edge sample had 244 cache hits and six misses (97.6% of hit+miss
+traffic, excluding dynamic/other statuses); it is not a customer-traffic SLA.
+Worker telemetry showed 113 requests and zero errors at verification time.
+
+**IMPLEMENTED, NOT YET MEASURED**: Cloudflare RUM is receiving events. Its first
+two samples are internal QA, so there is no representative field LCP/INP baseline.
+INP is unavailable, not zero. Continue using existing Cloudflare Web Analytics,
+Workers error/CPU analytics and edge cache/status metrics rather than adding an
+APM vendor. Monitoring is free; no plan upgrade or paid add-on was enabled.
+
+Exact checks executed: `npm run build:cloudflare`, `npx tsc --noEmit --incremental
+false`, `npm run lint`, `npm run test:conversion` (58), `npm run test:deployment`
+(115), Wrangler dry-run, strict remote deployment smoke on staging and production,
+and nine final Lighthouse runs (three per main mobile route, desktop homepage,
+mobile system route, forced-reduced-motion film). The reduced-motion audit had no
+initial film-frame requests, console errors or layout shift. Staging/browser QA
+verified robot rendering, light/dark mode, mobile menu, tab click/arrow-key states,
+calendar rendering, film forward/reverse/end navigation and Replay. Public linked
+resource audit: 64 resources, zero failures; ten fragment links, no missing targets.
+HTTP/www redirects preserve path/query. All 15 DNS records are byte-equivalent in
+their effective configuration; all 13 encrypted integration bindings remain.
+The precommit secret scan passed with zero findings. An unrelated pre-existing
+Graphify hook reported its optional Python package missing; commit still succeeded.
+
+Screenshots (local audit artifacts):
+`/tmp/aimedia-optimization-before-home-desktop.jpg`,
+`/tmp/aimedia-optimization-before-home-mobile.jpg`,
+`/tmp/aimedia-optimization-after-home-desktop.jpg`,
+`/tmp/aimedia-optimization-after-home-mobile.jpg`,
+`/tmp/aimedia-optimization-staging-light-desktop.jpg`,
+`/tmp/aimedia-optimization-staging-platform-mobile.jpg`,
+`/tmp/aimedia-optimization-staging-animated-tablet.jpg`,
+`/tmp/aimedia-optimization-staging-animated-mobile.jpg`.
+The result JSON includes all 55 release-file paths and the 19 removed-file paths.
+
+**BLOCKED / remaining bottlenecks**: authored Spline subdivision geometry and
+runtime initialization still dominate mobile CPU. Geometry baking requires a
+source-authoring workflow and fidelity check; this release does not delay the
+robot to game Lighthouse. Historical credential revocation/history remediation
+requires separate approval. The upstream build-time glob advisory remains.
+The existing Cal-to-CRM/Meta commissioning gap and two pre-existing CTA contrast
+findings remain explicitly documented, not silently declared fixed.
+
+**NOT ATTEMPTED**: real email sends, live bookings, CRM writes, Cal webhook/key
+commissioning, destructive data operations, paid features, domain transfers or
+old-host cancellation. Native Safari/physical mobile-device profiling was not
+available; browser QA uses Chromium/IAB plus mobile emulation. Safe conversion
+unit/integration tests and calendar rendering are not a claim of a real booked
+meeting flowing end-to-end into CRM.
+
+Next three improvements: (1) optimize/bake the original robot meshes with visual
+parity review, (2) collect representative RUM mobile LCP/INP by device before a
+new performance experiment, (3) separately approve historical credential
+remediation and apply a compatible upstream OpenNext security fix when available.
+
+Primary references used:
+https://nextjs.org/docs/app/guides/lazy-loading ,
+https://developer.chrome.com/docs/lighthouse/overview/ ,
+https://developers.cloudflare.com/workers/static-assets/ ,
+https://developers.cloudflare.com/web-analytics/faq/ ,
+https://developers.cloudflare.com/web-analytics/data-metrics/data-origin-and-collection/ ,
+https://github.com/lovell/sharp , https://github.com/GoogleChrome/lighthouse-ci ,
+https://github.com/microsoft/playwright , https://github.com/webpro-nl/knip .

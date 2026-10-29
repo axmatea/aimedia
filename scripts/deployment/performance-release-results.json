@@ -1,36 +1,715 @@
 {
   "date": "2026-10-29",
-  "status": "staging-verified-production-pending",
+  "status": "production-deployed-and-verified",
   "baselineCommit": "e495b7fa85d5f95c58a15e7f0a218249ea77425f",
   "rollbackWorkerVersion": "0133f6b0-0b83-4eb4-88a7-e6c43f2fd34f",
   "stagingUrl": "https://aimedia-web-staging.axmedia.workers.dev",
   "stagingWorkerVersion": "b9ba5505-875e-4638-aa0d-56004a4dc410",
   "productionUrl": "https://aimedia.global",
-  "productionWorkerVersion": null,
+  "productionWorkerVersion": "1091774f-3a90-405b-a965-7e394337a937",
   "method": {
     "lighthouse": "12.6.1",
     "chrome": "150.0.7871.24",
     "mobile": "default simulated mobile throttling, three runs per primary production route, median",
     "desktop": "desktop preset, single indicative run",
-    "caveats": ["Local lab results, not field INP", "Cloudflare POP and cache variability", "Staging metrics are not production comparison"]
+    "caveats": [
+      "Local lab results, not field INP",
+      "Cloudflare POP and cache variability",
+      "Staging metrics are not production comparison"
+    ]
   },
   "beforeMobileMedians": {
-    "home": { "performance": 70, "lcpMs": 4389.7755, "tbtMs": 461.606, "transferBytes": 2566699, "cls": 0 },
-    "animated": { "performance": 86, "lcpMs": 4048.129, "tbtMs": 9.5, "transferBytes": 485467, "cls": 0 }
+    "home": {
+      "performance": 70,
+      "lcpMs": 4389.7755,
+      "tbtMs": 461.60599999999977,
+      "ttfbMs": 490,
+      "cls": 0,
+      "transferBytes": 2566699,
+      "scriptBytes": 848014,
+      "cssBytes": 31815
+    },
+    "animated": {
+      "performance": 86,
+      "lcpMs": 4048.1290000000004,
+      "tbtMs": 9.5,
+      "ttfbMs": 482,
+      "cls": 0,
+      "transferBytes": 485467,
+      "scriptBytes": 251831,
+      "cssBytes": 38548
+    }
   },
-  "afterMobileMedians": null,
+  "afterMobileMedians": {
+    "home": {
+      "performance": 76,
+      "lcpMs": 4024.129999999999,
+      "tbtMs": 385.0280000000007,
+      "ttfbMs": 479,
+      "cls": 0,
+      "transferBytes": 2211960,
+      "scriptBytes": 838562,
+      "cssBytes": 25231
+    },
+    "animated": {
+      "performance": 87,
+      "lcpMs": 3817.478999999999,
+      "tbtMs": 3,
+      "ttfbMs": 563,
+      "cls": 0,
+      "transferBytes": 374621,
+      "scriptBytes": 174887,
+      "cssBytes": 27001
+    }
+  },
   "verifiedPayloads": {
-    "robotScene": { "beforeBytes": 1349622, "afterBytes": 1011211, "savedBytes": 338411, "savedPercent": 25.07, "losslessPixels": true, "geometryAndAnimationUnchanged": true },
-    "mainCss": { "beforeBytes": 136641, "afterBytes": 101989, "beforeGzipBytes": 25807, "afterGzipBytes": 19815 },
-    "worker": { "beforeKiB": 6031.14, "afterKiB": 5883.17, "beforeGzipKiB": 1347.75, "afterGzipKiB": 1332.50 }
+    "robotScene": {
+      "beforeBytes": 1349622,
+      "afterBytes": 1011211,
+      "savedBytes": 338411,
+      "savedPercent": 25.07,
+      "losslessPixels": true,
+      "geometryAndAnimationUnchanged": true
+    },
+    "mainCss": {
+      "beforeBytes": 136641,
+      "afterBytes": 101989,
+      "beforeGzipBytes": 25807,
+      "afterGzipBytes": 19815
+    },
+    "worker": {
+      "beforeKiB": 6031.14,
+      "afterKiB": 5883.17,
+      "beforeGzipKiB": 1347.75,
+      "afterGzipKiB": 1332.5
+    }
   },
-  "tests": { "conversion": 58, "deployment": 115, "lint": "pass", "typescript": "pass", "cloudflareBuild": "pass", "dryRun": "pass", "stagingSmoke": "pass" },
-  "monitoring": { "cloudflareRumSiteTag": "0b34b09eaacb43f48dcf4e7c3d01cbcf", "autoInstall": true, "fieldCoreWebVitals": "awaiting sufficient real samples" },
+  "tests": {
+    "conversion": 58,
+    "deployment": 115,
+    "lint": "pass",
+    "typescript": "pass",
+    "cloudflareBuild": "pass",
+    "dryRun": "pass",
+    "stagingSmoke": "pass"
+  },
+  "monitoring": {
+    "cloudflareRumSiteTag": "0b34b09eaacb43f48dcf4e7c3d01cbcf",
+    "autoInstall": true,
+    "fieldCoreWebVitals": "Insufficient real traffic. INP unavailable. Initial QA samples do not establish representative field percentiles.",
+    "beaconReceiving": true,
+    "initialRumSamples": 2,
+    "initialSamplesAreQA": true
+  },
   "knownLimitations": [
     "Spline geometry/runtime remains the primary homepage CPU cost; source-level mesh bake needs a separate visual fidelity review",
     "Four npm high findings refer to one upstream OpenNext build-time glob chain; no forced downgrade or override",
     "Historical credential removed from two unused scripts but not revoked or removed from history; separate approval required",
     "Cal-to-CRM/Meta commissioning is pre-existing and not completed by this optimization release",
-    "No real email, booking, lead or provider mutation used as a test"
-  ]
+    "No real email, booking, lead or provider mutation used as a test",
+    "Pre-existing contrast finding on two Selected System red CTAs: accessibility 95 before/after, unchanged to preserve appearance",
+    "Native Safari/Apple-device hardware profiling not performed; desktop Chromium/IAB and mobile emulation used"
+  ],
+  "productionSourceCommit": "7bfe02c",
+  "productionDeploymentId": "32d455d2-2cfd-4854-97c7-8b00a84cdcda",
+  "deployedAt": "2026-10-29T21:41:07.847283Z",
+  "measurements": {
+    "before": {
+      "home": [
+        {
+          "file": "/tmp/aimedia-optimization-before-home-mobile.json",
+          "performance": 69,
+          "lcpMs": 4600.062,
+          "tbtMs": 354,
+          "ttfbMs": 1570,
+          "cls": 0,
+          "transferBytes": 2566484,
+          "scriptBytes": 847789,
+          "cssBytes": 31777,
+          "initialFilmFrameRequests": 0,
+          "categories": {
+            "performance": 69,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "warnings": [],
+          "consoleErrors": []
+        },
+        {
+          "file": "/tmp/aimedia-optimization-before-home-mobile-2.json",
+          "performance": 70,
+          "lcpMs": 4292.013999999999,
+          "tbtMs": 489.17199999999957,
+          "ttfbMs": 490,
+          "cls": 0,
+          "transferBytes": 2566699,
+          "scriptBytes": 848014,
+          "cssBytes": 31815,
+          "initialFilmFrameRequests": 0,
+          "categories": {
+            "performance": 70,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "warnings": [],
+          "consoleErrors": []
+        },
+        {
+          "file": "/tmp/aimedia-optimization-before-home-mobile-3.json",
+          "performance": 71,
+          "lcpMs": 4389.7755,
+          "tbtMs": 461.60599999999977,
+          "ttfbMs": 482,
+          "cls": 0,
+          "transferBytes": 2566879,
+          "scriptBytes": 848171,
+          "cssBytes": 31824,
+          "initialFilmFrameRequests": 0,
+          "categories": {
+            "performance": 71,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "warnings": [],
+          "consoleErrors": []
+        }
+      ],
+      "animated": [
+        {
+          "file": "/tmp/aimedia-optimization-before-animated-mobile.json",
+          "performance": 86,
+          "lcpMs": 4048.1290000000004,
+          "tbtMs": 7.5,
+          "ttfbMs": 482,
+          "cls": 0,
+          "transferBytes": 485673,
+          "scriptBytes": 251967,
+          "cssBytes": 38548,
+          "initialFilmFrameRequests": 0,
+          "categories": {
+            "performance": 86,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 66
+          },
+          "warnings": [],
+          "consoleErrors": []
+        },
+        {
+          "file": "/tmp/aimedia-optimization-before-animated-mobile-2.json",
+          "performance": 89,
+          "lcpMs": 3670.490000000001,
+          "tbtMs": 14,
+          "ttfbMs": 486,
+          "cls": 0,
+          "transferBytes": 484904,
+          "scriptBytes": 251800,
+          "cssBytes": 38624,
+          "initialFilmFrameRequests": 0,
+          "categories": {
+            "performance": 89,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 66
+          },
+          "warnings": [],
+          "consoleErrors": []
+        },
+        {
+          "file": "/tmp/aimedia-optimization-before-animated-mobile-3.json",
+          "performance": 84,
+          "lcpMs": 4360.210500000002,
+          "tbtMs": 9.5,
+          "ttfbMs": 482,
+          "cls": 0,
+          "transferBytes": 485467,
+          "scriptBytes": 251831,
+          "cssBytes": 38547,
+          "initialFilmFrameRequests": 0,
+          "categories": {
+            "performance": 84,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 66
+          },
+          "warnings": [],
+          "consoleErrors": []
+        }
+      ]
+    },
+    "after": {
+      "home": [
+        {
+          "file": "/tmp/aimedia-optimization-after-home-mobile-1.json",
+          "performance": 73,
+          "lcpMs": 3903.6610000000005,
+          "tbtMs": 497.31750000000056,
+          "ttfbMs": 479,
+          "cls": 0,
+          "transferBytes": 2211960,
+          "scriptBytes": 838562,
+          "cssBytes": 25231,
+          "initialFilmFrameRequests": 0,
+          "categories": {
+            "performance": 73,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "warnings": [],
+          "consoleErrors": []
+        },
+        {
+          "file": "/tmp/aimedia-optimization-after-home-mobile-2.json",
+          "performance": 76,
+          "lcpMs": 4024.129999999999,
+          "tbtMs": 385.0280000000007,
+          "ttfbMs": 476,
+          "cls": 0,
+          "transferBytes": 2211935,
+          "scriptBytes": 838492,
+          "cssBytes": 25242,
+          "initialFilmFrameRequests": 0,
+          "categories": {
+            "performance": 76,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "warnings": [],
+          "consoleErrors": []
+        },
+        {
+          "file": "/tmp/aimedia-optimization-after-home-mobile-3.json",
+          "performance": 77,
+          "lcpMs": 4070.5299999999997,
+          "tbtMs": 336.5,
+          "ttfbMs": 483,
+          "cls": 0,
+          "transferBytes": 2212077,
+          "scriptBytes": 838634,
+          "cssBytes": 25208,
+          "initialFilmFrameRequests": 0,
+          "categories": {
+            "performance": 77,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "warnings": [],
+          "consoleErrors": []
+        }
+      ],
+      "animated": [
+        {
+          "file": "/tmp/aimedia-optimization-after-animated-mobile-1.json",
+          "performance": 85,
+          "lcpMs": 4111.650000000001,
+          "tbtMs": 3,
+          "ttfbMs": 563,
+          "cls": 0,
+          "transferBytes": 374651,
+          "scriptBytes": 174887,
+          "cssBytes": 26998,
+          "initialFilmFrameRequests": 0,
+          "categories": {
+            "performance": 85,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 66
+          },
+          "warnings": [],
+          "consoleErrors": []
+        },
+        {
+          "file": "/tmp/aimedia-optimization-after-animated-mobile-2.json",
+          "performance": 87,
+          "lcpMs": 3817.478999999999,
+          "tbtMs": 2,
+          "ttfbMs": 541,
+          "cls": 0,
+          "transferBytes": 374621,
+          "scriptBytes": 174906,
+          "cssBytes": 27005,
+          "initialFilmFrameRequests": 0,
+          "categories": {
+            "performance": 87,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 66
+          },
+          "warnings": [],
+          "consoleErrors": []
+        },
+        {
+          "file": "/tmp/aimedia-optimization-after-animated-mobile-3.json",
+          "performance": 88,
+          "lcpMs": 3640.6145,
+          "tbtMs": 11.5,
+          "ttfbMs": 1243,
+          "cls": 0,
+          "transferBytes": 374354,
+          "scriptBytes": 174628,
+          "cssBytes": 27001,
+          "initialFilmFrameRequests": 0,
+          "categories": {
+            "performance": 88,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 66
+          },
+          "warnings": [],
+          "consoleErrors": []
+        }
+      ]
+    },
+    "medians": {
+      "before": {
+        "home": {
+          "performance": 70,
+          "lcpMs": 4389.7755,
+          "tbtMs": 461.60599999999977,
+          "ttfbMs": 490,
+          "cls": 0,
+          "transferBytes": 2566699,
+          "scriptBytes": 848014,
+          "cssBytes": 31815
+        },
+        "animated": {
+          "performance": 86,
+          "lcpMs": 4048.1290000000004,
+          "tbtMs": 9.5,
+          "ttfbMs": 482,
+          "cls": 0,
+          "transferBytes": 485467,
+          "scriptBytes": 251831,
+          "cssBytes": 38548
+        }
+      },
+      "after": {
+        "home": {
+          "performance": 76,
+          "lcpMs": 4024.129999999999,
+          "tbtMs": 385.0280000000007,
+          "ttfbMs": 479,
+          "cls": 0,
+          "transferBytes": 2211960,
+          "scriptBytes": 838562,
+          "cssBytes": 25231
+        },
+        "animated": {
+          "performance": 87,
+          "lcpMs": 3817.478999999999,
+          "tbtMs": 3,
+          "ttfbMs": 563,
+          "cls": 0,
+          "transferBytes": 374621,
+          "scriptBytes": 174887,
+          "cssBytes": 27001
+        }
+      }
+    },
+    "indicative": {
+      "beforeDesktop": {
+        "file": "/tmp/aimedia-optimization-before-home-desktop.json",
+        "performance": 96,
+        "lcpMs": 1077.5124999999998,
+        "tbtMs": 41.5,
+        "ttfbMs": 545,
+        "cls": 0,
+        "transferBytes": 2589303,
+        "scriptBytes": 850627,
+        "cssBytes": 31815,
+        "initialFilmFrameRequests": 0,
+        "categories": {
+          "performance": 96,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "warnings": [],
+        "consoleErrors": []
+      },
+      "afterDesktop": {
+        "file": "/tmp/aimedia-optimization-after-home-desktop.json",
+        "performance": 97,
+        "lcpMs": 949.2889999999998,
+        "tbtMs": 48,
+        "ttfbMs": 257,
+        "cls": 0,
+        "transferBytes": 2242601,
+        "scriptBytes": 849170,
+        "cssBytes": 25216,
+        "initialFilmFrameRequests": 0,
+        "categories": {
+          "performance": 97,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "warnings": [],
+        "consoleErrors": []
+      },
+      "beforeSystem": {
+        "file": "/tmp/aimedia-optimization-before-system-mobile.json",
+        "performance": 87,
+        "lcpMs": 3897.6210000000005,
+        "tbtMs": 24,
+        "ttfbMs": 478,
+        "cls": 0,
+        "transferBytes": 412730,
+        "scriptBytes": 239644,
+        "cssBytes": 31823,
+        "initialFilmFrameRequests": 0,
+        "categories": {
+          "performance": 87,
+          "accessibility": 95,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "warnings": [],
+        "consoleErrors": []
+      },
+      "afterSystem": {
+        "file": "/tmp/aimedia-optimization-after-system-mobile.json",
+        "performance": 89,
+        "lcpMs": 3645.1970000000006,
+        "tbtMs": 5,
+        "ttfbMs": 501,
+        "cls": 0,
+        "transferBytes": 396814,
+        "scriptBytes": 230625,
+        "cssBytes": 25209,
+        "initialFilmFrameRequests": 0,
+        "categories": {
+          "performance": 89,
+          "accessibility": 95,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "warnings": [],
+        "consoleErrors": []
+      },
+      "reducedMotion": {
+        "file": "/tmp/aimedia-optimization-after-animated-reduced-motion.json",
+        "performance": 85,
+        "lcpMs": 4122.6050000000005,
+        "tbtMs": 1.5,
+        "ttfbMs": 561,
+        "cls": 0,
+        "transferBytes": 374531,
+        "scriptBytes": 174848,
+        "cssBytes": 26966,
+        "initialFilmFrameRequests": 0,
+        "categories": {
+          "performance": 85,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 66
+        },
+        "warnings": [],
+        "consoleErrors": []
+      }
+    },
+    "changedFiles": [
+      "AGENTS.md",
+      "README.md",
+      "app/animated/animated-experience.module.css",
+      "app/animated/animated-experience.tsx",
+      "app/animated/loading.module.css",
+      "app/animated/loading.tsx",
+      "app/cookies/page.tsx",
+      "app/globals.css",
+      "app/layout.tsx",
+      "app/page.tsx",
+      "app/privacy-policy/page.tsx",
+      "app/systems/qualified-pipeline/page.tsx",
+      "components/animated-cinema/cinematic-experience.tsx",
+      "components/animated/inquiry-hero.module.css",
+      "components/animated/inquiry-hero.tsx",
+      "components/animated/system-continuum.module.css",
+      "components/animated/system-continuum.tsx",
+      "components/home/actions.ts",
+      "components/home/booking-button.tsx",
+      "components/home/data.ts",
+      "components/home/hero-islands.tsx",
+      "components/providers/HomeMotionProvider.tsx",
+      "components/providers/SmoothScroll.tsx",
+      "components/providers/scroll-bridge.ts",
+      "components/providers/scroll-clock.ts",
+      "components/ui/animated-tooltip.tsx",
+      "components/ui/badge.tsx",
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "components/ui/count-up.tsx",
+      "components/ui/label.tsx",
+      "components/ui/lead-funnel.tsx",
+      "components/ui/liquid-metal-button.tsx",
+      "components/ui/magnetic.tsx",
+      "components/ui/n8n-workflow-block-shadcnui.tsx",
+      "components/ui/proof-section.tsx",
+      "components/ui/showcase-media.tsx",
+      "components/ui/switch.tsx",
+      "docs/cloudflare-migration.md",
+      "next.config.ts",
+      "package-lock.json",
+      "package.json",
+      "public/spline/robot-optimized-v1.splinecode",
+      "scripts/deployment-smoke.mjs",
+      "scripts/deployment/optimize-robot-scene.mjs",
+      "scripts/deployment/performance-release-results.json",
+      "scripts/deployment/robot-scene-optimization.json",
+      "scripts/deployment/tests/homepage-content.test.mjs",
+      "scripts/deployment/tests/motion-route-scope.test.mjs",
+      "scripts/deployment/tests/robot-scene-optimization.test.mjs",
+      "scripts/deployment/tests/smooth-scroll-lifecycle.test.mjs",
+      "scripts/deployment/tests/staging-isolation.test.mjs",
+      "scripts/generate_logos.py",
+      "scripts/generate_logos_v2.py",
+      "wrangler.staging.jsonc"
+    ],
+    "removedFiles": [
+      "app/animated/animated-experience.module.css",
+      "app/animated/animated-experience.tsx",
+      "components/animated/inquiry-hero.module.css",
+      "components/animated/inquiry-hero.tsx",
+      "components/animated/system-continuum.module.css",
+      "components/animated/system-continuum.tsx",
+      "components/home/booking-button.tsx",
+      "components/ui/badge.tsx",
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "components/ui/count-up.tsx",
+      "components/ui/label.tsx",
+      "components/ui/liquid-metal-button.tsx",
+      "components/ui/magnetic.tsx",
+      "components/ui/proof-section.tsx",
+      "components/ui/showcase-media.tsx",
+      "components/ui/switch.tsx",
+      "scripts/generate_logos.py",
+      "scripts/generate_logos_v2.py"
+    ]
+  },
+  "networkTTFBSamplesSeconds": {
+    "before": {
+      "health": [
+        0.701686,
+        0.178173,
+        0.589407,
+        0.110399,
+        0.199566
+      ],
+      "home": [
+        0.571693,
+        0.14375,
+        0.566049,
+        0.143983,
+        0.127993
+      ],
+      "animated": [
+        0.132887,
+        0.550732,
+        0.174879,
+        0.843326,
+        0.375887
+      ]
+    },
+    "after": {
+      "health": [
+        0.152793,
+        0.127075,
+        0.137544,
+        0.10219,
+        0.329056
+      ],
+      "home": [
+        0.159058,
+        0.315989,
+        0.907554,
+        0.138493,
+        0.570744
+      ],
+      "animated": [
+        0.229677,
+        0.150835,
+        0.179771,
+        0.175702,
+        0.139317
+      ]
+    },
+    "interpretation": "All 200. Small uncontrolled network samples with POP/cache variability. No backend latency improvement claimed."
+  },
+  "productionChecks": {
+    "strictRemoteSmoke": "pass",
+    "dns": {
+      "records": 15,
+      "allUnchanged": true,
+      "registrar": "Porkbun LLC",
+      "provider": "Cloudflare"
+    },
+    "preservedEncryptedBindings": 13,
+    "linkedResources": {
+      "checked": 64,
+      "failures": 0
+    },
+    "fragmentLinks": {
+      "occurrences": 10,
+      "missingTargets": 0
+    },
+    "redirects": "HTTP/apex/www -> HTTPS/apex 308 preserving path and query",
+    "indexing": "Homepage/system/legal index,follow; animated intentional noindex,follow unchanged; staging noindex,nofollow",
+    "consoleErrors": 0,
+    "visualWidths": [
+      1440,
+      768,
+      390,
+      360
+    ],
+    "nativeCal": "30-minute public iframe and attribution-bearing fallback loaded; no booking submitted",
+    "workerTelemetry": {
+      "requests": 113,
+      "errors": 0,
+      "cpuP50Ms": 30.414,
+      "cpuP99Ms": 591.849,
+      "note": "Short QA-heavy sample; different request mix from baseline"
+    },
+    "cacheTelemetry": {
+      "hits": 244,
+      "misses": 6,
+      "hitShareOfHitAndMiss": 97.6,
+      "note": "Short QA-heavy sample; dynamic/other none cache statuses excluded"
+    },
+    "reducedMotion": "Forced-preference Lighthouse browser smoke, no initial film-frame requests or console errors; automated preference/lifecycle tests passed"
+  },
+  "classification": {
+    "verifiedImprovement": [
+      "Lossless robot scene transfer 25.07% smaller",
+      "Mobile homepage median performance 70 to 76; LCP 4389.78 to 4024.13 ms; transfer 13.82% smaller",
+      "Mobile animated median performance 86 to 87; transfer 22.83% smaller; JavaScript 30.55% smaller",
+      "Dead code/styles/dependencies and public Demo labels removed"
+    ],
+    "implementedNotYetMeasured": [
+      "RUM enabled; waiting for representative real-visitor Core Web Vitals"
+    ],
+    "investigatedNoChangeNeeded": [
+      "Indexed D1 aggregate query",
+      "Existing API contracts",
+      "Mail/domain DNS",
+      "Existing security/CDN rules"
+    ],
+    "blocked": [
+      "Source-level Spline geometry bake/export requires authored-source workflow and fidelity review",
+      "Historical credential revocation/history handling requires separate explicit approval",
+      "No compatible OpenNext build-time glob fix selected"
+    ],
+    "notAttempted": [
+      "Real email sends, bookings or live CRM writes",
+      "Cal-to-CRM/Meta commissioning",
+      "Paid features, DNS/registrar changes",
+      "Old hosting account cancellation"
+    ]
+  }
 }
