@@ -26,6 +26,11 @@ Existing optimized images are served directly on Cloudflare; the original Next
 image behavior remains available for ordinary Node builds.
 Secrets must not be supplied at build time or committed in configuration.
 
+Isolated review URL: `https://aimedia-web.axmedia.workers.dev`.
+This is staging without production signing keys, not a completed domain cutover.
+Wrangler authorization has been verified in the target account with the scoped
+`workers_scripts:write` permission; do not start another OAuth flow unnecessarily.
+
 ```sh
 npm ci
 npm run lint
@@ -39,9 +44,13 @@ npx wrangler dev --local --port 4214
 npm run smoke:cloudflare:local
 ```
 
-Local Miniflare drops the Range request header in its disk-asset bridge.
-`--local-workerd` permits that documented loopback-only simulator limitation.
-Remote smoke MUST still require HTTP 206, correct Content-Range and 1024 bytes:
+Cloudflare Static Assets returns a complete `200` representation for these MP4
+Range requests. The scoped outer Worker routes only `/animated/video/*` through
+the Cache API, keys the cached representation by the current asset ETag, and lets
+the runtime produce native `206`/`416` responses without buffering films in JS.
+Local Miniflare's disk-asset bridge still cannot prove the deployed edge path, so
+`--local-workerd` remains a loopback-only allowance. Remote smoke MUST require
+HTTP 206, correct Content-Range and exactly 1024 bytes:
 
 ```sh
 npm run smoke:deployment -- https://THE-VERIFIED-WORKER.axmedia.workers.dev
@@ -49,6 +58,10 @@ npm run smoke:deployment -- https://THE-VERIFIED-WORKER.axmedia.workers.dev
 
 Never use the simulator flag for a remote release. No real mail, booking,
 follow-up cancellation or production lead write is part of the smoke suite.
+The native byte-range behavior uses the documented
+[Workers Cache API](https://developers.cloudflare.com/workers/runtime-apis/cache/).
+The first range request in a cold location fills one complete public asset into
+the cache; later seeks read only the requested bytes. No paid storage is enabled.
 
 ## First-party analytics
 
@@ -88,7 +101,9 @@ artifact. Only names/presence may be reported. No build step consumes that expor
 
 Vercel marks these values non-exportable: `CAL_WEBHOOK_SECRET`,
 `BOOKING_LOCK_HMAC_SECRET`, `BOOKING_LOCK_HASH_SECRET`, `NOTION_TOKEN`, `FROM_EMAIL`.
-An existing local Notion credential is present but needs read-only validation.
+The existing local Notion credential was read-only verified as NAYL Systems;
+the configured database metadata is readable. The Resend domain is verified.
+No live CRM write or email was part of those provider checks.
 Find the original signing keys in the approved secret store or obtain explicit
 approval for a coordinated rotation. Never invent replacements, weaken signature
 checks, or change the stable booking digest while an old writer can be active.

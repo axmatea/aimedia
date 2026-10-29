@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "aimedia-web",
   "account_id": "a377efd40123f2456972979cb5a8ccc9",
-  "main": ".open-next/worker.js",
+  "main": "cloudflare-worker.ts",
   "keep_names": false,
   "compatibility_date": "2026-10-29",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
@@ -10,7 +10,8 @@
   "preview_urls": false,
   "assets": {
     "directory": ".open-next/assets",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    "run_worker_first": ["/animated/video/*"]
   },
   "services": [
     { "binding": "WORKER_SELF_REFERENCE", "service": "aimedia-web" }
