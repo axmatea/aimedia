@@ -26,8 +26,10 @@ Existing optimized images are served directly on Cloudflare; the original Next
 image behavior remains available for ordinary Node builds.
 Secrets must not be supplied at build time or committed in configuration.
 
-Isolated review URL: `https://aimedia-web.axmedia.workers.dev`.
-This is staging without production signing keys, not a completed domain cutover.
+Worker review URL: `https://aimedia-web.axmedia.workers.dev`.
+The public hostname release retains this noindex URL and attaches only
+`aimedia.global` and `www.aimedia.global`. Runtime secrets are encrypted Worker
+bindings, never build inputs. Do not treat the health endpoint as CRM proof.
 Wrangler authorization has been verified in the target account with the scoped
 `workers_scripts:write` permission; do not start another OAuth flow unnecessarily.
 
@@ -68,7 +70,9 @@ the cache; later seeks read only the requested bytes. No paid storage is enabled
 `ANALYTICS_DB` is a dedicated D1 database, not a second CRM or the booking-lock DB.
 Create/verify it after approved Cloudflare authentication, pin its real database
 ID in wrangler.jsonc, and apply `lib/analytics/schema.sql` to that database only.
-Keep `ANALYTICS_ENVIRONMENT=staging` until production cutover is approved.
+The approved hostname release sets `ANALYTICS_ENVIRONMENT=production`.
+Use `utm_source=internal_qa` for founder/browser checks and exclude that source
+from a real-traffic baseline. Existing staging rows remain separately classified.
 The collector rejects foreign origins, unknown properties and oversized bodies;
 respects DNT/GPC; and stores anonymous session/event IDs, allowlisted dimensions,
 public paths and timestamps. No full URL, raw query, IP or CRM/prospect reference.
@@ -112,6 +116,28 @@ under an explicit secret-configuration approval before declaring full parity.
 Meta conversion settings were absent from the inspected Vercel inventory, so
 paid-Meta readiness is NOT claimed as a completed production integration.
 
+### Verified active booking dependency, 29 October 2026
+
+Authenticated Cal UI confirms the public `axmedia/call` event is ID `5203336`.
+Both its event-specific Webhooks tab and the account-level Webhooks page contain
+no registered subscriber. Native Cal iframe/fallback booking is independent of
+`/api/webhooks/cal`; `bookingSuccessfulV2` only emits browser analytics. Its saved
+default is now 30 minutes, retaining the other duration choices and all meetings.
+
+Therefore hostname recovery does not activate the previously unfinished
+Cal-to-Notion/Meta workflow or silently rotate its missing keys. The legacy D1
+database and its one COMMITTED mapping remain unchanged. Missing original hash
+material prevents claiming lossless historical identity recovery; no reset,
+cleanup, replacement database or guessed test-record deletion is authorized.
+Cal-to-CRM automation remains an explicit pre-existing integration gap, not a
+completed or live-verified part of this hosting release.
+
+The registered production website's legacy inquiry/email settings are migrated
+from the existing export, with the independently verified NAYL Systems Notion
+credential and existing AX Media sender defaults. No real inquiry, email,
+booking or CRM mutation is used for validation. Signed Resend delivery-noop and
+invalid-signature tests may validate ingestion without creating an email/lead.
+
 Preserve Cal scope, canonical Notion DB/schema, exact existing booking-lock Worker
 and D1 state, Resend signatures, sender identity, owner links, and Sheets mirror.
 Use read-only provider checks and signed PING where possible. A real test booking,
@@ -121,12 +147,15 @@ CRM write or email requires an explicitly approved owner-controlled test fixture
 
 1. Authorize only the official Wrangler flow in the correct Cloudflare account.
 2. Deploy the built release to a temporary Workers URL; no custom domain yet.
-3. Verify public routes, media ranges, mobile nav, 30-minute calendar, analytics,
-   signed webhooks, CRM access and required secret presence. Health alone is not parity.
+3. Verify public routes, media ranges, mobile nav, 30-minute native calendar,
+   analytics, registered Resend signature handling and existing CRM access.
+   Apply the active-dependency distinction above; do not claim Cal-to-CRM is live.
 4. Export the full 15-record DNS zone before mutation. Preserve all MX, SPF, DKIM,
    DMARC and verification records, plus unrelated legacy subdomains.
-5. Show the exact apex/www web-record or Worker-domain diff and obtain the final
-   cutover approval. Never change nameservers or mail records for this migration.
+5. Owner has explicitly approved the scoped apex/www Cloudflare cutover. Replace
+   only Vercel apex A and www CNAME with Worker custom domains; preserve all other
+   13 DNS records. Show/record this exact diff before applying it. Never change
+   nameservers, mail records or registrar as an implicit hosting step.
 6. Attach apex/www, verify HTTPS and www-to-apex path/query preservation, then
    repeat remote smoke and integration readbacks. Set analytics to production.
 7. Roll back web records to the A/CNAME values above if the new host regresses.

@@ -8,6 +8,10 @@
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "workers_dev": true,
   "preview_urls": false,
+  "routes": [
+    { "pattern": "aimedia.global", "custom_domain": true },
+    { "pattern": "www.aimedia.global", "custom_domain": true }
+  ],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
@@ -25,7 +29,7 @@
   ],
   "vars": {
     "PUBLIC_BASE_URL": "https://aimedia.global",
-    "ANALYTICS_ENVIRONMENT": "staging"
+    "ANALYTICS_ENVIRONMENT": "production"
   },
   "observability": {
     "enabled": false
