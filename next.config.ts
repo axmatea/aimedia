@@ -59,6 +59,16 @@ const nextConfig: NextConfig = {
         { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
       ],
     },
+    ...([['br', 'br'], ['gzip', 'gzip']] as const).map(([suffix, encoding]) => ({
+      // Precompressed, versioned scene aliases. Fetch transparently decodes the
+      // exact native Spline bytes in browsers, with no runtime or Worker patch.
+      source: `/spline/robot-baked-v2-${suffix}.splinecode`,
+      headers: [
+        { key: 'Content-Type', value: 'application/octet-stream' },
+        { key: 'Content-Encoding', value: encoding },
+        { key: 'Cache-Control', value: 'public, max-age=31536000, immutable, no-transform' },
+      ],
+    })),
   ],
 };
 

@@ -12,7 +12,7 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
-    "run_worker_first": ["/animated/video/*"]
+    "run_worker_first": ["/animated/video/*", "/spline/robot-baked-v2.splinecode", "/spline/robot-baked-v2-br.splinecode", "/spline/robot-baked-v2-gzip.splinecode"]
   },
   "services": [
     { "binding": "WORKER_SELF_REFERENCE", "service": "aimedia-web-staging" }

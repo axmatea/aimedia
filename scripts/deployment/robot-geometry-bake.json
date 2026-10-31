@@ -1,0 +1,596 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "path": "public/spline/robot-optimized-v1.splinecode",
+    "bytes": 1011211,
+    "sha256": "2937966ae88b97a5386f78e124737713303330307c47a02e3f7b3cc1f8061fd1"
+  },
+  "output": {
+    "path": "public/spline/robot-baked-v2.splinecode",
+    "bytes": 1491027,
+    "sha256": "4a31a1bf601dd4e3db02f4b11542ac17801e5032edd432c5375f346ba6182fd0"
+  },
+  "gzip": {
+    "path": "public/spline/robot-baked-v2-gzip.splinecode",
+    "bytes": 1305133,
+    "sha256": "5ee5440945f092e7c0ee4333d823c0717a4869e48bea75fb04abfc2df8863151",
+    "level": 9,
+    "decodedSha256": "4a31a1bf601dd4e3db02f4b11542ac17801e5032edd432c5375f346ba6182fd0",
+    "node": "22.22.3",
+    "zlib": "1.3.1-e00f703"
+  },
+  "brotli": {
+    "path": "public/spline/robot-baked-v2-br.splinecode",
+    "bytes": 1216569,
+    "sha256": "7ac5e5e2c8c66d009cae1afb3712e3769c15bf56b259ea53022082bb96d64b51",
+    "quality": 11,
+    "decodedSha256": "4a31a1bf601dd4e3db02f4b11542ac17801e5032edd432c5375f346ba6182fd0",
+    "node": "22.22.3",
+    "zlib": "1.3.1-e00f703"
+  },
+  "kernel": {
+    "runtimeVersion": "1.12.70",
+    "hashes": {
+      "runtime": "b640ca5e0d3930489580f8ed6c3a7757b60767f6b6ce9768ed8df6a0f5709348",
+      "wrapper": "08ba000a06b6a37c906bf0e15f319aabea67060d3f0f9005baea6d212aa05db1",
+      "wasm": "c87c49d7941dc4a039c75062836fb4f34029b996648d35295e41b7f221e35a2b"
+    }
+  },
+  "encoding": "Native msgpackr object records, custom extension types and reference aliases; complete source/output semantic trees are checked by the exact installed native unpacker before any file write.",
+  "algorithm": "Exact installed WASM CONTROL 0 then REFINED 2, phong 35, source scaleBaked; weld bit-identical position/normal tuples and narrow indices losslessly. No UV generation, quantization, normal regeneration or animation change.",
+  "dimensions": "Control-cage bounds are retained as generic width/height/depth and BufferGeometry userData.parameters, preventing auto-rescale and preserving dimension uniforms; refined positions/normals retain exact triangle attribute bits.",
+  "comparison": {
+    "rawBytesDelta": 479816,
+    "gzip9Source": 914893,
+    "gzip9Output": 1305133,
+    "brotliSource": 905893,
+    "brotliOutput": 1216569
+  },
+  "caution": "Experimental asset only. Local unmodified-runtime visual/motion/interaction and actual startup/network validation are required before selecting it for production.",
+  "meshes": [
+    {
+      "id": "f9212c6d-779c-4c47-bc10-6534ebb36286",
+      "name": "Head 2",
+      "verticesBeforeWeld": 11200,
+      "verticesAfterWeld": 2802,
+      "triangles": 5600,
+      "controlBounds": {
+        "min": [
+          -41.384483337402344,
+          -42.53711700439453,
+          -49.615379333496094
+        ],
+        "max": [
+          41.384483337402344,
+          64.45586395263672,
+          45.541927337646484
+        ],
+        "size": [
+          82.76896667480469,
+          106.99298095703125,
+          95.15730667114258
+        ],
+        "center": [
+          0,
+          10.959373474121094,
+          -2.0367259979248047
+        ]
+      },
+      "refinedBounds": {
+        "min": [
+          -39.0667839050293,
+          -40.593772888183594,
+          -46.656185150146484
+        ],
+        "max": [
+          39.0667839050293,
+          61.945892333984375,
+          42.758995056152344
+        ],
+        "size": [
+          78.1335678100586,
+          102.53966522216797,
+          89.41518020629883
+        ],
+        "center": [
+          0,
+          10.67605972290039,
+          -1.9485950469970703
+        ]
+      },
+      "buffers": {
+        "position": {
+          "bytes": 33624,
+          "type": "Float32Array",
+          "sha256": "2aa8f7103a6dc0c688edf98f4503021c6afa87e4d318a6718bc4fd0eee9cbb14"
+        },
+        "normal": {
+          "bytes": 33624,
+          "type": "Float32Array",
+          "sha256": "e89dfeb5e278329dbeb59ecfcc5576456ec025353e3a5dc34a32029e91f65e9b"
+        },
+        "index": {
+          "bytes": 33600,
+          "type": "Uint16Array",
+          "sha256": "d15f8b5275b2cc6c367d5987ffc6e333626ea224b15da62db18e076ac56921c9"
+        }
+      }
+    },
+    {
+      "id": "377263ac-e2d2-4042-b8f3-b532357d5aeb",
+      "name": "Hand",
+      "verticesBeforeWeld": 9088,
+      "verticesAfterWeld": 2274,
+      "triangles": 4544,
+      "controlBounds": {
+        "min": [
+          -20.066890716552734,
+          -7.123985767364502,
+          -8.916227340698242
+        ],
+        "max": [
+          8.331913948059082,
+          46.94671630859375,
+          8.898648262023926
+        ],
+        "size": [
+          28.398804664611816,
+          54.07070207595825,
+          17.814875602722168
+        ],
+        "center": [
+          -5.867488384246826,
+          19.911365270614624,
+          -0.008789539337158203
+        ]
+      },
+      "refinedBounds": {
+        "min": [
+          -18.97518539428711,
+          -7.123985767364502,
+          -7.333254337310791
+        ],
+        "max": [
+          7.760519027709961,
+          45.01725769042969,
+          8.29942512512207
+        ],
+        "size": [
+          26.73570442199707,
+          52.14124345779419,
+          15.632679462432861
+        ],
+        "center": [
+          -5.607333183288574,
+          18.946635961532593,
+          0.48308539390563965
+        ]
+      },
+      "buffers": {
+        "position": {
+          "bytes": 27288,
+          "type": "Float32Array",
+          "sha256": "ea7650b228294a5181a1e8cd690ecbfa3ac4c99e9290d88fb8aba5329cda08e9"
+        },
+        "normal": {
+          "bytes": 27288,
+          "type": "Float32Array",
+          "sha256": "9c16cb806f07082e08981d903f574d699204839cc04987e788d64505393a0168"
+        },
+        "index": {
+          "bytes": 27264,
+          "type": "Uint16Array",
+          "sha256": "65085aace14709c971de3acd45db3276d1b23b196a5b2c3e0fba7c846674c70f"
+        }
+      }
+    },
+    {
+      "id": "45226e20-eea5-4e0f-ac46-0c79e0755786",
+      "name": "Cube 3",
+      "verticesBeforeWeld": 3840,
+      "verticesAfterWeld": 962,
+      "triangles": 1920,
+      "controlBounds": {
+        "min": [
+          -24.883506774902344,
+          -45.74367904663086,
+          -30.12937355041504
+        ],
+        "max": [
+          24.883506774902344,
+          69.19569396972656,
+          28.943347930908203
+        ],
+        "size": [
+          49.76701354980469,
+          114.93937301635742,
+          59.07272148132324
+        ],
+        "center": [
+          0,
+          11.726007461547852,
+          -0.593012809753418
+        ]
+      },
+      "refinedBounds": {
+        "min": [
+          -21.87713050842285,
+          -45.66500473022461,
+          -25.338626861572266
+        ],
+        "max": [
+          21.87713050842285,
+          61.501670837402344,
+          22.98025894165039
+        ],
+        "size": [
+          43.7542610168457,
+          107.16667556762695,
+          48.318885803222656
+        ],
+        "center": [
+          0,
+          7.918333053588867,
+          -1.1791839599609375
+        ]
+      },
+      "buffers": {
+        "position": {
+          "bytes": 11544,
+          "type": "Float32Array",
+          "sha256": "b2ffd1b17430dbbeb95038c98d3974b8650164c2c281466e2676a918c1fbfbfa"
+        },
+        "normal": {
+          "bytes": 11544,
+          "type": "Float32Array",
+          "sha256": "08fa1461c25180c67bc9df18eac5164d41cb9ea3697827458831a0a1d9d7d2be"
+        },
+        "index": {
+          "bytes": 11520,
+          "type": "Uint16Array",
+          "sha256": "d2472820784a93a596d36d16f3dcf98edf12b0a11f9aab2f4fb5f902a8a6658a"
+        }
+      }
+    },
+    {
+      "id": "a19fe3ab-d419-49ec-88c9-01e3ac76f259",
+      "name": "Cube 2",
+      "verticesBeforeWeld": 3328,
+      "verticesAfterWeld": 834,
+      "triangles": 1664,
+      "controlBounds": {
+        "min": [
+          -45.1290397644043,
+          -64.09249114990234,
+          -31.49159812927246
+        ],
+        "max": [
+          18.314613342285156,
+          69.59283447265625,
+          31.49159812927246
+        ],
+        "size": [
+          63.44365310668945,
+          133.6853256225586,
+          62.98319625854492
+        ],
+        "center": [
+          -13.40721321105957,
+          2.750171661376953,
+          0
+        ]
+      },
+      "refinedBounds": {
+        "min": [
+          -39.87543487548828,
+          -61.42351150512695,
+          -31.045913696289062
+        ],
+        "max": [
+          16.646352767944336,
+          61.95159912109375,
+          31.402128219604492
+        ],
+        "size": [
+          56.52178764343262,
+          123.3751106262207,
+          62.448041915893555
+        ],
+        "center": [
+          -11.614541053771973,
+          0.26404380798339844,
+          0.17810726165771484
+        ]
+      },
+      "buffers": {
+        "position": {
+          "bytes": 10008,
+          "type": "Float32Array",
+          "sha256": "0318ce544a8c631c3c6b470de94b7bc8f3f0ec6a165a29807bf8355e4cd93ae3"
+        },
+        "normal": {
+          "bytes": 10008,
+          "type": "Float32Array",
+          "sha256": "ee5801d57828f473c64d40586cb53753a1901ad3fdf699b9e325ace3a07affe0"
+        },
+        "index": {
+          "bytes": 9984,
+          "type": "Uint16Array",
+          "sha256": "a4e7072c813cb43dbe37b5720e5afc14caa91eb9031986a03008938aa2649c54"
+        }
+      }
+    },
+    {
+      "id": "46b3f563-3b31-473b-b869-9612a8f77343",
+      "name": "Body",
+      "verticesBeforeWeld": 15424,
+      "verticesAfterWeld": 3858,
+      "triangles": 7712,
+      "controlBounds": {
+        "min": [
+          -77.08531951904297,
+          96.3434829711914,
+          -54.22816467285156
+        ],
+        "max": [
+          74.2872543334961,
+          288.308837890625,
+          64.72900390625
+        ],
+        "size": [
+          151.37257385253906,
+          191.9653549194336,
+          118.95716857910156
+        ],
+        "center": [
+          -1.3990325927734375,
+          192.3261604309082,
+          5.250419616699219
+        ]
+      },
+      "refinedBounds": {
+        "min": [
+          -73.21290588378906,
+          100.22859954833984,
+          -51.8139533996582
+        ],
+        "max": [
+          70.50331115722656,
+          286.5400390625,
+          56.42372512817383
+        ],
+        "size": [
+          143.71621704101562,
+          186.31143951416016,
+          108.23767852783203
+        ],
+        "center": [
+          -1.35479736328125,
+          193.38431930541992,
+          2.3048858642578125
+        ]
+      },
+      "buffers": {
+        "position": {
+          "bytes": 46296,
+          "type": "Float32Array",
+          "sha256": "d90af4cb6a00ad04b37fb3e4e4c54fe3983bc4484d06addf87ecb0fcf39cf546"
+        },
+        "normal": {
+          "bytes": 46296,
+          "type": "Float32Array",
+          "sha256": "2556cad4028e90a6041a674eafaf0b7dcb3f1a6d2d231a8266c749f006a42849"
+        },
+        "index": {
+          "bytes": 46272,
+          "type": "Uint16Array",
+          "sha256": "7fac233ad5ebf811c1ae33887193c15f0ac8b7111f134da8ea7b225963784bfe"
+        }
+      }
+    },
+    {
+      "id": "62b05a0d-e2b8-4d8d-9839-434cc7a75022",
+      "name": "Cube 3",
+      "verticesBeforeWeld": 4096,
+      "verticesAfterWeld": 1026,
+      "triangles": 2048,
+      "controlBounds": {
+        "min": [
+          -31.915367126464844,
+          -26.36272430419922,
+          -72.42021179199219
+        ],
+        "max": [
+          30.523651123046875,
+          26.36272430419922,
+          41.322208404541016
+        ],
+        "size": [
+          62.43901824951172,
+          52.72544860839844,
+          113.7424201965332
+        ],
+        "center": [
+          -0.6958580017089844,
+          0,
+          -15.549001693725586
+        ]
+      },
+      "refinedBounds": {
+        "min": [
+          -29.433273315429688,
+          -26.128767013549805,
+          -69.16120910644531
+        ],
+        "max": [
+          28.310367584228516,
+          26.128767013549805,
+          41.029178619384766
+        ],
+        "size": [
+          57.7436408996582,
+          52.25753402709961,
+          110.19038772583008
+        ],
+        "center": [
+          -0.5614528656005859,
+          0,
+          -14.066015243530273
+        ]
+      },
+      "buffers": {
+        "position": {
+          "bytes": 12312,
+          "type": "Float32Array",
+          "sha256": "29345b86b99c6fbcedd61e774c60c4fe8460743cf71610e0a5913a6d8d42d903"
+        },
+        "normal": {
+          "bytes": 12312,
+          "type": "Float32Array",
+          "sha256": "392c172346691efad6da3d4031300cb01d88b2cfbe32583a31246a9a304284a2"
+        },
+        "index": {
+          "bytes": 12288,
+          "type": "Uint16Array",
+          "sha256": "42abc627aafa63f30f854a3b71498044683ae0a4216e75d0ae0f1e95a0efc663"
+        }
+      }
+    },
+    {
+      "id": "79677ee9-0039-4a29-a7ca-29d4f608cf86",
+      "name": "Cube 5",
+      "verticesBeforeWeld": 3328,
+      "verticesAfterWeld": 834,
+      "triangles": 1664,
+      "controlBounds": {
+        "min": [
+          -27.02587127685547,
+          -14.004836082458496,
+          -40.94565963745117
+        ],
+        "max": [
+          27.025869369506836,
+          32.88798904418945,
+          59.7268180847168
+        ],
+        "size": [
+          54.051740646362305,
+          46.89282512664795,
+          100.67247772216797
+        ],
+        "center": [
+          -9.5367431640625e-7,
+          9.441576480865479,
+          9.390579223632812
+        ]
+      },
+      "refinedBounds": {
+        "min": [
+          -24.603609085083008,
+          -13.952081680297852,
+          -39.860595703125
+        ],
+        "max": [
+          24.603607177734375,
+          30.226465225219727,
+          53.67176818847656
+        ],
+        "size": [
+          49.20721626281738,
+          44.17854690551758,
+          93.53236389160156
+        ],
+        "center": [
+          -9.5367431640625e-7,
+          8.137191772460938,
+          6.905586242675781
+        ]
+      },
+      "buffers": {
+        "position": {
+          "bytes": 10008,
+          "type": "Float32Array",
+          "sha256": "d848894ddd9c1885b602f437a8f6f1d8126c2e6c230ed0dc485a5726fbd267df"
+        },
+        "normal": {
+          "bytes": 10008,
+          "type": "Float32Array",
+          "sha256": "7863a09b781370173e92d24c21d60f6df03d0097c9719fce1c05b63f916510b2"
+        },
+        "index": {
+          "bytes": 9984,
+          "type": "Uint16Array",
+          "sha256": "15434c589c23dbe9e166082f75f7a944f2e5cd6a94d2ecdab3191d91c45c799f"
+        }
+      }
+    },
+    {
+      "id": "96a2eb48-7334-42e8-9f7a-fc2037d589ef",
+      "name": "Cube 4",
+      "verticesBeforeWeld": 1920,
+      "verticesAfterWeld": 482,
+      "triangles": 960,
+      "controlBounds": {
+        "min": [
+          -27,
+          -27.03168296813965,
+          -54.660736083984375
+        ],
+        "max": [
+          27,
+          55.639373779296875,
+          69.9898910522461
+        ],
+        "size": [
+          54,
+          82.67105674743652,
+          124.65062713623047
+        ],
+        "center": [
+          0,
+          14.303845405578613,
+          7.664577484130859
+        ]
+      },
+      "refinedBounds": {
+        "min": [
+          -24.111474990844727,
+          -25.206634521484375,
+          -54.53095245361328
+        ],
+        "max": [
+          25.36336326599121,
+          53.4644660949707,
+          68.57164001464844
+        ],
+        "size": [
+          49.47483825683594,
+          78.67110061645508,
+          123.10259246826172
+        ],
+        "center": [
+          0.6259441375732422,
+          14.128915786743164,
+          7.020343780517578
+        ]
+      },
+      "buffers": {
+        "position": {
+          "bytes": 5784,
+          "type": "Float32Array",
+          "sha256": "be5b47aa19979a45b48d70de0b3393133962cade49232f48880c42f733caeb49"
+        },
+        "normal": {
+          "bytes": 5784,
+          "type": "Float32Array",
+          "sha256": "a79c494d575aa2a4131a3fbdc667c25ec334de095ad041eeb7e90afd3939c879"
+        },
+        "index": {
+          "bytes": 5760,
+          "type": "Uint16Array",
+          "sha256": "6ef5704a5fd2af98807c6a043478580ecbc339201bb6c01cec8dfcb7d0c91037"
+        }
+      }
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import { maybeServeVideoRequest, type AssetFetcher, type RangeCache } from "./lib/cloudflare/video-range"
+import { maybeServeRobotScene } from "./lib/cloudflare/robot-scene"
 
 // OpenNext creates this module during `npm run build:cloudflare`.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -27,6 +28,8 @@ interface CloudflareCacheStorage extends CacheStorage {
 
 const worker = {
   async fetch(request: Request, env: CloudflareWorkerEnv, ctx: CloudflareExecutionContext) {
+    const robot = await maybeServeRobotScene(request, env.ASSETS)
+    if (robot) return robot
     const video = await maybeServeVideoRequest(request, {
       assets: env.ASSETS,
       cache: (caches as CloudflareCacheStorage).default,

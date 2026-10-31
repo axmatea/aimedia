@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react'
+import { preload } from 'react-dom'
 import type { Application } from '@splinetool/runtime'
 
 const Spline = lazy(() => import('@splinetool/react-spline'))
@@ -62,8 +63,8 @@ const HEAD_NAMES = ['Head', 'head', 'Robot_Head', 'robot_head', 'HEAD', 'Helmet'
 
 // Self-hosted runtime wasm base (v7.1). The runtime's Application constructor
 // accepts { wasmPath } (react-spline forwards the prop) and resolves helper
-// binaries as `${wasmPath}/<name>.wasm` instead of unpkg.com. Our robot scene
-// contains SubdivGeometry meshes, so it needs exactly one helper:
+// binaries as `${wasmPath}/<name>.wasm` instead of unpkg.com. The baked hero no
+// longer needs modelling WASM. The original/v1 scenes remain compatible through:
 //   public/spline/process.wasm  (from @splinetool/modelling-wasm@1.12.70/build)
 // It has no BooleanGeometry / navmesh / draco-compressed buffers (verified by
 // scanning the .splinecode), so boolean.wasm, navmesh.wasm, and the draco
@@ -73,9 +74,18 @@ const HEAD_NAMES = ['Head', 'head', 'Robot_Head', 'robot_head', 'HEAD', 'Helmet'
 // version in lockstep with the installed @splinetool/runtime version.
 const SPLINE_WASM_PATH = '/spline'
 
+// Local User Timing entries let performance traces distinguish real robot
+// startup from the earlier server-rendered headline/poster. No network, user
+// identifiers or analytics payloads are created here.
+function markRobotTiming(phase: 'requested' | 'loaded' | 'ready') {
+  if (typeof performance !== 'undefined' && typeof performance.mark === 'function') {
+    performance.mark(`aimedia:robot:${phase}`)
+  }
+}
+
 export function SplineScene({ scene, className, onLoad, onReadyChange }: SplineSceneProps) {
-  // Nothing renders until the live scene is ready: the dark ambient hero
-  // background carries the space, then the 3D scene fades and settles in.
+  // The server-rendered poster stays until the live scene is ready; then the
+  // authored 3D scene fades and settles in with its original pose pre-roll.
   const [sceneReady, setSceneReady] = useState(false)
   // Respect explicit reduced-motion and Save-Data preferences. Neither mode
   // imports the heavy live runtime; the approved server-rendered poster stays.
@@ -84,8 +94,8 @@ export function SplineScene({ scene, className, onLoad, onReadyChange }: SplineS
   // Lazy init: only mount the Spline runtime once the hero is near the viewport.
   const [inView, setInView] = useState(false)
   const [pageVisible, setPageVisible] = useState(false)
-  // Heavy Spline runtime is intentionally delayed until after first paint so it
-  // never competes with hydration or the initial chunk work.
+  // Heavy Spline runtime starts after the first paint, without a fixed waiting
+  // period. The server-rendered poster remains until the real scene is ready.
   const [canMountScene, setCanMountScene] = useState(false)
   // Head mouse-follow lerp only runs on fine-pointer (cursor) devices. On touch the
   // scene still plays its own idle animation, we just skip the wasted pointer work.
@@ -197,23 +207,16 @@ export function SplineScene({ scene, className, onLoad, onReadyChange }: SplineS
     }
   }, [])
 
-  // Mount scheduling. The Spline runtime is ~1.3 MB of scene data plus several
-  // seconds of (throttled) main-thread scripting, so it must never overlap the
-  // initial load: it was the whole reason the home page scored perf 47 while
-  // the legal pages scored 95. Two paths bring the live robot in:
-  //   a) FAST: the first real user gesture (pointer, wheel, touch, key). An
-  //      engaged user gets the robot right away, routed through
-  //      requestIdleCallback so the boot lands in a main-thread gap and never
-  //      mid-gesture.
-  //   b) DEFAULT (no gesture): a short 200ms beat after this post-hydration
-  //      effect runs, then mount on the next idle gap. The hero headline is
-  //      already painted server-side (the LCP), so this reads as a fast,
-  //      intentional arrival without the boot blocking the load frame.
+  // Start after one post-hydration paint, then use an idle gap when available.
+  // No 200ms beat or 500ms fallback wait: unsupported requestIdleCallback must
+  // not make phones wait longer. Input and default paths share one mount gate.
   useEffect(() => {
     if (motionOk !== true || !inView || !pageVisible || canMountScene) return
 
     let cancelled = false
+    let scheduled = false
     let idleId: number | null = null
+    let paintFrame: number | null = null
     const timeouts: number[] = []
 
     const win = window as typeof window & {
@@ -222,20 +225,23 @@ export function SplineScene({ scene, className, onLoad, onReadyChange }: SplineS
     }
 
     const mount = () => {
-      if (!cancelled) setCanMountScene(true)
+      if (!cancelled) {
+        markRobotTiming('requested')
+        // Download scene bytes alongside the lazy runtime rather than waiting
+        // for that JavaScript to parse and discover them. Same credentials/cache
+        // mode as Application.load; no import/fetch in reduced-motion/Save-Data.
+        preload(scene, { as: 'fetch', crossOrigin: 'anonymous', fetchPriority: 'low' })
+        setCanMountScene(true)
+      }
     }
 
-    // Every mount goes through requestIdleCallback with a hard ceiling so the
-    // boot waits for a gap but can never stall forever. The ceiling differs by
-    // path: the gesture fast-path uses a tight 300ms (an engaged user gets the
-    // robot near-instantly), the no-gesture default uses a 500ms window so an
-    // idle visitor still sees the robot arrive fast, right after first paint.
     const scheduleIdle = (timeout: number) => {
-      if (cancelled || idleId !== null) return
+      if (cancelled || scheduled) return
+      scheduled = true
       if (win.requestIdleCallback) {
         idleId = win.requestIdleCallback(mount, { timeout })
       } else {
-        timeouts.push(window.setTimeout(mount, timeout))
+        timeouts.push(window.setTimeout(mount, 0))
       }
     }
 
@@ -251,22 +257,20 @@ export function SplineScene({ scene, className, onLoad, onReadyChange }: SplineS
       window.addEventListener(ev, onFirstInput, { passive: true })
     }
 
-    // No-gesture path (v7.3): the robot should read as a fast, intentional
-    // arrival, not a late pop. This effect already runs post-hydration, after
-    // the server-rendered hero headline (the LCP element) has painted, so a
-    // short 200ms beat here does not push LCP. It just lets hydration settle one
-    // frame, then boots the ~1.3 MB runtime on the next idle gap (500ms ceiling)
-    // so the boot never blocks the main thread on load. Any real gesture still
-    // short-circuits this via the tighter fast path above.
-    timeouts.push(window.setTimeout(() => scheduleIdle(500), 200))
+    // A task scheduled from rAF runs after that paint, not inside its rendering
+    // work. The live renderer still retains its authored 420ms pose pre-roll.
+    paintFrame = requestAnimationFrame(() => {
+      timeouts.push(window.setTimeout(() => scheduleIdle(150), 0))
+    })
 
     return () => {
       cancelled = true
       detachInput()
+      if (paintFrame !== null) cancelAnimationFrame(paintFrame)
       for (const t of timeouts) window.clearTimeout(t)
       if (idleId !== null) win.cancelIdleCallback?.(idleId)
     }
-  }, [motionOk, inView, pageVisible, canMountScene])
+  }, [motionOk, inView, pageVisible, canMountScene, scene])
 
   const handleLoad = useCallback((app: Application) => {
     const splineApp = app as SplineApp
@@ -276,6 +280,7 @@ export function SplineScene({ scene, className, onLoad, onReadyChange }: SplineS
       splineApp.stop?.()
       return
     }
+    markRobotTiming('loaded')
     appRef.current?._splineCleanup?.()
     appRef.current = splineApp
     const canvas = splineApp.canvas
@@ -372,6 +377,7 @@ export function SplineScene({ scene, className, onLoad, onReadyChange }: SplineS
       revealFrame = requestAnimationFrame(() => {
         revealTimer = window.setTimeout(() => {
           if (!motionAllowedRef.current) return
+          markRobotTiming('ready')
           setSceneReady(true)
           onReadyChange?.(true)
           onLoad?.(app)

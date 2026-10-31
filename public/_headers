@@ -11,6 +11,14 @@
 /spline/*
   Cache-Control: public, max-age=31536000, immutable
 
+/spline/robot-baked-v2-br.splinecode
+  Content-Type: application/octet-stream
+  Cache-Control: no-transform
+
+/spline/robot-baked-v2-gzip.splinecode
+  Content-Type: application/octet-stream
+  Cache-Control: no-transform
+
 /animated/neural-return/*
   Cache-Control: public, max-age=31536000, immutable
 

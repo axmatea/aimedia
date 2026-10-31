@@ -1,4 +1,6 @@
 import assert from "node:assert/strict"
+import { createHash } from "node:crypto"
+import { readFileSync } from "node:fs"
 
 // Read-only checks. No booking submission, email, CRM mutation, or signed link.
 const baseUrl = new URL(process.argv[2] || "http://127.0.0.1:3000")
@@ -50,11 +52,24 @@ await get(chunkPath)
 for (const path of [
   "/animated", "/systems/qualified-pipeline", "/privacy-policy", "/legal", "/cookies",
   "/robots.txt", "/sitemap.xml", "/manifest.webmanifest", "/ax-logo-clean.png",
-  "/spline/robot.splinecode", "/spline/robot-optimized-v1.splinecode", "/spline/process.wasm",
+  "/spline/robot.splinecode", "/spline/robot-optimized-v1.splinecode", "/spline/robot-baked-v2.splinecode", "/spline/process.wasm",
 ]) {
   const response = await get(path)
   if (path === "/sitemap.xml") assert.match(await response.text(), /qualified-pipeline/)
   else await response.body?.cancel()
+}
+const baked = JSON.parse(readFileSync(new URL("./deployment/robot-geometry-bake.json", import.meta.url), "utf8"))
+for (const [suffix, encoding] of [["br", "br"], ["gzip", "gzip"]]) {
+  const response = await get(`/spline/robot-baked-v2-${suffix}.splinecode`)
+  assert.equal(response.headers.get("content-encoding"), encoding)
+  assert.match(response.headers.get("content-type") || "", /application\/octet-stream/)
+  assert.match(response.headers.get("cache-control") || "", /immutable/)
+  assert.match(response.headers.get("cache-control") || "", /no-transform/)
+  // Fetch must expose the exact decompressed native scene, not compressed bytes
+  // that merely returned 200. Both representations are immutable aliases.
+  const decoded = Buffer.from(await response.arrayBuffer())
+  assert.equal(decoded.length, baked.output.bytes)
+  assert.equal(createHash("sha256").update(decoded).digest("hex"), baked.output.sha256)
 }
 const video = await fetch(new URL("/animated/video/desktop/entity-through-core.mp4", baseUrl), {
   headers: { Range: "bytes=0-1023" },

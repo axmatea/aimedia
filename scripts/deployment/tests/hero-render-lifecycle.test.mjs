@@ -9,6 +9,7 @@ import ts from "typescript"
 function browserHarness(componentFile, { saveData = false, stateOverrides = {} } = {}) {
   const effects = [], callbacks = [], frames = new Map(), timers = new Map()
   const stateUpdates = [], renderedTags = []
+  const timingMarks = [], preloads = [], timeoutDelays = []
   const observers = [], documentListeners = new Map(), windowListeners = new Map()
   const canvas = { clientWidth: 1200, clientHeight: 900, style: {}, dispatchEvent() {} }
   const deletions = { buffer: 0, program: 0, shader: 0 }
@@ -50,7 +51,7 @@ function browserHarness(componentFile, { saveData = false, stateOverrides = {} }
     matchMedia: query,
     addEventListener: (name, callback) => windowListeners.set(name, callback),
     removeEventListener: name => windowListeners.delete(name),
-    setTimeout: callback => { timers.set(++serial, callback); return serial },
+    setTimeout: (callback, delay) => { timeoutDelays.push(delay); timers.set(++serial, callback); return serial },
     clearTimeout: id => timers.delete(id),
   }
   const lazyComponent = () => null
@@ -74,6 +75,7 @@ function browserHarness(componentFile, { saveData = false, stateOverrides = {} }
   const jsxRuntime = { jsx, jsxs: jsx }
   const context = vm.createContext({
     exports: {}, document, window, console, navigator: { connection },
+    performance: { mark: name => timingMarks.push(name) },
     requestAnimationFrame: callback => { frames.set(++serial, callback); return serial },
     cancelAnimationFrame: id => frames.delete(id),
     ResizeObserver: class { observe() {} disconnect() {} },
@@ -86,6 +88,7 @@ function browserHarness(componentFile, { saveData = false, stateOverrides = {} }
     MouseEvent: class {},
     require(name) {
       if (name === "react") return react
+      if (name === "react-dom") return { preload: (url, options) => preloads.push({ url, options }) }
       if (name === "react/jsx-runtime") return jsxRuntime
       throw new Error(`Unexpected dependency: ${name}`)
     },
@@ -104,7 +107,7 @@ function browserHarness(componentFile, { saveData = false, stateOverrides = {} }
     }
     return count
   }
-  return { ...context, effects, callbacks, frames, timers, observers, deletions, query, documentListeners, windowListeners, flushFrames, connection, stateUpdates, renderedTags, lazyComponent }
+  return { ...context, effects, callbacks, frames, timers, observers, deletions, query, documentListeners, windowListeners, flushFrames, connection, stateUpdates, renderedTags, lazyComponent, timingMarks, preloads, timeoutDelays }
 }
 
 test("Lightning starts only in view and pauses for hidden tabs and reduced motion, releasing GPU resources", () => {
@@ -185,6 +188,79 @@ test("Spline pointer lerp runs only for a real head and stops at its target", ()
   headless.windowListeners.get("mousemove")({ clientX: 1400, clientY: 100 })
   assert.equal(headless.frames.size, 0, "Never spin a lerp loop without a head object")
   for (const cleanup of headless.cleanups) cleanup?.()
+})
+
+test("robot startup timing distinguishes loaded from visible, without changing authored pre-roll", () => {
+  const harness = splineFixture()
+  assert.deepEqual(harness.timingMarks, ["aimedia:robot:loaded"])
+  for (const [id, callback] of [...harness.timers]) {
+    harness.timers.delete(id)
+    callback()
+  }
+  assert.deepEqual(harness.timingMarks, ["aimedia:robot:loaded", "aimedia:robot:ready"])
+  assert.ok(harness.stateUpdates.some(update => update.index === 0 && update.value === true))
+  const source = readFileSync(new URL("../../../components/ui/splite.tsx", import.meta.url), "utf8")
+  assert.match(source, /markRobotTiming\('requested'\)/)
+  assert.match(source, /}, 420\)/, "Do not shorten the authored pose pre-roll to game timing")
+  for (const cleanup of harness.cleanups) cleanup?.()
+})
+
+function mountFixture(idle = false) {
+  const harness = browserHarness("components/ui/splite.tsx", {
+    stateOverrides: { 1: true, 2: true, 3: true, 4: false },
+  })
+  const idleCalls = []
+  if (idle) {
+    harness.window.requestIdleCallback = (callback, options) => { idleCalls.push({ callback, options }); return 42 }
+    harness.window.cancelIdleCallback = () => {}
+  }
+  harness.exports.SplineScene({ scene: "/spline/robot-baked-v2-br.splinecode" })
+  const cleanups = harness.effects.map(effect => effect())
+  const flushTimers = () => {
+    while (harness.timers.size) {
+      const batch = [...harness.timers.entries()]
+      harness.timers.clear()
+      for (const [, callback] of batch) callback()
+    }
+  }
+  return { ...harness, idleCalls, cleanups, flushTimers }
+}
+
+test("robot starts after a paint without a fixed wait, preloads once beside lazy JS, and does not restart on input", () => {
+  const harness = mountFixture()
+  assert.equal(harness.preloads.length, 0, "No model download inside the initial rendering work")
+  assert.equal(harness.frames.size, 1)
+  harness.flushFrames()
+  harness.flushTimers()
+  assert.deepEqual(harness.timingMarks, ["aimedia:robot:requested"])
+  assert.equal(harness.preloads.length, 1)
+  assert.equal(harness.preloads[0].url, "/spline/robot-baked-v2-br.splinecode")
+  assert.equal(harness.preloads[0].options.as, "fetch")
+  assert.equal(harness.preloads[0].options.crossOrigin, "anonymous")
+  assert.equal(harness.preloads[0].options.fetchPriority, "low")
+  assert.ok(harness.timeoutDelays.every(delay => delay === 0), "No extra 200/500ms fallback wait")
+  harness.windowListeners.get("pointerdown")()
+  harness.flushTimers()
+  assert.equal(harness.preloads.length, 1)
+  for (const cleanup of harness.cleanups) cleanup?.()
+})
+
+test("robot idle scheduling is bounded and cancelling startup prevents a stale preload", () => {
+  const harness = mountFixture(true)
+  harness.flushFrames()
+  harness.flushTimers()
+  assert.equal(harness.idleCalls.length, 1)
+  assert.equal(harness.idleCalls[0].options.timeout, 150)
+  assert.equal(harness.preloads.length, 0)
+  for (const cleanup of harness.cleanups) cleanup?.()
+  harness.idleCalls[0].callback()
+  assert.equal(harness.preloads.length, 0, "Late idle callback after unmount may not start a request")
+  assert.equal(harness.timingMarks.length, 0)
+  const beforePaint = mountFixture()
+  for (const cleanup of beforePaint.cleanups) cleanup?.()
+  beforePaint.flushFrames()
+  beforePaint.flushTimers()
+  assert.equal(beforePaint.preloads.length, 0)
 })
 
 test("Save-Data disables the live runtime gate without changing the default live robot", () => {
