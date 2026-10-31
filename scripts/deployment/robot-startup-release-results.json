@@ -1,0 +1,126 @@
+{
+  "date": "2026-10-31",
+  "status": "production-deployed-and-verified",
+  "scope": "Homepage robot startup only; no redesign, reduced model fidelity, animation changes, new dependencies, integration commissioning, DNS or credentials changes",
+  "sourceCommit": "c825ee1110eb2b77ea567d56f83bf4d68cdf1813",
+  "branch": "codex/aimedia-robot-startup",
+  "productionUrl": "https://aimedia.global/",
+  "productionWorker": "aimedia-web",
+  "productionWorkerVersion": "2b46bfe0-b5d9-4d36-ad5d-0ccbd55e2a32",
+  "productionDeploymentId": "8358b176-8e43-4009-b0be-7463902e8bf8",
+  "productionDeployedAt": "2026-10-31T15:28:40.697945Z",
+  "rollbackWorkerVersion": "1091774f-3a90-405b-a965-7e394337a937",
+  "stagingUrl": "https://aimedia-web-staging.axmedia.workers.dev/",
+  "stagingBeforeWorkerVersion": "9cfee3ee-71eb-479e-a37b-666661eb02a9",
+  "stagingAfterWorkerVersion": "74d6e9d9-9efa-4a3b-8486-639174406490",
+  "method": {
+    "lighthouse": "12.6.1",
+    "chrome": "150.0.7871.24",
+    "pageMetrics": "Default simulated mobile throttling; serial isolated browser runs, same URL and pinned toolchain before/after; median of every valid run",
+    "robotMetrics": "User Timing from saved trace, actual observed unthrottled browser wall time, NOT the simulated phone time used by Lighthouse metrics. requested precedes parallel scene/runtime load; loaded is native Application.load resolution; ready precedes scene-ready state after the unchanged 420 ms authored pose pre-roll and two animation frames, not the end of CSS fade",
+    "stagingTimingBaseline": "Original v1 scene and original scheduling with only the same local timing marks added. Three before versus five after runs on the same hostname. All five valid after runs retained, including the outlier",
+    "productionBaseline": "Serving source 7bfe02c on rollback version; three fresh same-day runs. Original production has no robot timing marks, so robot startup timing is compared only on the instrumented same-host staging A/B",
+    "limitations": [
+      "Lab results, not field INP or physical-phone/Safari measurements",
+      "Cloudflare/network/cache and local host scheduling variability",
+      "Before production runs 2/3 may have briefly overlapped the first instrumentation build; no runs excluded",
+      "Staging has intentional noindex, hence SEO 69 there; production SEO is 100",
+      "Earlier double-encoded staging output was rejected before release; staging-after-1/2 audit files are invalid and not used",
+      "Whole-page LCP did not materially improve. The optimization targets native robot initialization, not a promise of uniformly faster navigation on every device"
+    ]
+  },
+  "geometry": {
+    "manifest": "scripts/deployment/robot-geometry-bake.json",
+    "runtimeVersion": "1.12.70",
+    "staticTemplates": 8,
+    "verifiedWorldPlacements": 14,
+    "beforeVertices": 52224,
+    "afterVertices": 13072,
+    "trianglesBeforeAndAfter": 26112,
+    "method": "Offline exact installed subdivision WASM; bit-identical expanded triangle positions/normals, lossless position+normal welding and 16-bit indices. Original control-cage bounds retained to preserve native generic rescale and material projection dimensions",
+    "preserved": ["camera", "transforms", "materials", "textures", "embedded head video", "hierarchy and aliases", "events and animation states", "original pose pre-roll", "desktop pointer-follow", "existing mobile DPR cap"],
+    "sourceSceneSha256": "2937966ae88b97a5386f78e124737713303330307c47a02e3f7b3cc1f8061fd1",
+    "decodedSceneBytes": 1491027,
+    "decodedSceneSha256": "4a31a1bf601dd4e3db02f4b11542ac17801e5032edd432c5375f346ba6182fd0",
+    "brotliBytes": 1216569,
+    "gzipBytes": 1305133,
+    "caution": "Raw scene is larger than v1. Precompression and eliminating the modeling-WASM request keep whole-page startup transfer approximately unchanged; do not claim a large byte saving"
+  },
+  "stagingBeforeRuns": [
+    { "run": 1, "performance": 75, "lcpMs": 4015.515, "tbtMs": 389.5, "robotRequestedToLoadedMs": 1265.722, "robotRequestedToReadyMs": 1701.543, "navigationToReadyMs": 3412.102 },
+    { "run": 2, "performance": 78, "lcpMs": 3838.526, "tbtMs": 347.5, "robotRequestedToLoadedMs": 653.263, "robotRequestedToReadyMs": 1087.491, "navigationToReadyMs": 2302.713 },
+    { "run": 3, "performance": 78, "lcpMs": 3829.716, "tbtMs": 354, "robotRequestedToLoadedMs": 720.033, "robotRequestedToReadyMs": 1153.055, "navigationToReadyMs": 2117.606 }
+  ],
+  "stagingAfterRuns": [
+    { "run": 1, "performance": 44, "lcpMs": 5292.9, "tbtMs": 3183, "robotRequestedToLoadedMs": 1515.32, "robotRequestedToReadyMs": 1961.671, "navigationToReadyMs": 3921.685 },
+    { "run": 2, "performance": 76, "lcpMs": 3823.375, "tbtMs": 335, "robotRequestedToLoadedMs": 512.566, "robotRequestedToReadyMs": 947.162, "navigationToReadyMs": 2292.032 },
+    { "run": 3, "performance": 78, "lcpMs": 3840.196, "tbtMs": 302, "robotRequestedToLoadedMs": 506.594, "robotRequestedToReadyMs": 941.343, "navigationToReadyMs": 2382.21 },
+    { "run": 4, "performance": 73, "lcpMs": 3845.2875, "tbtMs": 434.5, "robotRequestedToLoadedMs": 650.046, "robotRequestedToReadyMs": 1128.219, "navigationToReadyMs": 2354.766 },
+    { "run": 5, "performance": 77, "lcpMs": 4024.15, "tbtMs": 321.5, "robotRequestedToLoadedMs": 514.64, "robotRequestedToReadyMs": 950.711, "navigationToReadyMs": 1751.326 }
+  ],
+  "stagingMedians": {
+    "before": { "performance": 78, "lcpMs": 3838.526, "tbtMs": 354, "robotRequestedToLoadedMs": 720.033, "robotRequestedToReadyMs": 1153.055, "navigationToReadyMs": 2302.713 },
+    "after": { "performance": 76, "lcpMs": 3845.2875, "tbtMs": 335, "robotRequestedToLoadedMs": 514.64, "robotRequestedToReadyMs": 950.711, "navigationToReadyMs": 2354.766 },
+    "initializationReductionPercent": 28.53,
+    "requestedToReadyReductionPercent": 17.55,
+    "outlierInvestigation": "Saved trace wall/thread-CPU analysis supports off-CPU waiting/descheduling, not excess decoder computation: startup microtask 1134.7 ms wall / 170.5 ms CPU versus normal 207.8 / 155.3; React callback 979.1 wall / 6.6 CPU. GPU tasks similarly inflated. No sampled CPU profiles; cannot distinguish GPU/driver waits from OS contention. Outlier retained"
+  },
+  "productionBeforeRuns": [
+    { "run": 1, "performance": 73, "lcpMs": 3974.414, "tbtMs": 471.07, "transferBytes": 2211695 },
+    { "run": 2, "performance": 71, "lcpMs": 4158.7285, "tbtMs": 501.388, "transferBytes": 2211874 },
+    { "run": 3, "performance": 71, "lcpMs": 4348.1735, "tbtMs": 372, "transferBytes": 2211833 }
+  ],
+  "productionAfterRuns": [
+    { "run": 1, "performance": 72, "lcpMs": 4295.776, "tbtMs": 398.5, "transferBytes": 2212069, "robotRequestedToLoadedMs": 543.157, "robotRequestedToReadyMs": 1002.427, "navigationToReadyMs": 1907.48 },
+    { "run": 2, "performance": 72, "lcpMs": 4254.3815, "tbtMs": 334.5, "transferBytes": 2212168, "robotRequestedToLoadedMs": 533.009, "robotRequestedToReadyMs": 971.27, "navigationToReadyMs": 2729.34 },
+    { "run": 3, "performance": 74, "lcpMs": 4224.997, "tbtMs": 315, "transferBytes": 2212146, "robotRequestedToLoadedMs": 515.502, "robotRequestedToReadyMs": 946.489, "navigationToReadyMs": 2121.462 }
+  ],
+  "productionMedians": {
+    "before": { "performance": 71, "lcpMs": 4158.7285, "tbtMs": 471.07, "transferBytes": 2211833 },
+    "after": { "performance": 72, "lcpMs": 4254.3815, "tbtMs": 334.5, "transferBytes": 2212146, "robotRequestedToLoadedMs": 533.009, "robotRequestedToReadyMs": 971.27 },
+    "accessibilityBeforeAndAfter": 100,
+    "bestPracticesBeforeAndAfter": 100,
+    "seoBeforeAndAfter": 100,
+    "clsAllRuns": 0,
+    "consoleErrorsAllAfterRuns": 0,
+    "warningsAllAfterRuns": 0,
+    "sceneRequestsPerAfterRun": 1,
+    "modelingWasmRequestsPerAfterRun": 0
+  },
+  "validation": {
+    "productionBuild": "passed build:cloudflare",
+    "typecheck": "passed",
+    "lint": "passed",
+    "deploymentTests": 136,
+    "conversionTests": 58,
+    "nativeRuntimeParity": { "mobileViewport": "390x844", "desktopViewport": "1440x900", "passedMeshesEach": 8, "sameCameraAndViewport": true },
+    "responsiveBrowserWidths": [360, 390, 768, 1440],
+    "horizontalOverflow": false,
+    "lightDarkSwitch": "passed without robot remount",
+    "mobileNavigation": "passed",
+    "booking": "Native calendar rendered with duration=30; no booking, email or CRM record created",
+    "animated": "Entry, forward/end, reverse and Replay browser checks; source untouched",
+    "reducedMotion": { "browser": "staging Chrome with forced reduced-motion preference", "sceneRequests": 0, "wasmRequests": 0, "consoleErrors": 0, "cls": 0 },
+    "saveData": "Existing no-runtime gate covered by lifecycle tests; no physical-device/network-header emulation claim",
+    "http": "Production smoke passed canonical scene, Brotli/gzip aliases with exact decoded length/SHA, existing scene assets, homepage/animated/system/legal routes and MP4 206 streaming",
+    "bindings": "All original 13 encrypted bindings and five nonsecret bindings remain by name/type; values not retrieved or disclosed",
+    "secretScan": "precommit gitleaks passed, zero findings",
+    "unrelatedHookWarning": "Existing optional Graphify Python package absent; nonfatal, not modified",
+    "localParityServer": "Stopped exact task-owned loopback process after verification"
+  },
+  "evidence": {
+    "productionBeforePattern": "/tmp/aimedia-robot-startup-before-mobile-{1,2,3}.json",
+    "productionAfterPattern": "/tmp/aimedia-robot-startup-after-mobile-{1,2,3}.json",
+    "stagingBeforePattern": "/tmp/aimedia-robot-startup-staging-before-{1,2,3}.json",
+    "stagingAfterPattern": "/tmp/aimedia-robot-startup-staging-valid-after-{1,2,3,4,5}.json",
+    "savedTraceSuffix": "-0.trace.json",
+    "reducedMotion": "/tmp/aimedia-robot-final-reduced-motion.json",
+    "nativeParity": ["/tmp/aimedia-robot-parity-browser-390.json", "/tmp/aimedia-robot-parity-browser-1440.json"],
+    "screenshots": ["/tmp/aimedia-robot-startup-before-mobile.jpg", "/tmp/aimedia-robot-startup-after-mobile.jpg", "/tmp/aimedia-robot-startup-after-desktop.jpg", "/tmp/aimedia-robot-startup-after-tablet-light.jpg"]
+  },
+  "remaining": [
+    "Large Spline JavaScript and native WebGL initialization remain a mobile CPU cost; no claim of a perfect Lighthouse score",
+    "Physical iPhone/Safari profiling not available in this run",
+    "Previously documented uncommissioned Cal-to-CRM/Meta webhook configuration and upstream OpenNext glob advisory are unchanged and excluded from this robot-only release"
+  ]
+}

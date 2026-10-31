@@ -395,3 +395,108 @@ https://developers.cloudflare.com/web-analytics/faq/ ,
 https://developers.cloudflare.com/web-analytics/data-metrics/data-origin-and-collection/ ,
 https://github.com/lovell/sharp , https://github.com/GoogleChrome/lighthouse-ci ,
 https://github.com/microsoft/playwright , https://github.com/webpro-nl/knip .
+
+## 2026-10-31: exact robot geometry bake and startup release
+
+**DEPLOYED / VERIFIED**: homepage robot optimization only, source commit
+`c825ee1110eb2b77ea567d56f83bf4d68cdf1813` on `codex/aimedia-robot-startup`.
+Production Worker version `2b46bfe0-b5d9-4d36-ad5d-0ccbd55e2a32`, deployment
+`8358b176-8e43-4009-b0be-7463902e8bf8`, 2026-10-31 15:28:40 UTC.
+Homepage: https://aimedia.global/ ; unchanged film: https://aimedia.global/animated .
+Rollback, if needed: `npx wrangler rollback 1091774f-3a90-405b-a965-7e394337a937`.
+All original 13 encrypted bindings and five other bindings remain by name/type;
+values were not retrieved or disclosed. No DNS, credentials, paid additions,
+backend workflows, marketing copy, theme/layout or cinematic source changed.
+
+**IMPLEMENTED**: precomputed eight static subdivision templates using the exact
+installed Spline 1.12.70 modeling kernel. Lossless welding of bit-identical
+position/normal tuples reduces 52,224 vertices to 13,072, with all 26,112 triangles,
+normals, winding, camera, materials, head video, transforms, aliases, events and
+animation states preserved. Control-cage bounds prevent a generic-mesh rescale or
+material projection change. The native runtime is unmodified. Independent tests
+also cover 14 world placements, not just local mesh buffers.
+
+The installed native MessagePack unpacker is a mandatory codec oracle. A candidate
+that looked correct under independent generic parsers decoded maps differently
+in the real Spline runtime, so it was rejected before production. Native records
+and tests for root, nested and prototype-wrapped Maps prevent that false green.
+Native browser A/B checks at 390×844 and 1440×900 pass all eight template buffers,
+expanded triangles/normals, matrices, material descriptors and camera/viewport.
+The authored initial close-up and zoom remain unchanged, including the 420 ms
+pose pre-roll and two animation frames. Original/v1 assets remain available.
+
+Hero loads `/spline/robot-baked-v2.splinecode`. Its gated fetch preload runs beside
+the lazy runtime import after a post-hydration paint, removing fixed waits and the
+runtime→scene serial discovery step. Default and input paths share one mount gate.
+Motion/Save-Data preferences still prevent import/fetch; offscreen/hidden pause,
+cleanup, desktop head-follow and the existing DPR cap are preserved. Local User
+Timing marks distinguish requested, loaded and ready, without analytics payloads.
+
+Cloudflare negotiates the immutable scene's raw/Brotli/gzip representation with
+the original client Accept-Encoding, streams through `ASSETS`, and uses
+`encodeBody: "manual"`. Merely adding a static Content-Encoding caused double
+encoding in staging and was rejected by decoded length/SHA checks. Only three
+exact scene paths enter this handler. No dynamic compression, buffering, private
+headers, user queries, storage or new dependency is involved. Existing MP4 range
+streaming and OpenNext fallback remain intact. Next's explicit encoded aliases
+have corresponding Node headers. The decoded production scene is 1,491,027 bytes,
+SHA-256 `4a31a1bf601dd4e3db02f4b11542ac17801e5032edd432c5375f346ba6182fd0`.
+Raw geometry grows; precompressed delivery plus no modeling-WASM request keeps
+whole-page transfer approximately unchanged. This is not a large byte reduction.
+
+**MEASURED**: see `scripts/deployment/robot-startup-release-results.json` for every
+valid repeat, methods, limitations and artifact paths. Same-host instrumented
+staging A/B: median requested→native load 720→515 ms (−28.53%); requested→ready
+1,153→951 ms (−17.55%). These are observed unthrottled trace wall times, NOT
+Lighthouse's simulated phone timings. Three before and all five valid after runs
+are retained. An outlier showed substantial off-CPU wall time; traces support
+GPU/OS waiting but cannot distinguish the cause. Navigation→ready did not improve
+uniformly; no whole-navigation speed claim is made.
+
+Fresh production before/after, three runs each, pinned Lighthouse 12.6.1 / Chrome
+150.0.7871.24, default mobile simulation:
+
+| Median | Before | After |
+| --- | ---: | ---: |
+| Performance | 71 | 72 |
+| LCP | 4,159 ms | 4,254 ms |
+| Total blocking time | 471 ms | 335 ms |
+| CLS | 0 | 0 |
+| Whole-page transfer | 2,211,833 B | 2,212,146 B |
+
+Accessibility / best practices / SEO remain 100 / 100 / 100. No audit warnings or
+console errors. After production native load is 516–543 ms (median 533 ms), one
+scene request and zero modeling-WASM requests in each run. Whole-page LCP is
+essentially unchanged, not advertised as improved. Small lab score changes and
+network/cache variability are not field INP or a guarantee for every phone.
+
+**VALIDATED**: full Cloudflare build, TypeScript, ESLint and dry-run pass;
+136 deployment + 58 conversion tests pass. Production HTTP smoke validates raw
+and encoded scenes against exact decoded SHA/length, the existing routes/assets
+and real MP4 206 streaming. Browser QA covers 360/390/768/1440 widths, no horizontal
+overflow, live robot, light/dark switches without remount, mobile menu, the native
+30-minute calendar, film end/reverse/Replay and no production console errors.
+Forced reduced-motion staging audit loads no scene or WASM, has zero errors and
+zero CLS. Save-Data gating remains unit-tested. No real booking, email or lead was
+created. The task-owned local parity server was stopped. Gitleaks passes; the
+existing optional Graphify hook warning is nonfatal and unchanged.
+
+Reproduction: `node scripts/deployment/bake-robot-geometry.mjs --check` verifies
+the existing guarded outputs; `--write` creates missing outputs only and refuses
+to overwrite an existing different asset. Tests:
+`npm run test:deployment && npm run test:conversion`.
+Optional loopback-only native review:
+`node scripts/deployment/robot-parity-review.mjs --port=61801`.
+It exposes only allowlisted public scene/runtime assets, not project secrets or
+backend routes. Raw traces/screenshots remain local `/tmp` artifacts, not Git.
+
+**REMAINING / EXCLUDED**: Spline JavaScript and WebGL initialization remain a
+mobile CPU cost. Physical iPhone/Safari profiling was not available. The previous
+Cal-to-CRM/Meta commissioning gap, upstream OpenNext glob advisory and credential
+history remediation are unchanged and outside this robot-only release. No new
+claims of a real booking flowing into CRM are made.
+
+Additional primary references:
+https://docs.spline.design/ ,
+https://developers.cloudflare.com/workers/runtime-apis/response/ ,
+https://developers.cloudflare.com/workers/runtime-apis/request/ .
